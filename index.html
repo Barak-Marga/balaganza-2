@@ -756,7 +756,7 @@ async function exportSpotify(){
     setSpMsg('מוסיף שירים לפלייליסט...','loading');
     try{
       for(let i=0;i<uris.length;i+=100){
-        await spFetch(`https://api.spotify.com/v1/playlists/${pendingPl}/tracks`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
+        await spFetch(`https://api.spotify.com/v1/playlists/${pendingPl}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
       }
       setSpMsg(`✅ ${uris.length} שירים נוספו!`,'ok');
       toast('🎵 הפלייליסט נוצר!','success');
@@ -793,7 +793,7 @@ async function exportSpotify(){
     if(uris.length){
       setSpMsg('\u05de\u05d5\u05e1\u05d9\u05e3 \u05e9\u05d9\u05e8\u05d9\u05dd...','loading');
       for(let i=0;i<uris.length;i+=100){
-        const addRes=await spFetch(`https://api.spotify.com/v1/playlists/${pl.id}/tracks`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
+        const addRes=await spFetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
         if(!addRes.ok){
           const err=await addRes.json();
           console.error('Add tracks error:',addRes.status,err);
