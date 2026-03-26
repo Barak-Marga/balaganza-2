@@ -443,6 +443,10 @@ document.addEventListener('fb-ready',()=>{
   db=fb.db;fbRef=fb.ref;push=fb.push;onValue=fb.onValue;
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
   handleSpotifyCB();
+  // Auto-finish pending Spotify export after page reload
+  if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
+    setTimeout(()=>exportSpotify(),1500);
+  }
   onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
   onValue(fbRef(db,'rooms'),snap=>{
     const r=snap.val()||{};allQueues={};
@@ -732,7 +736,8 @@ async function handleSpotifyCB(){
       const savedRoom=localStorage.getItem('b_sp_room');
       if(savedRoom&&allEvents[savedRoom])setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),600);
       if(localStorage.getItem('b_sp_pl')&&localStorage.getItem('b_sp_songs')){
-        setTimeout(()=>exportSpotify(),800);
+        // Force clean URL reload so exportSpotify runs on a fresh page with clean token
+        window.location.href='/';
       } else {
         toast('\u2705 \u05de\u05d7\u05d5\u05d1\u05e8 \u05dc\u05e1\u05e4\u05d5\u05d8\u05d9\u05e4\u05d9\u05d9!','success');
       }
