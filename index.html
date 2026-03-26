@@ -723,7 +723,7 @@ function spLogin(){
 
 async function handleSpotifyCB(){
   const p=new URLSearchParams(location.search);const code=p.get('code');if(!code)return;
-  history.replaceState({},'',location.pathname);
+ history.replaceState({},'','/');
   try{
     const res=await fetch('/api/spotify-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,redirect_uri:SP_REDIRECT})});
     const d=await res.json();
