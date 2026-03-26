@@ -727,8 +727,8 @@ async function handleSpotifyCB(){
   try{
     const res=await fetch('/api/spotify-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,redirect_uri:SP_REDIRECT})});
     const d=await res.json();
-    if(d.access_token){
-      spToken=d.access_token;localStorage.setItem('b_spt',spToken);isDJ=true;show('sDJ');
+   if(d.access_token){
+      spToken=d.access_token;localStorage.setItem('b_spt',spToken);console.log('Token saved:',spToken.substring(0,20));isDJ=true;show('sDJ');
       const savedRoom=localStorage.getItem('b_sp_room');
       if(savedRoom&&allEvents[savedRoom])setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),600);
       toast('✅ מחובר לספוטיפיי!','success');
