@@ -229,7 +229,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <div class="brand-title" id="entryBrand">BALAGANZA</div>
     
-    <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92%27%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:11px 16px;margin-bottom:14px;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגגים אירוע בקרוב? לחצו כאן 🎉</a>
     <p id="entryMsg">הזן את שמך כדי לבקש שירים ולהצביע!</p>
     <input class="comic-inp" type="text" id="nameInp" placeholder="השם שלך..." maxlength="20">
     <button class="btn-comic btn-red" onclick="enterGuest()">כניסה למסיבה 🎉</button>
@@ -263,12 +262,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 
     <!-- EVENT HERO -->
     <div class="event-hero" id="eventHero" style="display:none">
-      <div class="hero-type" id="heroType">🎉 אירוע</div>
       <div class="hero-name" id="heroName"></div>
       <div class="hero-details">
         <div class="hero-row" id="hDate" style="display:none"><span class="hero-ico">📅</span><span id="hDateTxt"></span></div>
         <div class="hero-row" id="hTime" style="display:none"><span class="hero-ico">🕐</span><span id="hTimeTxt"></span></div>
         <div class="hero-row" id="hLoc" style="display:none"><span class="hero-ico">📍</span><span id="hLocTxt"></span></div>
+        <div class="hero-row" id="hDJ" style="display:none"><span class="hero-ico">🎧</span><span id="hDJTxt"></span></div>
       </div>
     </div>
 
@@ -285,6 +284,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 
     <div class="fab-wrap">
       <button class="btn-fab" onclick="openSearch()">+ הוסף שיר 🎵</button>
+    </div>
+    <div style="padding:0 0 8px">
+      <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92'%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:11px 16px;margin-bottom:14px;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגגים אירוע בקרוב? לחצו כאן 🎉</a>
     </div>
 
     <div id="searchPanel" style="display:none">
@@ -314,11 +316,27 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div class="tabs">
       <div class="tab on" id="djT1" onclick="djTab('events')">📋 אירועים</div>
       <div class="tab" id="djT2" onclick="djTab('create')">✨ צור אירוע</div>
+      <div class="tab" id="djT3" onclick="djTab('about')">📝 עלינו</div>
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
         <div class="ev-list" id="djEvList">
           <div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-body" id="djBAbout">
+      <div class="admin-sec">
+        <div class="admin-card">
+          <h3>📝 ערוך את "קצת עלינו"</h3>
+          <div class="fld"><label>כותרת</label><input type="text" id="aboutBrand" placeholder="BALAGANZA" value="BALAGANZA"></div>
+          <div class="fld"><label>תגית</label><input type="text" id="aboutTagline" placeholder="🎵 DJ לכל אירוע 🎵"></div>
+          <div class="fld"><label>תיאור</label><textarea id="aboutDesc" rows="4" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical">היי! אנחנו הדיג׳יים של בלאגנזה!</textarea></div>
+          <div class="fld"><label>טלפון</label><input type="text" id="aboutPhone" placeholder="050-989-6598"></div>
+          <div class="fld"><label>וואטסאפ (מספר)</label><input type="text" id="aboutWA" placeholder="972509896598"></div>
+          <div class="fld"><label>אינסטגרם</label><input type="text" id="aboutIG" placeholder="balaganza"></div>
+          <div class="fld"><label>פייסבוק</label><input type="text" id="aboutFB" placeholder="balaganza"></div>
+          <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
       </div>
     </div>
@@ -362,7 +380,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   <div style="max-width:540px;margin:0 auto">
     <div class="hdr">
       <img class="hdr-logo" id="lEQ" src="" alt="">
-      <div><div class="hdr-title" id="eqTitle">תור האירוע</div><div class="hdr-sub" id="eqMeta"></div></div>
+      <div><div class="hdr-title" id="eqTitle" style="cursor:pointer" onclick="editEvName()">תור האירוע ✏️</div><div class="hdr-sub" id="eqMeta"></div></div>
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
       <button class="icon-btn" onclick="show('sDJ')">← חזור</button>
     </div>
@@ -429,7 +447,7 @@ let isDJ=false;
 let currentRoom='main';
 let allQueues={},allEvents={};
 let currentEQRoom=null,prevScreen=null;
-let votedSongs=JSON.parse(localStorage.getItem('b_votes')||'{}');
+let votedSongs={};
 let _sRes=[],searchT;
 let spToken=localStorage.getItem('b_spt')||null;
 
@@ -442,6 +460,7 @@ document.addEventListener('fb-ready',()=>{
   const fb=window._fb;
   db=fb.db;fbRef=fb.ref;push=fb.push;onValue=fb.onValue;
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
+  get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
   handleSpotifyCB();
   // Auto-finish pending Spotify export after page reload
   if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
@@ -518,8 +537,8 @@ function loadGuestEvent(){
     document.getElementById('gHdrTitle').textContent=ev.name||'בלאגנזה';
     const hero=document.getElementById('eventHero');
     hero.style.display='block';
-    document.getElementById('heroType').textContent=getTypeEmoji(ev.type)+' '+(ev.type||'אירוע');
     document.getElementById('heroName').textContent=ev.name||'';
+    if(ev.djName){document.getElementById('hDJ').style.display='';document.getElementById('hDJTxt').textContent='DJ: '+ev.djName;}
     if(ev.date){const d=new Date(ev.date+'T00:00:00');document.getElementById('hDateTxt').textContent=d.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('hDate').style.display='flex';}
     if(ev.time){document.getElementById('hTimeTxt').textContent=ev.time;document.getElementById('hTime').style.display='flex';}
     if(ev.location){document.getElementById('hLocTxt').textContent=ev.location;document.getElementById('hLoc').style.display='flex';}
@@ -539,10 +558,43 @@ function djLogout(){isDJ=false;show('sDJ');}
 
 // ── DJ TABS ──
 function djTab(t){
-  ['Events','Create'].forEach(x=>{
-    document.getElementById('djT'+(x==='Events'?1:2)).classList.toggle('on',t===x.toLowerCase());
-    document.getElementById('djB'+x).classList.toggle('on',t===x.toLowerCase());
+  [{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3}].forEach(x=>{
+    document.getElementById('djT'+x.n).classList.toggle('on',t===x.k.toLowerCase());
+    document.getElementById('djB'+x.k).classList.toggle('on',t===x.k.toLowerCase());
   });
+  if(t==='about')loadAboutFields();
+}
+async function loadAboutFields(){
+  const snap=await get(fbRef(db,'about'));
+  const d=snap.val()||{};
+  if(d.brand)document.getElementById('aboutBrand').value=d.brand;
+  if(d.tagline)document.getElementById('aboutTagline').value=d.tagline;
+  if(d.desc)document.getElementById('aboutDesc').value=d.desc;
+  if(d.phone)document.getElementById('aboutPhone').value=d.phone;
+  if(d.wa)document.getElementById('aboutWA').value=d.wa;
+  if(d.ig)document.getElementById('aboutIG').value=d.ig;
+  if(d.fb)document.getElementById('aboutFB').value=d.fb;
+}
+async function saveAbout(){
+  const d={
+    brand:document.getElementById('aboutBrand').value.trim(),
+    tagline:document.getElementById('aboutTagline').value.trim(),
+    desc:document.getElementById('aboutDesc').value.trim(),
+    phone:document.getElementById('aboutPhone').value.trim(),
+    wa:document.getElementById('aboutWA').value.trim(),
+    ig:document.getElementById('aboutIG').value.trim(),
+    fb:document.getElementById('aboutFB').value.trim(),
+  };
+  await set(fbRef(db,'about'),d);
+  applyAbout(d);
+  toast('✅ הפרטים נשמרו!','success');
+}
+function applyAbout(d){
+  if(!d)return;
+  if(d.brand){document.querySelectorAll('.about-brand').forEach(el=>el.textContent=d.brand);}
+  if(d.tagline){document.querySelectorAll('.about-tagline').forEach(el=>el.textContent=d.tagline);}
+  if(d.desc){const el=document.querySelector('.about-desc');if(el)el.textContent=d.desc;}
+  if(d.phone){const el=document.querySelector('.about-phone');if(el)el.textContent=d.phone;}
 }
 
 // ── SEARCH ──
@@ -600,18 +652,26 @@ async function addToQ(song){
   }catch(e){toast('שגיאה, נסה שנית','error');}
 }
 
+function voteColor(votes,maxVotes){
+  if(!maxVotes||maxVotes===0)return'rgba(255,255,255,0.3)';
+  const ratio=votes/maxVotes;
+  const light=Math.round(30+ratio*225);
+  return`rgb(${light},${light},${light})`;
+}
 function renderGuestQ(){
   const list=document.getElementById('gQList');const cnt=document.getElementById('gQCount');if(!list)return;
   const songs=Object.entries(allQueues[currentRoom]||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.votes||0)-(a.votes||0));
   cnt.textContent=songs.length;
   if(!songs.length){list.innerHTML='<div class="empty"><span class="ico">🎵</span><p>התור ריק!<br>לחץ הוסף שיר 👇</p></div>';return;}
+  const maxVotes=songs.length?Math.max(...songs.map(s=>s.votes||0)):1;
   const rank=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':'';
   list.innerHTML=songs.map((s,i)=>{
     const mv=s.voters&&s.voters[guestId];
     return `<div class="qi ${mv?'voted':''} ${i===0?'top1':''}">
       ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
       <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
-      <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt">${s.votes||0}</span></button>
+      ${s.preview?`<button class="preview-btn" data-preview="${s.preview}" onclick="event.stopPropagation();togglePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>`:''}
+      <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${mv?'var(--red)':voteColor(s.votes||0,maxVotes)}">${s.votes||0}</span></button>
     </div>`;
   }).join('');
   list.querySelectorAll('.vote-btn').forEach(btn=>btn.addEventListener('click',()=>vote(btn.dataset.key)));
@@ -621,7 +681,6 @@ async function vote(key){
   const song=(allQueues[currentRoom]||{})[key];if(!song)return;
   if(song.voters&&song.voters[guestId]){toast('כבר הצבעת 😊','info');return;}
   await runTransaction(fbRef(db,'rooms/'+currentRoom+'/queue/'+key),cur=>{if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;});
-  votedSongs[song.name+song.artist]=true;localStorage.setItem('b_votes',JSON.stringify(votedSongs));
   toast('🔥 הצבעת!','success');
 }
 
@@ -641,11 +700,11 @@ function renderDJEvents(){
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
       <div class="ev-btns">
-        <button class="ev-btn ev-btn-copy" onclick="copyLink('${escA(gUrl)}')">🔗 העתק לינק לאורחים</button>
         <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
+        <button class="ev-btn ev-btn-copy" onclick="copyLink('${escA(gUrl)}')">🔗 העתק לינק לאורחים</button>
         <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}')">📋 תור (${cnt})</button>
         <button class="ev-btn" style="background:rgba(0,200,83,.1);color:#00C853;border-color:rgba(0,200,83,.3)" onclick="quickExportCSV('${escA(rid)}')">📥 CSV</button>
-        <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="quickExportSpotify('${escA(rid)}')">🎵 ספוטיפיי</button>
+        <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ספוטיפיי</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
       </div>
     </div>`;
@@ -695,11 +754,19 @@ function renderEQ(){
     <div class="qi ${i===0?'top1':''}">
       ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
       <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
+      ${s.preview?`<button class="preview-btn" data-preview="${s.preview}" onclick="event.stopPropagation();togglePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>`:''}
       <div class="vote-btn voted"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:#4a9fff">${s.votes||0}</span></div>
       <button class="del-btn" onclick="delSong('${s.key}')">🗑️</button>
     </div>`).join('');
 }
 
+async function editEvName(){
+  const newName=prompt('שם חדש לאירוע:',document.getElementById('eqTitle').textContent.replace(' ✏️',''));
+  if(!newName||!newName.trim()||!currentEQRoom)return;
+  await set(fbRef(db,'events/'+currentEQRoom+'/name'),newName.trim());
+  document.getElementById('eqTitle').textContent=newName.trim()+' ✏️';
+  toast('✅ השם עודכן!','success');
+}
 async function delSong(key){await set(fbRef(db,'rooms/'+currentEQRoom+'/queue/'+key),null);}
 async function clearEQ(){if(!confirm('למחוק את כל התור?'))return;await set(fbRef(db,'rooms/'+currentEQRoom+'/queue'),null);toast('התור נוקה','info');}
 
@@ -845,16 +912,28 @@ let currentAudio=null;
 let currentPrevBtn=null;
 function togglePreview(btn,name,artist,art){
   const url=btn.dataset.preview;
-  if(currentAudio&&!currentAudio.paused){
-    stopPreview();
-    if(currentPrevBtn===btn)return;
-  }
+  // If same button pressed again - stop
+  if(currentPrevBtn===btn){stopPreview();return;}
+  // Stop any playing audio first
+  stopPreview();
   currentPrevBtn=btn;
   currentAudio=new Audio(url);
   currentAudio.volume=0.8;
-  currentAudio.play();
-  btn.classList.add('playing');
-  btn.textContent='⏹';
+  // Mobile-safe play with Promise handling
+  const playPromise=currentAudio.play();
+  if(playPromise!==undefined){
+    playPromise.then(()=>{
+      btn.classList.add('playing');
+      btn.textContent='⏹';
+    }).catch(()=>{
+      // Autoplay blocked - still show UI
+      btn.classList.add('playing');
+      btn.textContent='⏹';
+    });
+  } else {
+    btn.classList.add('playing');
+    btn.textContent='⏹';
+  }
   document.getElementById('pbName').textContent=name;
   document.getElementById('pbArtist').textContent=artist;
   document.getElementById('pbArt').src=art||'';
