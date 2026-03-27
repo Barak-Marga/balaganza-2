@@ -646,7 +646,8 @@ async function addToQ(song){
   const queue=allQueues[currentRoom]||{};
   if(Object.values(queue).find(s=>s.name===song.name&&s.artist===song.artist)){toast('השיר כבר בתור! הצבע עליו 👆','info');closeSearch();return;}
   try{
-    await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,votes:1,voters:{[guestId]:true},requestedBy:guestName||'אנונימי',timestamp:Date.now()});
+    const newRef=await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,requestedBy:guestName||'אנונימי',timestamp:Date.now()});
+    await set(fbRef(db,'rooms/'+currentRoom+'/voters/'+newRef.key+'/'+guestId),true);
     votedSongs[song.name+song.artist]=true;localStorage.setItem('b_votes',JSON.stringify(votedSongs));
     toast('✅ '+song.name+' נוסף!','success');closeSearch();
   }catch(e){toast('שגיאה, נסה שנית','error');}
