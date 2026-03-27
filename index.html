@@ -552,7 +552,7 @@ function openSearch(){document.getElementById('searchPanel').style.display='bloc
 function closeSearch(){document.getElementById('searchPanel').style.display='none';document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';}
 
 // ── DJ LOGIN ──
-function checkPass(){isDJ=true;show('sDJ');}
+function checkPass(){const inp=document.getElementById('djPassInp');if(inp.value===DJ_PASS){isDJ=true;inp.value='';show('sDJ');}else{inp.style.borderColor='var(--red)';inp.value='';setTimeout(()=>{inp.style.borderColor='';},1500);}}
 document.getElementById('djPassInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
 function djLogout(){isDJ=false;show('sDJ');}
 
