@@ -44,7 +44,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 .ev-detail:last-child{margin-bottom:0}
 .ev-detail-ico{font-size:16px}
 
-.logo-mini{width:80px;height:80px;object-fit:contain;display:block;margin:0 auto 14px;background:transparent;filter:drop-shadow(0 0 16px rgba(232,23,26,.5))}
+.logo-mini{width:110px;height:110px;object-fit:contain;display:block;margin:0 auto 16px;background:transparent;filter:drop-shadow(0 0 16px rgba(232,23,26,.5))}
 .brand-title{font-family:'Fredoka One',cursive;font-size:28px;text-shadow:2px 2px 0 var(--red);margin-bottom:4px}
 .brand-sub{font-size:11px;color:#4a9fff;letter-spacing:3px;text-transform:uppercase;margin-bottom:18px;font-weight:700}
 .entry-card p{font-size:14px;color:var(--muted);margin-bottom:16px;line-height:1.5}
@@ -64,7 +64,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 
 /* ── HEADER ── */
 .hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:3px solid rgba(255,255,255,.1);position:sticky;top:0;background:rgba(13,27,62,.97);backdrop-filter:blur(20px);z-index:50}
-.hdr-logo{width:52px;height:52px;object-fit:contain;flex-shrink:0}
+.hdr-logo{width:56px;height:56px;object-fit:contain;flex-shrink:0}
 .hdr-title{font-family:'Fredoka One',cursive;font-size:19px;letter-spacing:.5px;text-shadow:2px 2px 0 var(--red)}
 .hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .live-badge{margin-right:auto;display:flex;align-items:center;gap:5px;background:var(--red);border:2px solid white;border-radius:100px;padding:4px 10px;font-size:11px;font-weight:900;color:white;box-shadow:2px 2px 0 #9a0f11}
@@ -290,6 +290,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92'%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:10px 16px;margin:10px 16px 0;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגג/ת אירוע בקרוב? לחץ כאן 🎉</a>
 
     <!-- QUEUE -->
+    <div style="text-align:center;padding:16px 0 4px">
+      <img id="lQueueTop" src="" alt="" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(232,23,26,.4));display:block;margin:0 auto">
+    </div>
     <div class="qsec">
       <div class="q-hdr">
         <span class="q-title">🎵 תור השירים</span>
@@ -453,7 +456,7 @@ const SP_CLIENT_ID='4cd1ea39802a4358aa8c142b18662d57';
 const SP_REDIRECT=location.origin+'/';
 // iTunes used for search (free, no auth, has cover art + preview)
 
-['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
+['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2','lQueueTop'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
 
 let db,fbRef,push,onValue,runTransaction,get,set;
 let guestId=localStorage.getItem('b_gid')||('g_'+Math.random().toString(36).substr(2,9));
@@ -753,7 +756,7 @@ async function vote(key){
 // ── DJ EVENTS ──
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
-  const evArr=Object.entries(allEvents).filter(([rid,ev])=>currentUserType==='owner'||!ev.djId||ev.djId===currentUserType).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  const evArr=Object.entries(allEvents).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
   if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
@@ -886,80 +889,89 @@ async function handleSpotifyCB(){
 
 async function exportSpotify(){
   if(!spToken){spLogin();return;}
-
-  // After re-login, finish adding tracks to existing playlist
-  const pendingPl=localStorage.getItem('b_sp_pl');
-  const pendingSongs=localStorage.getItem('b_sp_songs');
-  if(pendingPl&&pendingSongs){
-    localStorage.removeItem('b_sp_pl');
-    localStorage.removeItem('b_sp_songs');
-    const uris=JSON.parse(pendingSongs);
-    document.getElementById('btnSP').disabled=true;
-    setSpMsg('מוסיף שירים לפלייליסט...','loading');
-    try{
-      for(let i=0;i<uris.length;i+=100){
-        await spFetch(`https://api.spotify.com/v1/playlists/${pendingPl}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
-      }
-      setSpMsg(`\u2705 ${uris.length} \u05e9\u05d9\u05e8\u05d9\u05dd \u05e0\u05d5\u05e1\u05e4\u05d5!`,'ok');
-      toast('\uD83C\uDFB5 \u05d4\u05e4\u05dc\u05d9\u05d9\u05e1\u05d8 \u05e0\u05d5\u05e6\u05e8!','success');
-      setTimeout(()=>window.open(`https://open.spotify.com/playlist/${pendingPl}`,'_blank'),800);
-    }catch(e){setSpMsg('\u05e9\u05d2\u05d9\u05d0\u05d4: '+e.message,'err');console.error(e);}
-    document.getElementById('btnSP').disabled=false;
-    return;
-  }
+  // Clear any stale pending state from old sessions
+  localStorage.removeItem('b_sp_pl');
+  localStorage.removeItem('b_sp_songs');
 
   const queue=allQueues[currentEQRoom]||{};
-  const allSongs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
-  const songs=allSongs.slice(0,60);
-  if(!songs.length){toast('\u05d4\u05ea\u05d5\u05e8 \u05e8\u05d9\u05e7','error');return;}
+  const allSongsArr=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  const songs=allSongsArr.slice(0,60);
+  if(!songs.length){toast('התור ריק','error');return;}
+
   const ev=allEvents[currentEQRoom]||{};
-  const djName=ev.djName||'Balaganza DJ';const evName=ev.name||'\u05d1\u05dc\u05d0\u05d2\u05e0\u05d6\u05d4';const lang=ev.lang||'he';
-  const plName=`\uD83C\uDFB5 ${evName} \u2013 ${djName}`;
-  const plDesc=lang==='he'?`\u05e4\u05dc\u05d9\u05d9\u05e1\u05d8 \u05e9\u05e0\u05d5\u05e6\u05e8 \u05e2"\u05d9 ${djName} | \u05d1\u05dc\u05d0\u05d2\u05e0\u05d6\u05d4`:`Playlist by ${djName} | Balaganza`;
+  const djName=ev.djName||'Balaganza DJ';
+  const evName=ev.name||'בלאגנזה';
+  const lang=ev.lang||'he';
+  const plName='🎵 '+evName+' – '+djName;
+  const plDesc=lang==='he'?'פלייליסט ע"י '+djName+' | בלאגנזה':'Playlist by '+djName+' | Balaganza';
+
   document.getElementById('btnSP').disabled=true;
+
+  // Per-event playlist ID – never create duplicates
+  const plStoreKey='b_sp_plid_'+(currentEQRoom||'main');
+  const existingPlId=localStorage.getItem(plStoreKey);
+
+  const reLogin=(plId,uris)=>{
+    localStorage.setItem('b_sp_pl',plId||'');
+    localStorage.setItem('b_sp_songs',JSON.stringify(uris||[]));
+    localStorage.setItem('b_sp_room',currentEQRoom||'');
+    spToken=null;localStorage.removeItem('b_spt');
+    setSpMsg('מתחבר מחדש לספוטיפיי...','loading');
+    setTimeout(()=>spLogin(),800);
+  };
+
   try{
-    setSpMsg('\u05de\u05d0\u05de\u05ea...','loading');
+    setSpMsg('מאמת...','loading');
     const meRes=await spFetch('https://api.spotify.com/v1/me');
-    if(!meRes.ok){spToken=null;localStorage.removeItem('b_spt');spLogin();return;}
+    if(!meRes.ok){document.getElementById('btnSP').disabled=false;reLogin('',[]); return;}
     await meRes.json();
-    setSpMsg('\u05d9\u05d5\u05e6\u05e8 \u05e4\u05dc\u05d9\u05d9\u05e1\u05d8...','loading');
-    const plRes=await spFetch(`https://api.spotify.com/v1/me/playlists`,{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
-    const pl=await plRes.json();
+
+    // Search all songs with rate-limit protection
     const uris=[];
     const delay=ms=>new Promise(r=>setTimeout(r,ms));
     for(let si=0;si<songs.length;si++){
       const s=songs[si];
-      setSpMsg(`\u05de\u05d7\u05e4\u05e9 (${si+1}/${songs.length}): ${s.name}...`,'loading');
+      setSpMsg('מחפש ('+(si+1)+'/'+songs.length+'): '+s.name+'...','loading');
       const q=encodeURIComponent(s.name+(s.artist?' '+s.artist:''));
-      let sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);
-      if(sr.status===429){await delay(2000);sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);}
-      if(sr.ok){const sd=await sr.json();if(sd?.tracks?.items?.[0]) uris.push(sd.tracks.items[0].uri);}
-      if(si<songs.length-1) await delay(songs.length>30?200:120);
+      let sr=await spFetch('https://api.spotify.com/v1/search?q='+q+'&type=track&limit=3');
+      if(sr.status===429){await delay(2500);sr=await spFetch('https://api.spotify.com/v1/search?q='+q+'&type=track&limit=3');}
+      if(sr.ok){const sd=await sr.json();if(sd&&sd.tracks&&sd.tracks.items&&sd.tracks.items[0])uris.push(sd.tracks.items[0].uri);}
+      if(si<songs.length-1) await delay(songs.length>30?200:130);
     }
+
+    // Find or create playlist
+    let plId=existingPlId;
+    if(existingPlId){
+      setSpMsg('בודק פלייליסט קיים...','loading');
+      const chk=await spFetch('https://api.spotify.com/v1/playlists/'+existingPlId);
+      if(!chk.ok) plId=null; // Gone – create new
+    }
+    if(!plId){
+      setSpMsg('יוצר פלייליסט...','loading');
+      const plRes=await spFetch('https://api.spotify.com/v1/me/playlists',{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
+      if(!plRes.ok){const e=await plRes.json();throw new Error(e.error&&e.error.message||'יצירת פלייליסט נכשלה');}
+      const pl=await plRes.json();
+      plId=pl.id;
+      localStorage.setItem(plStoreKey,plId);
+    }
+
     if(uris.length){
-      setSpMsg('\u05de\u05d5\u05e1\u05d9\u05e3 \u05e9\u05d9\u05e8\u05d9\u05dd...','loading');
+      setSpMsg('מסנכרן שירים...','loading');
+      // Clear existing tracks then add current queue
+      const clr=await spFetch('https://api.spotify.com/v1/playlists/'+plId+'/tracks',{method:'PUT',body:JSON.stringify({uris:[]})});
+      if(!clr.ok&&(clr.status===401||clr.status===403)){document.getElementById('btnSP').disabled=false;reLogin(plId,uris);return;}
       for(let i=0;i<uris.length;i+=100){
-        const addRes=await spFetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
-        if(!addRes.ok){
-          const err=await addRes.json();
-          console.error('Add tracks error:',addRes.status,err);
-          if(addRes.status===403){
-            localStorage.setItem('b_sp_pl',pl.id);
-            localStorage.setItem('b_sp_songs',JSON.stringify(uris));
-            localStorage.setItem('b_sp_room',currentEQRoom||'');
-            spToken=null;localStorage.removeItem('b_spt');
-            setSpMsg('\u05de\u05ea\u05d7\u05d1\u05e8 \u05de\u05d7\u05d3\u05e9...','loading');
-            setTimeout(()=>spLogin(),1000);
-            return;
-          }
-        }
+        const ar=await spFetch('https://api.spotify.com/v1/playlists/'+plId+'/tracks',{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
+        if(!ar.ok&&(ar.status===401||ar.status===403)){document.getElementById('btnSP').disabled=false;reLogin(plId,uris);return;}
       }
     }
-    setSpMsg(`\u2705 ${uris.length}/${songs.length} \u05e9\u05d9\u05e8\u05d9\u05dd \u05e0\u05d5\u05e1\u05e4\u05d5!`,'ok');
-    toast('\uD83C\uDFB5 \u05d4\u05e4\u05dc\u05d9\u05d9\u05e1\u05d8 \u05e0\u05d5\u05e6\u05e8!','success');
-    setTimeout(()=>window.open(`https://open.spotify.com/playlist/${pl.id}`,'_blank'),800);
+
+    const isUpdate=!!(existingPlId&&plId===existingPlId);
+    setSpMsg('✅ '+uris.length+'/'+songs.length+' שירים '+(isUpdate?'עודכנו':'נוספו')+'!','ok');
+    toast('🎵 הפלייליסט '+(isUpdate?'עודכן':'נוצר')+'!','success');
+    setTimeout(()=>window.open('https://open.spotify.com/playlist/'+plId,'_blank'),800);
   }catch(e){
-    setSpMsg('\u05e9\u05d2\u05d9\u05d0\u05d4: '+e.message,'err');
+    setSpMsg('שגיאה: '+e.message,'err');
     console.error(e);
   }
   document.getElementById('btnSP').disabled=false;
