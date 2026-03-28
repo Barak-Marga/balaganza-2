@@ -642,15 +642,12 @@ document.getElementById('searchInp').addEventListener('input',()=>{
 
 async function doSearch(q){
   try{
-    // Use server-side proxy to fix CORS issues on mobile
-    const proxyUrl='/api/itunes-search?term='+encodeURIComponent(q)+'&limit=8&country=IL';
     let d;
     try{
-      const r=await fetch(proxyUrl,{headers:{'Accept':'application/json'}});
+      const r=await fetch('/api/itunes-search?term='+encodeURIComponent(q)+'&limit=8&country=IL');
       if(!r.ok) throw new Error('proxy '+r.status);
       d=await r.json();
     }catch(proxyErr){
-      // Fallback to direct call (works on desktop)
       const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=8&country=IL');
       d=await r2.json();
     }
@@ -682,7 +679,7 @@ function renderSearch(results){
     el.addEventListener('click',e=>{
       if(e.target.classList.contains('preview-btn'))return;
       const r=_sRes[+el.dataset.i];if(!r)return;
-      addToQ({name:r.name,artist:r.artist,art:r.art,preview:r.preview||''});
+      addToQ({name:r.name,artist:r.artist,art:r.art});
     });
   });
 }
@@ -751,10 +748,7 @@ async function vote(key){
 // ── DJ EVENTS ──
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
-  // Owner sees all events; DJs see only their own
-  const evArr=Object.entries(allEvents)
-    .filter(([rid,ev])=>currentUserType==='owner'||!ev.djId||ev.djId===currentUserType||ev.djId==='')
-    .sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  const evArr=Object.entries(allEvents).filter(([rid,ev])=>currentUserType==='owner'||!ev.djId||ev.djId===currentUserType).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
   if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
@@ -895,8 +889,7 @@ async function exportSpotify(){
     try{
       await spFetch('https://api.spotify.com/v1/playlists/'+pendingPl+'/tracks',{method:'PUT',body:JSON.stringify({uris:[]})});
       for(let i=0;i<uris.length;i+=100){await spFetch('https://api.spotify.com/v1/playlists/'+pendingPl+'/tracks',{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});}
-      setSpMsg('✅ הפלייסט עודכן!','ok');
-      toast('������ הפלייסט עודכן!','success');
+      setSpMsg('✅ הפלייליסט עודכן!','ok');toast('🎵 הפלייליסט עודכן!','success');
       setTimeout(()=>window.open('https://open.spotify.com/playlist/'+pendingPl,'_blank'),800);
     }catch(e){setSpMsg('שגיאה: '+e.message,'err');console.error(e);}
     document.getElementById('btnSP').disabled=false;return;
@@ -908,8 +901,8 @@ async function exportSpotify(){
   const djName=ev.djName||'Balaganza DJ';
   const evName=ev.name||'בלאגנזה';
   const lang=ev.lang||'he';
-  const plName='������ '+evName+' – '+djName;
-  const plDesc=lang==='he'?'פלייסט שנוצר ע"י '+djName+' | בלאגנזה':'Playlist by '+djName+' | Balaganza';
+  const plName='🎵 '+evName+' – '+djName;
+  const plDesc=lang==='he'?'פלייליסט שנוצר ע"י '+djName+' | בלאגנזה':'Playlist by '+djName+' | Balaganza';
   document.getElementById('btnSP').disabled=true;
   const plStoreKey='b_sp_plid_'+(currentEQRoom||'main');
   const existingPlId=localStorage.getItem(plStoreKey);
@@ -928,12 +921,12 @@ async function exportSpotify(){
     }
     let plId=existingPlId;
     if(existingPlId){
-      setSpMsg('בודק פלייסט קיים...','loading');
+      setSpMsg('בודק פלייליסט קיים...','loading');
       const checkRes=await spFetch('https://api.spotify.com/v1/playlists/'+existingPlId);
       if(!checkRes.ok) plId=null;
     }
     if(!plId){
-      setSpMsg('יוצר פלייסט...','loading');
+      setSpMsg('יוצר פלייליסט...','loading');
       const plRes=await spFetch('https://api.spotify.com/v1/me/playlists',{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
       const pl=await plRes.json();plId=pl.id;localStorage.setItem(plStoreKey,plId);
     }
@@ -954,7 +947,7 @@ async function exportSpotify(){
     }
     const isUpdate=!!(existingPlId&&plId===existingPlId);
     setSpMsg('✅ '+uris.length+'/'+songs.length+' שירים '+(isUpdate?'עודכנו':'נוספו')+'!','ok');
-    toast('������ הפלייסט '+(isUpdate?'עודכן':'נוצר')+'!','success');
+    toast('🎵 הפלייליסט '+(isUpdate?'עודכן':'נוצר')+'!','success');
     setTimeout(()=>window.open('https://open.spotify.com/playlist/'+plId,'_blank'),800);
   }catch(e){setSpMsg('שגיאה: '+e.message,'err');console.error(e);}
   document.getElementById('btnSP').disabled=false;
@@ -1029,4 +1022,7 @@ function stopPreview(){
 }
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function escA(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&
+function escA(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+</script>
+</body>
+</html>
