@@ -64,7 +64,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 
 /* ── HEADER ── */
 .hdr{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:3px solid rgba(255,255,255,.1);position:sticky;top:0;background:rgba(13,27,62,.97);backdrop-filter:blur(20px);z-index:50}
-.hdr-logo{width:40px;height:40px;object-fit:contain;flex-shrink:0}
+.hdr-logo{width:52px;height:52px;object-fit:contain;flex-shrink:0}
 .hdr-title{font-family:'Fredoka One',cursive;font-size:19px;letter-spacing:.5px;text-shadow:2px 2px 0 var(--red)}
 .hdr-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .live-badge{margin-right:auto;display:flex;align-items:center;gap:5px;background:var(--red);border:2px solid white;border-radius:100px;padding:4px 10px;font-size:11px;font-weight:900;color:white;box-shadow:2px 2px 0 #9a0f11}
@@ -142,9 +142,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 .qi-artist{font-size:11px;color:var(--muted);margin-top:1px}
 .qi-by{font-size:10px;color:rgba(255,255,255,.2);margin-top:2px}
 .vote-btn{display:flex;flex-direction:column;align-items:center;gap:1px;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;padding:6px 10px;cursor:pointer;transition:all .15s;flex-shrink:0;min-width:48px}
-.vote-btn:hover{border-color:var(--red);background:rgba(232,23,26,.15);transform:translateY(-2px)}
+.vote-btn:hover{border-color:#4a9fff;background:rgba(74,159,255,.15);transform:translateY(-2px)}
 .vote-btn:active{transform:translateY(1px)}
-.vote-btn.voted{background:rgba(232,23,26,.2);border-color:var(--red);box-shadow:0 2px 8px rgba(232,23,26,.3)}
+.vote-btn.voted{background:rgba(74,159,255,.2);border-color:#4a9fff;box-shadow:0 2px 8px rgba(74,159,255,.3)}
 .vote-arr{font-size:14px;line-height:1}
 .vote-cnt{font-size:16px;font-weight:900;line-height:1;font-family:'Fredoka One',cursive}
 .vote-btn.voted .vote-cnt{color:#FFB800}
@@ -424,7 +424,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div class="about-hero">
       <img class="about-logo" id="lAbout2" src="" alt="">
       <div class="about-brand">BALAGANZA</div>
-      <div class="about-tagline">🎵 DJ לכל אירוע 🎵</div>
     </div>
     <p class="about-desc">היי! אנחנו הדיג׳יים של בלאגנזה! המותג החזק של אירועי בת ובר מצווה. אם את/ה חוגגים אירוע בקרוב - אנחנו בדיוק האנשים שחיפשת! שלח/י הודעה ונבנה לך חגיגת בלאגנזה אמיתית 🎉🎶</p>
     <div class="contact-list">
@@ -461,8 +460,10 @@ let guestId=localStorage.getItem('b_gid')||('g_'+Math.random().toString(36).subs
 localStorage.setItem('b_gid',guestId);
 let guestName='';
 let isDJ=false;
-let currentUserType='';
-let currentUserName='';
+let currentUserType=localStorage.getItem('b_userType')||'';
+let currentUserName=currentUserType?(DJ_NAMES&&DJ_NAMES[currentUserType])||currentUserType:'';
+// Restore DJ session if previously logged in
+if(currentUserType){isDJ=true;}
 let currentRoom='main';
 let allQueues={},allEvents={};
 let currentEQRoom=null,prevScreen=null;
@@ -495,6 +496,7 @@ document.addEventListener('fb-ready',()=>{
 });
 
 function initScreen(){
+  if(currentUserType){updateDJHeader();}
   if(urlDJ){show('sDJ');return;}
   if(urlRoom){
     // Guest event page – show name entry with event details
@@ -553,7 +555,7 @@ function loadGuestEvent(){
   if(!urlRoom)return;
   get(fbRef(db,'events/'+urlRoom)).then(snap=>{
     const ev=snap.val();if(!ev)return;
-    document.getElementById('gHdrTitle').textContent=ev.name||'בלאגנזה';
+    // Event name shown in hero section only, not in header
     const hero=document.getElementById('eventHero');
     hero.style.display='block';
     document.getElementById('heroName').textContent=ev.name||'';
@@ -597,6 +599,7 @@ function djTab(t){
     document.getElementById('djB'+x.k).classList.toggle('on',t===x.k.toLowerCase());
   });
   if(t==='about')loadAboutFields();
+  if(t==='events')renderDJEvents();
 }
 async function loadAboutFields(){
   const snap=await get(fbRef(db,'about'));
@@ -687,6 +690,8 @@ function renderSearch(results){
 async function addToQ(song){
   if(!db)return;
   const queue=allQueues[currentRoom]||{};
+  // Max 60 songs per queue
+  if(Object.keys(queue).length>=60){toast('הפלייליסט מלא! מקסימום 60 שירים 🎵','error');closeSearch();return;}
   const existing=Object.entries(queue).find(([k,s])=>s.name===song.name&&s.artist===song.artist);
   if(existing){
     const [existKey,existSong]=existing;
@@ -726,7 +731,7 @@ function renderGuestQ(){
     return `<div class="qi ${mv?'voted':''} ${i===0?'top1':''}">
       ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
       <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
-      ${s.preview?`<button class="preview-btn" data-preview="${s.preview}" onclick="event.stopPropagation();togglePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>`:''}
+      <button class="preview-btn" data-preview="${s.preview||''}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" onclick="event.stopPropagation();playQueuePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>
       <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${mv?'#FFB800':voteColor(s.votes||0,maxVotes)}">${s.votes||0}</span></button>
     </div>`;
   }).join('');
@@ -757,12 +762,11 @@ function renderDJEvents(){
     const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
     const typeEmoji=getTypeEmoji(ev.type);
     return `<div class="ev-item">
-      <div class="ev-name">${typeEmoji} ${esc(ev.name)}</div>
+      <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
       <div class="ev-btns">
         <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
-        <button class="ev-btn" style="background:rgba(74,159,255,.12);color:#4a9fff;border-color:rgba(74,159,255,.35)" onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')">✏️ ערוך שם</button>
         <button class="ev-btn ev-btn-copy" onclick="copyLink('${escA(gUrl)}')">🔗 העתק לינק לאורחים</button>
         <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}')">📋 תור (${cnt})</button>
         <button class="ev-btn" style="background:rgba(0,200,83,.1);color:#00C853;border-color:rgba(0,200,83,.3)" onclick="quickExportCSV('${escA(rid)}')">📥 CSV</button>
@@ -809,7 +813,8 @@ function renderEQ(){
   const list=document.getElementById('eqList');const cnt=document.getElementById('eqCount');
   if(!list||!currentEQRoom)return;
   const songs=Object.entries(allQueues[currentEQRoom]||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.votes||0)-(a.votes||0));
-  cnt.textContent=songs.length;
+  cnt.textContent=songs.length+(songs.length>=60?' (מקס)':'');
+  cnt.style.background=songs.length>=60?'#FF8C00':'';
   if(!songs.length){list.innerHTML='<div class="empty"><span class="ico">🎵</span><p>התור ריק</p></div>';return;}
   const rank=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;
   list.innerHTML=songs.map((s,i)=>`
@@ -895,7 +900,8 @@ async function exportSpotify(){
     document.getElementById('btnSP').disabled=false;return;
   }
   const queue=allQueues[currentEQRoom]||{};
-  const songs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  const allSongs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  const songs=allSongs.slice(0,60); // max 60 songs
   if(!songs.length){toast('התור ריק','error');return;}
   const ev=allEvents[currentEQRoom]||{};
   const djName=ev.djName||'Balaganza DJ';
@@ -912,12 +918,23 @@ async function exportSpotify(){
     if(!meRes.ok){spToken=null;localStorage.removeItem('b_spt');spLogin();return;}
     await meRes.json();
     const uris=[];
-    for(const s of songs){
-      setSpMsg('מחפש: '+s.name+'...','loading');
+    const delay=ms=>new Promise(r=>setTimeout(r,ms));
+    for(let si=0;si<songs.length;si++){
+      const s=songs[si];
+      setSpMsg('מחפש ('+( si+1)+'/'+songs.length+'): '+s.name+'...','loading');
       const q=encodeURIComponent(s.name+(s.artist?' '+s.artist:''));
-      const sr=await spFetch('https://api.spotify.com/v1/search?q='+q+'&type=track&limit=3');
-      const sd=await sr.json();
-      if(sd&&sd.tracks&&sd.tracks.items&&sd.tracks.items[0]) uris.push(sd.tracks.items[0].uri);
+      let sr=await spFetch('https://api.spotify.com/v1/search?q='+q+'&type=track&limit=3');
+      // Retry once on rate limit (429)
+      if(sr.status===429){
+        await delay(2000);
+        sr=await spFetch('https://api.spotify.com/v1/search?q='+q+'&type=track&limit=3');
+      }
+      if(sr.ok){
+        const sd=await sr.json();
+        if(sd&&sd.tracks&&sd.tracks.items&&sd.tracks.items[0]) uris.push(sd.tracks.items[0].uri);
+      }
+      // Adaptive delay to avoid rate limiting (more songs = more breathing room)
+      if(si<songs.length-1) await delay(songs.length>30?200:120);
     }
     let plId=existingPlId;
     if(existingPlId){
@@ -977,8 +994,30 @@ function renderTopSongs(){
 // ── PREVIEW PLAYER ──
 let currentAudio=null;
 let currentPrevBtn=null;
-function togglePreview(btn,name,artist,art){
-  const url=btn.dataset.preview;
+async function playQueuePreview(btn,name,artist,art){
+  let url=btn.dataset.preview;
+  if(!url){
+    // Fetch preview URL from iTunes on demand
+    try{
+      let d;
+      try{
+        const r=await fetch('/api/itunes-search?term='+encodeURIComponent(name+' '+artist)+'&limit=1&country=IL');
+        d=await r.json();
+      }catch(e){
+        const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(name+' '+artist)+'&media=music&limit=1&country=IL');
+        d=await r2.json();
+      }
+      if(d&&d.results&&d.results[0]&&d.results[0].previewUrl){
+        url=d.results[0].previewUrl;
+        btn.dataset.preview=url;
+      }
+    }catch(e){console.error('preview fetch error',e);}
+  }
+  if(!url){toast('אין תצוגה מקדימה זמינה','info');return;}
+  togglePreview(btn,name,artist,art,url);
+}
+function togglePreview(btn,name,artist,art,url){
+  if(!url)url=btn.dataset.preview;
   // If same button pressed again - stop
   if(currentPrevBtn===btn){stopPreview();return;}
   // Stop any playing audio first
