@@ -482,10 +482,7 @@ document.addEventListener('fb-ready',()=>{
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
   get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
   handleSpotifyCB();
-  // Auto-finish pending Spotify export after page reload
-  if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
-    setTimeout(()=>exportSpotify(),1500);
-  }
+  // Spotify pending handled in handleSpotifyCB after re-auth
   onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
   onValue(fbRef(db,'rooms'),snap=>{
     const r=snap.val()||{};allQueues={};
@@ -869,14 +866,31 @@ async function handleSpotifyCB(){
     const res=await fetch('/api/spotify-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,redirect_uri:SP_REDIRECT})});
     const d=await res.json();
     if(d.access_token){
-      spToken=d.access_token;localStorage.setItem('b_spt',spToken);isDJ=true;show('sDJ');
+      spToken=d.access_token;localStorage.setItem('b_spt',spToken);
+      isDJ=true;
+      // Restore DJ session
+      const savedUserType=localStorage.getItem('b_userType');
+      if(savedUserType){currentUserType=savedUserType;currentUserName=DJ_NAMES[savedUserType]||savedUserType;}
+      show('sDJ');updateDJHeader();
       const savedRoom=localStorage.getItem('b_sp_room');
-      if(savedRoom&&allEvents[savedRoom])setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),600);
-      if(localStorage.getItem('b_sp_pl')&&localStorage.getItem('b_sp_songs')){
-        // Force clean URL reload so exportSpotify runs on a fresh page with clean token
-        window.location.href='/';
+      const pendingPlId=localStorage.getItem('b_sp_pl');
+      const pendingUris=localStorage.getItem('b_sp_songs');
+      if(pendingPlId&&pendingUris&&savedRoom){
+        // Wait for Firebase to load, then resume export
+        const waitForFirebase=()=>new Promise(resolve=>{
+          if(Object.keys(allEvents).length>0){resolve();}
+          else{const t=setInterval(()=>{if(Object.keys(allEvents).length>0){clearInterval(t);resolve();}},200);setTimeout(()=>{clearInterval(t);resolve();},5000);}
+        });
+        await waitForFirebase();
+        if(allEvents[savedRoom]){
+          openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'','');
+          setTimeout(()=>exportSpotify(),400);
+        }
       } else {
-        toast('\u2705 \u05de\u05d7\u05d5\u05d1\u05e8 \u05dc\u05e1\u05e4\u05d5\u05d8\u05d9\u05e4\u05d9\u05d9!','success');
+        toast('✅ מחובר לספוטיפיי!','success');
+        if(savedRoom&&allEvents[savedRoom]){
+          setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),600);
+        }
       }
     }
   }catch(e){console.error(e);}
@@ -884,21 +898,9 @@ async function handleSpotifyCB(){
 
 async function exportSpotify(){
   if(!spToken){spLogin();return;}
-  const pendingPl=localStorage.getItem('b_sp_pl');
-  const pendingSongs=localStorage.getItem('b_sp_songs');
-  if(pendingPl&&pendingSongs){
-    localStorage.removeItem('b_sp_pl');localStorage.removeItem('b_sp_songs');
-    const uris=JSON.parse(pendingSongs);
-    document.getElementById('btnSP').disabled=true;
-    setSpMsg('מסנכרן פלייליסט...','loading');
-    try{
-      await spFetch('https://api.spotify.com/v1/playlists/'+pendingPl+'/tracks',{method:'PUT',body:JSON.stringify({uris:[]})});
-      for(let i=0;i<uris.length;i+=100){await spFetch('https://api.spotify.com/v1/playlists/'+pendingPl+'/tracks',{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});}
-      setSpMsg('✅ הפלייליסט עודכן!','ok');toast('🎵 הפלייליסט עודכן!','success');
-      setTimeout(()=>window.open('https://open.spotify.com/playlist/'+pendingPl,'_blank'),800);
-    }catch(e){setSpMsg('שגיאה: '+e.message,'err');console.error(e);}
-    document.getElementById('btnSP').disabled=false;return;
-  }
+  // Clear any stale pending state
+  localStorage.removeItem('b_sp_pl');
+  localStorage.removeItem('b_sp_songs');
   const queue=allQueues[currentEQRoom]||{};
   const allSongs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
   const songs=allSongs.slice(0,60); // max 60 songs
@@ -950,15 +952,17 @@ async function exportSpotify(){
     if(uris.length){
       setSpMsg('מסנכרן שירים...','loading');
       const clr=await spFetch('https://api.spotify.com/v1/playlists/'+plId+'/tracks',{method:'PUT',body:JSON.stringify({uris:[]})});
-      if(!clr.ok&&clr.status===403){
-        localStorage.setItem('b_sp_pl',plId);localStorage.setItem('b_sp_songs',JSON.stringify(uris));localStorage.setItem('b_sp_room',currentEQRoom||'');
-        spToken=null;localStorage.removeItem('b_spt');setSpMsg('מתחבר מחדש...','loading');setTimeout(()=>spLogin(),1000);return;
+      if(!clr.ok){
+        if(clr.status===401||clr.status===403){
+          localStorage.setItem('b_sp_pl',plId);localStorage.setItem('b_sp_songs',JSON.stringify(uris));localStorage.setItem('b_sp_room',currentEQRoom||'');
+          spToken=null;localStorage.removeItem('b_spt');setSpMsg('מתחבר מחדש לספוטיפיי...','loading');setTimeout(()=>spLogin(),800);return;
+        }
       }
       for(let i=0;i<uris.length;i+=100){
         const ar=await spFetch('https://api.spotify.com/v1/playlists/'+plId+'/tracks',{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
-        if(!ar.ok&&ar.status===403){
+        if(!ar.ok&&(ar.status===401||ar.status===403)){
           localStorage.setItem('b_sp_pl',plId);localStorage.setItem('b_sp_songs',JSON.stringify(uris));localStorage.setItem('b_sp_room',currentEQRoom||'');
-          spToken=null;localStorage.removeItem('b_spt');setSpMsg('מתחבר מחדש...','loading');setTimeout(()=>spLogin(),1000);return;
+          spToken=null;localStorage.removeItem('b_spt');setSpMsg('מתחבר מחדש לספוטיפיי...','loading');setTimeout(()=>spLogin(),800);return;
         }
       }
     }
