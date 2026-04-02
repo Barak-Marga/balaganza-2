@@ -499,15 +499,18 @@ document.addEventListener('fb-ready',()=>{
 });
 
 function initScreen(){
-  if(currentUserType){updateDJHeader();}
-  if(urlDJ){show('sDJ');return;}
   if(urlRoom){
     // Guest event page – show name entry with event details
     show('sName');
     loadEntryEventDetails(urlRoom);
   } else {
-    // No room – show DJ login
-    show('sDJ');
+    // Admin area – require login
+    if(currentUserType){
+      updateDJHeader();
+      show('sDJ');
+    } else {
+      show('sDJPass');
+    }
   }
 }
 
@@ -592,7 +595,7 @@ function checkPass(){
   }
 }
 document.getElementById('djPassInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
-function djLogout(){isDJ=false;currentUserType='';currentUserName='';localStorage.removeItem('b_userType');show('sDJ');}
+function djLogout(){isDJ=false;currentUserType='';currentUserName='';localStorage.removeItem('b_userType');show('sDJPass');}
 function updateDJHeader(){const el=document.querySelector('#sDJ .hdr-sub');if(el&&currentUserName)el.textContent='שלום, '+currentUserName+' 👋';}
 
 // ── DJ TABS ──
