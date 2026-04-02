@@ -289,6 +289,10 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92'%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:10px 16px;margin:10px 16px 0;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגג/ת אירוע בקרוב? לחץ כאן 🎉</a>
 
+    <div class="fab-wrap">
+      <button class="btn-fab" onclick="openSearch()">+ הוסף שיר 🎵</button>
+    </div>
+
     <!-- QUEUE -->
     <div style="text-align:center;padding:16px 0 4px">
       <img id="lQueueTop" src="" alt="" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(232,23,26,.4));display:block;margin:0 auto">
@@ -301,10 +305,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <div class="q-list" id="gQList">
         <div class="empty"><span class="ico">🎵</span><p>התור ריק!<br>לחץ הוסף שיר 👇</p></div>
       </div>
-    </div>
-
-    <div class="fab-wrap">
-      <button class="btn-fab" onclick="openSearch()">+ הוסף שיר 🎵</button>
     </div>
 
 
@@ -336,6 +336,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <div class="tab on" id="djT1" onclick="djTab('events')">📋 אירועים</div>
       <div class="tab" id="djT2" onclick="djTab('create')">✨ צור אירוע</div>
       <div class="tab" id="djT3" onclick="djTab('about')">📝 עלינו</div>
+      <div class="tab" id="djT4" onclick="djTab('manage')" style="display:none">⚙️ ניהול</div>
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
@@ -386,8 +387,25 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
             <div class="fld"><label>שפת פלייליסט</label>
               <select id="evLang"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
             </div>
+            <div class="fld"><label>מקס׳ שירים לפלייליסט</label><input type="number" id="evMaxSongs" min="5" max="200" value="30" placeholder="30"></div>
           </div>
           <button class="btn-full btn-red" onclick="createEv()">🎉 צור אירוע</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-body" id="djBManage">
+      <div class="admin-sec">
+        <!-- Change Owner Password -->
+        <div class="admin-card">
+          <h3>🔑 שינוי סיסמת בעלים</h3>
+          <div class="fld"><label>סיסמה חדשה לבעלים</label><input type="password" id="ownerNewPass" placeholder="הקלד סיסמה חדשה..."></div>
+          <button class="btn-full btn-red" onclick="changeOwnerPass()">💾 שמור סיסמה</button>
+        </div>
+        <!-- Manage DJs -->
+        <div class="admin-card">
+          <h3>🎧 ניהול דיג׳יים</h3>
+          <div id="djManageList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
+          <button class="btn-full btn-blue" onclick="addDJ()">+ הוסף דיג׳יי</button>
         </div>
       </div>
     </div>
@@ -395,7 +413,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 </div>
 
 <!-- ══ EVENT QUEUE (DJ) ══ -->
-<div id="sEQ" class="scr dj-mode">
   <div style="max-width:540px;margin:0 auto">
     <div class="hdr">
       <img class="hdr-logo" id="lEQ" src="" alt="">
@@ -483,19 +500,22 @@ document.addEventListener('fb-ready',()=>{
   const fb=window._fb;
   db=fb.db;fbRef=fb.ref;push=fb.push;onValue=fb.onValue;
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
-  get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
-  handleSpotifyCB();
-  // Auto-finish pending Spotify export after page reload
-  if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
-    setTimeout(()=>exportSpotify(),1500);
-  }
-  onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
-  onValue(fbRef(db,'rooms'),snap=>{
-    const r=snap.val()||{};allQueues={};
-    Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
-    renderGuestQ();renderEQ();renderDJEvents();
+  // Load config (passwords/DJ names) from Firebase first
+  loadConfig().then(()=>{
+    get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
+    handleSpotifyCB();
+    // Auto-finish pending Spotify export after page reload
+    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
+      setTimeout(()=>exportSpotify(),1500);
+    }
+    onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
+    onValue(fbRef(db,'rooms'),snap=>{
+      const r=snap.val()||{};allQueues={};
+      Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
+      renderGuestQ();renderEQ();renderDJEvents();
+    });
+    initScreen();
   });
-  initScreen();
 });
 
 function initScreen(){
@@ -579,19 +599,54 @@ function openSearch(){document.getElementById('searchPanel').style.display='bloc
 function closeSearch(){document.getElementById('searchPanel').style.display='none';document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';}
 
 // ── DJ LOGIN ──
+const LOGIN_ATTEMPTS_KEY='b_login_attempts';
+const LOGIN_LOCKOUT_KEY='b_login_lockout';
+const MAX_ATTEMPTS=5;
+const LOCKOUT_DURATION=30*60*1000; // 30 minutes
+
+function getLoginAttempts(){return parseInt(localStorage.getItem(LOGIN_ATTEMPTS_KEY)||'0');}
+function getLockoutEnd(){return parseInt(localStorage.getItem(LOGIN_LOCKOUT_KEY)||'0');}
+function isLockedOut(){return Date.now()<getLockoutEnd();}
+function getLockoutRemaining(){return Math.ceil((getLockoutEnd()-Date.now())/60000);}
+
 function checkPass(){
   const inp=document.getElementById('djPassInp');
   const userType=document.getElementById('userTypeSelect').value;
   const errEl=document.getElementById('loginError');
+
+  // Check lockout
+  if(isLockedOut()){
+    errEl.textContent='נעול! נסה שוב בעוד '+getLockoutRemaining()+' דקות 🔒';
+    errEl.style.display='block';
+    inp.value='';
+    return;
+  }
+
   if(!userType){inp.style.borderColor='var(--red)';errEl.textContent='אנא בחר סוג משתמש';errEl.style.display='block';inp.value='';setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},2000);return;}
-  if(inp.value===USER_PASSWORDS[userType]){
+  if(inp.value===_userPasswords[userType]){
+    // Success – reset attempts
+    localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+    localStorage.removeItem(LOGIN_LOCKOUT_KEY);
     isDJ=true;currentUserType=userType;currentUserName=DJ_NAMES[userType]||userType;
     localStorage.setItem('b_userType',userType);
     inp.value='';document.getElementById('userTypeSelect').value='';errEl.style.display='none';
     show('sDJ');updateDJHeader();
   }else{
-    inp.style.borderColor='var(--red)';errEl.textContent='סיסמה שגויה ❌';errEl.style.display='block';inp.value='';
-    setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},2000);
+    const attempts=getLoginAttempts()+1;
+    localStorage.setItem(LOGIN_ATTEMPTS_KEY,attempts);
+    if(attempts>=MAX_ATTEMPTS){
+      localStorage.setItem(LOGIN_LOCKOUT_KEY,Date.now()+LOCKOUT_DURATION);
+      localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+      inp.style.borderColor='var(--red)';
+      errEl.textContent='5 ניסיונות כושלים – נעול ל-30 דקות! 🔒';
+      errEl.style.display='block';
+    } else {
+      inp.style.borderColor='var(--red)';
+      errEl.textContent='סיסמה שגויה ❌ ('+attempts+'/'+MAX_ATTEMPTS+')';
+      errEl.style.display='block';
+    }
+    inp.value='';
+    setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},3000);
   }
 }
 document.getElementById('djPassInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
@@ -600,14 +655,136 @@ function updateDJHeader(){const el=document.querySelector('#sDJ .hdr-sub');if(el
 
 // ── DJ TABS ──
 function djTab(t){
-  [{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3}].forEach(x=>{
+  const tabs=[{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3},{k:'Manage',n:4}];
+  tabs.forEach(x=>{
     document.getElementById('djT'+x.n).classList.toggle('on',t===x.k.toLowerCase());
     document.getElementById('djB'+x.k).classList.toggle('on',t===x.k.toLowerCase());
   });
   if(t==='about')loadAboutFields();
   if(t==='events')renderDJEvents();
+  if(t==='manage')renderDJManage();
 }
-async function loadAboutFields(){
+// ── OWNER MANAGEMENT ──
+// Passwords & DJ list are stored in Firebase under 'config' node
+// We keep USER_PASSWORDS as runtime object, loaded from Firebase if available
+let _userPasswords={...USER_PASSWORDS};
+let _djNames={...DJ_NAMES};
+
+async function loadConfig(){
+  const snap=await get(fbRef(db,'config'));
+  const cfg=snap.val();
+  if(cfg){
+    if(cfg.passwords)Object.assign(_userPasswords,cfg.passwords);
+    if(cfg.djNames)Object.assign(_djNames,cfg.djNames);
+    // Rebuild login dropdown
+    rebuildLoginSelect();
+  }
+}
+
+function rebuildLoginSelect(){
+  const sel=document.getElementById('userTypeSelect');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">בחר סוג משתמש...</option>';
+  // Owner always first
+  sel.innerHTML+='<option value="owner">👑 בעלים</option>';
+  // DJs
+  const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
+  djKeys.forEach(k=>{
+    sel.innerHTML+=`<option value="${esc(k)}">🎧 ${esc(_djNames[k])}</option>`;
+  });
+  if(cur)sel.value=cur;
+}
+
+function renderDJManage(){
+  const list=document.getElementById('djManageList');if(!list)return;
+  const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
+  if(!djKeys.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center">אין דיג׳יים. הוסף דיג׳יי למטה.</div>';return;}
+  list.innerHTML=djKeys.map(k=>`
+    <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-family:'Fredoka One',cursive;font-size:16px">🎧 ${esc(_djNames[k])}</span>
+        <span style="font-size:11px;color:var(--muted);font-weight:700">(${esc(k)})</span>
+      </div>
+      <div class="fld-row">
+        <div class="fld"><label>שם חדש</label><input type="text" id="dj_name_${k}" value="${esc(_djNames[k])}" placeholder="שם הדיג׳יי"></div>
+        <div class="fld"><label>סיסמה חדשה</label><input type="password" id="dj_pass_${k}" placeholder="השאר ריק לא לשנות"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="ev-btn ev-btn-view" style="flex:1" onclick="saveDJ('${esc(k)}')">💾 שמור</button>
+        <button class="ev-btn ev-btn-del" onclick="removeDJ('${esc(k)}')">🗑️ מחק</button>
+      </div>
+    </div>`).join('');
+}
+
+async function saveDJ(key){
+  const nameEl=document.getElementById('dj_name_'+key);
+  const passEl=document.getElementById('dj_pass_'+key);
+  const newName=nameEl?nameEl.value.trim():'';
+  const newPass=passEl?passEl.value.trim():'';
+  if(!newName){toast('אנא הכנס שם','error');return;}
+  _djNames[key]=newName;
+  const upd={};
+  upd['config/djNames/'+key]=newName;
+  if(newPass){
+    _userPasswords[key]=newPass;
+    upd['config/passwords/'+key]=newPass;
+  }
+  await Promise.all(Object.entries(upd).map(([path,val])=>set(fbRef(db,path),val)));
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('✅ הדיג׳יי עודכן!','success');
+}
+
+async function removeDJ(key){
+  if(!confirm('למחוק את הדיג׳יי '+_djNames[key]+'?'))return;
+  delete _djNames[key];
+  delete _userPasswords[key];
+  await set(fbRef(db,'config/djNames/'+key),null);
+  await set(fbRef(db,'config/passwords/'+key),null);
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('הדיג׳יי נמחק','info');
+}
+
+async function addDJ(){
+  // Find next available djN key
+  let n=1;
+  while(_djNames['dj'+n])n++;
+  const key='dj'+n;
+  const name=prompt('שם הדיג׳יי החדש:','');
+  if(!name||!name.trim())return;
+  const pass=prompt('סיסמה לדיג׳יי:','');
+  if(!pass||!pass.trim())return;
+  _djNames[key]=name.trim();
+  _userPasswords[key]=pass.trim();
+  await set(fbRef(db,'config/djNames/'+key),name.trim());
+  await set(fbRef(db,'config/passwords/'+key),pass.trim());
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('✅ דיג׳יי חדש נוסף!','success');
+}
+
+async function changeOwnerPass(){
+  const inp=document.getElementById('ownerNewPass');
+  const newPass=inp?inp.value.trim():'';
+  if(!newPass||newPass.length<4){toast('סיסמה קצרה מדי (מינ׳ 4 תווים)','error');return;}
+  _userPasswords['owner']=newPass;
+  await set(fbRef(db,'config/passwords/owner'),newPass);
+  inp.value='';
+  toast('✅ סיסמת הבעלים שונתה!','success');
+}
+
+// Patch checkPass to use _userPasswords (runtime, updated from Firebase)
+// Override the const USER_PASSWORDS check with _userPasswords
+
+function updateDJHeader(){
+  const el=document.querySelector('#sDJ .hdr-sub');
+  if(el&&currentUserName)el.textContent='שלום, '+currentUserName+' 👋';
+  // Show manage tab only for owner
+  const manageTab=document.getElementById('djT4');
+  if(manageTab)manageTab.style.display=currentUserType==='owner'?'':'none';
+}async function loadAboutFields(){
   const snap=await get(fbRef(db,'about'));
   const d=snap.val()||{};
   if(d.brand)document.getElementById('aboutBrand').value=d.brand;
@@ -693,11 +870,18 @@ function renderSearch(results){
   });
 }
 
+function countMyRequests(room){
+  const q=allQueues[room]||{};
+  return Object.values(q).reduce((sum,s)=>(s.requesterId&&s.requesterId===guestId)?sum+1:sum,0);
+}
+
 async function addToQ(song){
   if(!db)return;
   const queue=allQueues[currentRoom]||{};
-  // Max 60 songs per queue
-  if(Object.keys(queue).length>=60){toast('הפלייליסט מלא! מקסימום 60 שירים 🎵','error');closeSearch();return;}
+  const ev=allEvents[currentRoom]||{};
+  const maxQ=ev.maxSongs||30;
+  // Max songs per queue
+  if(Object.keys(queue).length>=maxQ){toast('הפלייליסט מלא! מקסימום '+maxQ+' שירים 🎵','error');closeSearch();return;}
   const existing=Object.entries(queue).find(([k,s])=>s.name===song.name&&s.artist===song.artist);
   if(existing){
     const [existKey,existSong]=existing;
@@ -709,8 +893,10 @@ async function addToQ(song){
     toast('🔥 השיר כבר בתור – הצבעת עליו!','success');closeSearch();return;
   }
   try{
+    // Max 3 song requests per guest
+    if(countMyRequests(currentRoom)>=3){toast('הגעת למגבלת 3 בקשות שירים! 🔒','error');closeSearch();return;}
     if(countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
-    await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,preview:song.preview||'',requestedBy:guestName||'אנונימי',votes:1,voters:{[guestId]:true},timestamp:Date.now()});
+    await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,preview:song.preview||'',requestedBy:guestName||'אנונימי',requesterId:guestId,votes:1,voters:{[guestId]:true},timestamp:Date.now()});
     votedSongs[song.name+song.artist]=true;localStorage.setItem('b_votes',JSON.stringify(votedSongs));
     toast('✅ '+song.name+' נוסף!','success');closeSearch();
   }catch(e){toast('שגיאה, נסה שנית','error');}
@@ -759,7 +945,12 @@ async function vote(key){
 // ── DJ EVENTS ──
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
-  const evArr=Object.entries(allEvents).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  let evArr=Object.entries(allEvents);
+  // Owner sees all events; DJ sees only their own
+  if(currentUserType&&currentUserType!=='owner'){
+    evArr=evArr.filter(([rid,ev])=>ev.djId===currentUserType);
+  }
+  evArr=evArr.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
   if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
@@ -790,12 +981,14 @@ async function createEv(){
   const time=document.getElementById('evTime').value;
   const loc=document.getElementById('evLoc').value.trim();
   const lang=document.getElementById('evLang').value;
+  const maxSongs=parseInt(document.getElementById('evMaxSongs').value)||30;
   const djName=document.getElementById('evDJName').value.trim()||'Balaganza DJ';
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  await set(fbRef(db,'events/'+rid),{name,type,date,time,location:loc,lang,djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
+  await set(fbRef(db,'events/'+rid),{name,type,date,time,location:loc,lang,maxSongs,djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
   ['evName','evDate','evTime','evLoc'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('evType').value='';
+  document.getElementById('evMaxSongs').value='30';
   toast('✅ האירוע נוצר!','success');
   djTab('events');
 }
@@ -849,6 +1042,17 @@ async function editEvNameFromList(rid,currentName){
 async function delSong(key){await set(fbRef(db,'rooms/'+currentEQRoom+'/queue/'+key),null);}
 async function clearEQ(){if(!confirm('למחוק את כל התור?'))return;await set(fbRef(db,'rooms/'+currentEQRoom+'/queue'),null);toast('התור נוקה','info');}
 
+function quickExportCSV(rid){
+  const queue=allQueues[rid]||{};
+  const songs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  const ev=allEvents[rid]||{};const lang=ev.lang||'he';
+  const headers=lang==='he'?['#','שיר','אמן','קולות','בקשה של']:['#','Track','Artist','Votes','Requested by'];
+  const rows=[headers,...songs.map((s,i)=>[i+1,s.name||'',s.artist||'',s.votes||0,s.requestedBy||''])];
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`balaganza_${ev.name||'playlist'}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  toast('✅ CSV יוצא!','success');
+}
 function exportCSV(){
   const queue=allQueues[currentEQRoom]||{};
   const songs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
