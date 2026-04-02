@@ -199,7 +199,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 .about-logo{width:100px;height:100px;object-fit:contain;display:block;margin:0 auto 14px}
 .about-brand{font-family:'Fredoka One',cursive;font-size:34px;text-shadow:3px 3px 0 var(--red);letter-spacing:1px}
 .about-tagline{font-size:12px;color:#4a9fff;font-weight:900;letter-spacing:3px;margin-top:4px;text-transform:uppercase}
-.about-desc{font-size:15px;line-height:1.8;color:rgba(255,255,255,.85);margin-bottom:20px}
+.about-desc{font-size:15px;line-height:1.8;color:rgba(255,255,255,.85);margin-bottom:20px;text-align:center;white-space:pre-line}
 .contact-list{display:flex;flex-direction:column;gap:8px}
 .contact-item{display:flex;align-items:center;gap:12px;background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:14px 16px;text-decoration:none;color:white;transition:all .2s}
 .contact-item:hover{border-color:rgba(255,255,255,.3);transform:translateX(-3px);box-shadow:3px 3px 0 rgba(232,23,26,.2)}
@@ -263,7 +263,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <button class="btn-comic btn-blue" onclick="checkPass()">כניסה 🎧</button>
     <div id="loginError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">סיסמה שגויה ❌</div>
     <div style="margin-top:14px;border-top:2px solid rgba(255,255,255,.1);padding-top:14px">
-      <button class="btn-comic btn-green" style="font-size:16px;padding:10px" onclick="show('sCelebrant')">🎂 כניסת חוגג/ת</button>
+      <button class="btn-comic btn-blue" style="font-size:16px;padding:10px" onclick="show('sCelebrant')">🎂 כניסת חוגג/ת</button>
     </div>
   </div>
 </div>
@@ -282,7 +282,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <input class="comic-inp" type="text" id="celebrantName" placeholder="השם שלך..." maxlength="20" style="margin-bottom:8px">
     <input class="comic-inp" type="password" id="celebrantPassInp" placeholder="קוד חוגג...">
-    <button class="btn-comic btn-green" onclick="checkCelebrant()">כניסה 🎉</button>
+    <button class="btn-comic btn-blue" onclick="checkCelebrant()">כניסה 🎉</button>
     <div id="celebrantError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">קוד שגוי ❌</div>
     <button class="subtle-link" onclick="show('sDJPass')" style="margin-top:8px">← חזור לכניסת DJ</button>
   </div>
@@ -311,7 +311,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="hero-row" id="hDJ" style="display:none"><span class="hero-ico">🎧</span><span id="hDJTxt"></span></div>
         <div id="hRulesRow" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.55);text-align:center;background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px;display:none">🎵 ניתן להוסיף 3 שירים, ולהצביע 10 הצבעות לשירים שברשימה 🗳️</div>
         <div id="hCelebrantBtn" style="display:none;margin-top:8px">
-          <button onclick="promptCelebrantCode()" style="background:rgba(0,200,83,.12);border:2px solid rgba(0,200,83,.35);border-radius:10px;padding:7px 14px;color:#00C853;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת — הזן קוד מיוחד</button>
+          <button onclick="promptCelebrantCode()" style="background:rgba(26,47,191,.2);border:2px solid rgba(26,47,191,.5);border-radius:10px;padding:7px 14px;color:#818cf8;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת עם קוד</button>
         </div>
       </div>
     </div>
@@ -475,8 +475,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div class="about-hero">
       <img class="about-logo" id="lAbout2" src="" alt="">
       <div class="about-brand">BALAGANZA</div>
+      <div class="about-tagline">🎵 DJ לכל אירוע 🎵</div>
     </div>
-    <p class="about-desc">היי! אנחנו הדיג׳יים של בלאגנזה! המותג החזק של אירועי בת ובר מצווה. אם את/ה חוגגים אירוע בקרוב - אנחנו בדיוק האנשים שחיפשת! שלח/י הודעה ונבנה לך חגיגת בלאגנזה אמיתית 🎉🎶</p>
+    <p class="about-desc" style="text-align:center;white-space:pre-line">היי! אנחנו הדיג׳יים של בלאגנזה! המותג החזק של אירועי בת ובר מצווה. אם את/ה חוגגים אירוע בקרוב - אנחנו בדיוק האנשים שחיפשת! שלח/י הודעה ונבנה לך חגיגת בלאגנזה אמיתית 🎉🎶</p>
     <div class="contact-list">
       <a class="contact-item" href="tel:+972509896598"><span class="contact-ico">📞</span><div><div class="contact-lbl">טלפון</div><div class="contact-val">050-989-6598</div></div></a>
       <a class="contact-item" href="https://wa.me/972509896598?text=היי%20בלאגנזה!%20אשמח%20לשמוע%20פרטים%20על%20אירוע" target="_blank"><span class="contact-ico">💬</span><div><div class="contact-lbl">וואטסאפ</div><div class="contact-val">שלח הודעה עכשיו</div></div></a>
@@ -499,7 +500,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <button onclick="closeRulesModal()" style="position:absolute;top:12px;left:14px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:8px;color:white;cursor:pointer;font-size:16px;padding:3px 9px;font-weight:900">✕</button>
     <div style="text-align:center;margin-bottom:18px">
       <div style="font-size:40px;margin-bottom:8px">🎵</div>
-      <div style="font-family:'Fredoka One',cursive;font-size:22px;text-shadow:2px 2px 0 var(--red)">כללי המשחק</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:22px;text-shadow:2px 2px 0 var(--red)">חשוב לדעת</div>
     </div>
     <div style="display:flex;flex-direction:column;gap:12px">
       <div style="background:rgba(74,159,255,.1);border:2px solid rgba(74,159,255,.3);border-radius:12px;padding:12px 14px">
@@ -819,7 +820,7 @@ async function promptCelebrantCode(){
   const r=document.getElementById('hRulesRow');if(r)r.style.display='none';
   const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='none';
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 🎂 (חוגג/ת)';
-  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success');
+  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success',5000);
 }
 
 async function editCelebrantPass(rid,currentPass){
@@ -989,7 +990,14 @@ function applyAbout(d){
   if(!d)return;
   if(d.brand){document.querySelectorAll('.about-brand').forEach(el=>el.textContent=d.brand);}
   if(d.tagline){document.querySelectorAll('.about-tagline').forEach(el=>el.textContent=d.tagline);}
-  if(d.desc){const el=document.querySelector('.about-desc');if(el)el.textContent=d.desc;}
+  if(d.desc){
+    const el=document.querySelector('.about-desc');
+    if(el){
+      el.textContent=d.desc; // textContent preserves \n with white-space:pre-line
+      el.style.textAlign='center';
+      el.style.whiteSpace='pre-line';
+    }
+  }
   if(d.phone){const el=document.querySelector('.about-phone');if(el)el.textContent=d.phone;}
 }
 
@@ -1383,7 +1391,7 @@ async function exportSpotify(){
 }
 function spFetch(url,opts={}){return fetch(url,{...opts,headers:{'Authorization':'Bearer '+spToken,'Content-Type':'application/json',...(opts.headers||{})}});}
 function copyLink(url){navigator.clipboard.writeText(url).then(()=>toast('🔗 הלינק הועתק!','success'));}
-function toast(msg,type='info'){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),2500);}
+function toast(msg,type='info',duration=2500){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),duration);}
 // ── TOP SONGS ──
 const TOP_SONGS=[
   {name:'ככה זה אהבה',artist:'עידן רייכל',art:''},
