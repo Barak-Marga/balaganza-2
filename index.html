@@ -215,6 +215,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 .toast.info{border-color:#4a9fff;color:#4a9fff}
 
 @media(max-width:400px){.fld-row{grid-template-columns:1fr}.ev-name{font-size:16px}}
+#rulesModal.show{display:flex!important}
 </style>
 </head>
 <body>
@@ -261,6 +262,29 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <input class="comic-inp" type="password" id="djPassInp" placeholder="סיסמה...">
     <button class="btn-comic btn-blue" onclick="checkPass()">כניסה 🎧</button>
     <div id="loginError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">סיסמה שגויה ❌</div>
+    <div style="margin-top:14px;border-top:2px solid rgba(255,255,255,.1);padding-top:14px">
+      <button class="btn-comic btn-green" style="font-size:16px;padding:10px" onclick="show('sCelebrant')">🎂 כניסת חוגג/ת</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CELEBRANT LOGIN ══ -->
+<div id="sCelebrant" class="scr-center">
+  <div class="entry-card">
+    <img class="logo-mini" id="lCelebrant" src="" alt="">
+    <div class="brand-title">כניסת חוגג/ת 🎂</div>
+    <div class="brand-sub">✨ גישה מיוחדת</div>
+    <div class="fld" style="margin-bottom:12px">
+      <label style="display:block;font-size:11px;font-weight:900;color:#4a9fff;margin-bottom:6px;letter-spacing:1.5px;text-transform:uppercase">בחר את האירוע שלך</label>
+      <select class="comic-inp" id="celebrantEventSelect" style="text-align:center;direction:rtl;cursor:pointer">
+        <option value="">בחר אירוע...</option>
+      </select>
+    </div>
+    <input class="comic-inp" type="text" id="celebrantName" placeholder="השם שלך..." maxlength="20" style="margin-bottom:8px">
+    <input class="comic-inp" type="password" id="celebrantPassInp" placeholder="קוד חוגג...">
+    <button class="btn-comic btn-green" onclick="checkCelebrant()">כניסה 🎉</button>
+    <div id="celebrantError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">קוד שגוי ❌</div>
+    <button class="subtle-link" onclick="show('sDJPass')" style="margin-top:8px">← חזור לכניסת DJ</button>
   </div>
 </div>
 
@@ -285,29 +309,19 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="hero-row" id="hTime" style="display:none"><span class="hero-ico">🕐</span><span id="hTimeTxt"></span></div>
         <div class="hero-row" id="hLoc" style="display:none"><span class="hero-ico">📍</span><span id="hLocTxt"></span></div>
         <div class="hero-row" id="hDJ" style="display:none"><span class="hero-ico">🎧</span><span id="hDJTxt"></span></div>
+        <div id="hRulesRow" style="margin-top:8px;font-size:12px;color:rgba(255,255,255,.55);text-align:center;background:rgba(255,255,255,.05);border-radius:8px;padding:6px 10px;display:none">🎵 ניתן להוסיף 3 שירים, ולהצביע 10 הצבעות לשירים שברשימה 🗳️</div>
+        <div id="hCelebrantBtn" style="display:none;margin-top:8px">
+          <button onclick="promptCelebrantCode()" style="background:rgba(0,200,83,.12);border:2px solid rgba(0,200,83,.35);border-radius:10px;padding:7px 14px;color:#00C853;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת — הזן קוד מיוחד</button>
+        </div>
       </div>
     </div>
     <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92'%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:10px 16px;margin:10px 16px 0;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגג/ת אירוע בקרוב? לחץ כאן 🎉</a>
-
-    <!-- QUEUE -->
-    <div style="text-align:center;padding:16px 0 4px">
-      <img id="lQueueTop" src="" alt="" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(232,23,26,.4));display:block;margin:0 auto">
-    </div>
-    <div class="qsec">
-      <div class="q-hdr">
-        <span class="q-title">🎵 תור השירים</span>
-        <span class="q-count" id="gQCount">0</span>
-      </div>
-      <div class="q-list" id="gQList">
-        <div class="empty"><span class="ico">🎵</span><p>התור ריק!<br>לחץ הוסף שיר 👇</p></div>
-      </div>
-    </div>
 
     <div class="fab-wrap">
       <button class="btn-fab" onclick="openSearch()">+ הוסף שיר 🎵</button>
     </div>
 
-
+    <!-- SEARCH PANEL - above queue, shown when searching -->
     <div id="searchPanel" style="display:none">
       <div class="sec" style="padding-top:14px">
         <div class="search-box">
@@ -319,6 +333,21 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="results" id="searchRes"></div>
       </div>
     </div>
+
+    <!-- QUEUE -->
+    <div style="text-align:center;padding:16px 0 4px">
+      <img id="lQueueTop" src="" alt="" style="width:72px;height:72px;object-fit:contain;filter:drop-shadow(0 0 12px rgba(232,23,26,.4));display:block;margin:0 auto">
+    </div>
+    <div class="qsec">
+      <div class="q-hdr">
+        <span class="q-title">🎵 תור השירים</span>
+        <span class="q-count" id="gQCount">0</span>
+      </div>
+      <div class="q-list" id="gQList">
+        <div class="empty"><span class="ico">🎵</span><p>התור ריק!<br>לחץ הוסף שיר 👆</p></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -336,6 +365,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <div class="tab on" id="djT1" onclick="djTab('events')">📋 אירועים</div>
       <div class="tab" id="djT2" onclick="djTab('create')">✨ צור אירוע</div>
       <div class="tab" id="djT3" onclick="djTab('about')">📝 עלינו</div>
+      <div class="tab" id="djT4" onclick="djTab('manage')" style="display:none">⚙️ ניהול</div>
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
@@ -386,8 +416,26 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
             <div class="fld"><label>שפת פלייליסט</label>
               <select id="evLang"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
             </div>
+            <div class="fld"><label>מקס׳ שירים לפלייליסט</label><input type="number" id="evMaxSongs" min="5" max="200" value="30" placeholder="30"></div>
           </div>
+          <div class="fld"><label>קוד חוגג/ת (גישה ללא הגבלה)</label><input type="text" id="evCelebrantPass" placeholder="למשל: dana2025 (השאר ריק לא לאפשר)"></div>
           <button class="btn-full btn-red" onclick="createEv()">🎉 צור אירוע</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-body" id="djBManage">
+      <div class="admin-sec">
+        <!-- Change Owner Password -->
+        <div class="admin-card">
+          <h3>🔑 שינוי סיסמת בעלים</h3>
+          <div class="fld"><label>סיסמה חדשה לבעלים</label><input type="password" id="ownerNewPass" placeholder="הקלד סיסמה חדשה..."></div>
+          <button class="btn-full btn-red" onclick="changeOwnerPass()">💾 שמור סיסמה</button>
+        </div>
+        <!-- Manage DJs -->
+        <div class="admin-card">
+          <h3>🎧 ניהול דיג׳יים</h3>
+          <div id="djManageList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
+          <button class="btn-full btn-blue" onclick="addDJ()">+ הוסף דיג׳יי</button>
         </div>
       </div>
     </div>
@@ -401,7 +449,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <img class="hdr-logo" id="lEQ" src="" alt="">
       <div><div class="hdr-title" id="eqTitle" style="cursor:pointer" onclick="editEvName()">תור האירוע ✏️</div><div class="hdr-sub" id="eqMeta"></div></div>
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-      <button class="icon-btn" onclick="show('sDJ')">← חזור</button>
+      <button class="icon-btn" onclick="currentEQRoom=null;show('sDJ')">← חזור</button>
     </div>
     <div class="qsec">
       <div class="q-hdr"><span class="q-title">תור השירים</span><span class="q-count" id="eqCount">0</span></div>
@@ -445,6 +493,34 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   <span style="font-size:11px;color:var(--green);font-weight:700">▶ 30s</span>
   <button class="pb-close" onclick="stopPreview()">✕</button>
 </div>
+<!-- ══ RULES MODAL ══ -->
+<div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface2);border:3px solid rgba(255,255,255,.2);border-radius:22px;padding:28px 22px;max-width:360px;width:100%;position:relative;box-shadow:6px 6px 0 rgba(232,23,26,.3);animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">
+    <button onclick="closeRulesModal()" style="position:absolute;top:12px;left:14px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:8px;color:white;cursor:pointer;font-size:16px;padding:3px 9px;font-weight:900">✕</button>
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:40px;margin-bottom:8px">🎵</div>
+      <div style="font-family:'Fredoka One',cursive;font-size:22px;text-shadow:2px 2px 0 var(--red)">כללי המשחק</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <div style="background:rgba(74,159,255,.1);border:2px solid rgba(74,159,255,.3);border-radius:12px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:900;color:#4a9fff;margin-bottom:4px">🎤 בקשת שירים</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.85)">כל אחד יכול <strong>להוסיף עד 3 שירים</strong> לרשימה</div>
+      </div>
+      <div style="background:rgba(255,184,0,.08);border:2px solid rgba(255,184,0,.3);border-radius:12px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:900;color:#FFB800;margin-bottom:4px">🗳️ הצבעות</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.85)">ניתן <strong>להצביע עד 10 פעמים</strong> לשירים שכבר ברשימה<br>ולהשפיע על הסדר שהם ינוגנו!</div>
+      </div>
+      <div style="background:rgba(0,200,83,.08);border:2px solid rgba(0,200,83,.25);border-radius:12px;padding:12px 14px">
+        <div style="font-size:13px;font-weight:900;color:#00C853;margin-bottom:4px">🎂 חוגג/ת?</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.85)">אם יש לך <strong>קוד חוגג</strong> תוכל/י להוסיף שירים ללא הגבלה!</div>
+      </div>
+    </div>
+    <button onclick="closeRulesModal()" style="width:100%;margin-top:18px;background:var(--red);color:white;border:3px solid rgba(255,255,255,.5);border-radius:12px;padding:12px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;box-shadow:3px 3px 0 #9a0f11">
+      בואו נתחיל! 🎉
+    </button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -456,7 +532,7 @@ const SP_CLIENT_ID='4cd1ea39802a4358aa8c142b18662d57';
 const SP_REDIRECT=location.origin+'/';
 // iTunes used for search (free, no auth, has cover art + preview)
 
-['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2','lQueueTop'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
+['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2','lQueueTop','lCelebrant'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
 
 let db,fbRef,push,onValue,runTransaction,get,set;
 let guestId=localStorage.getItem('b_gid')||('g_'+Math.random().toString(36).substr(2,9));
@@ -483,19 +559,27 @@ document.addEventListener('fb-ready',()=>{
   const fb=window._fb;
   db=fb.db;fbRef=fb.ref;push=fb.push;onValue=fb.onValue;
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
-  get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
-  handleSpotifyCB();
-  // Auto-finish pending Spotify export after page reload
-  if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
-    setTimeout(()=>exportSpotify(),1500);
-  }
-  onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
-  onValue(fbRef(db,'rooms'),snap=>{
-    const r=snap.val()||{};allQueues={};
-    Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
-    renderGuestQ();renderEQ();renderDJEvents();
+  // Load config (passwords/DJ names) from Firebase first
+  loadConfig().then(()=>{
+    get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
+    handleSpotifyCB();
+    // Auto-finish pending Spotify export after page reload
+    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
+      setTimeout(()=>exportSpotify(),1500);
+    }
+    onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
+    onValue(fbRef(db,'rooms'),snap=>{
+      const r=snap.val()||{};allQueues={};
+      Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
+      renderGuestQ();renderEQ();renderDJEvents();
+    });
+    // Pre-fill guest name if already registered
+    get(fbRef(db,'guestNames/'+guestId)).then(snap=>{
+      const saved=snap.val();
+      if(saved){const el=document.getElementById('nameInp');if(el)el.value=saved;}
+    });
+    initScreen();
   });
-  initScreen();
 });
 
 function initScreen(){
@@ -522,6 +606,8 @@ function show(id,from){
   if(el.classList.contains('scr-center'))el.classList.add('on');
   else{el.classList.add('on');el.style.display='block';}
   window.scrollTo(0,0);
+  // Populate celebrant event list when showing that screen
+  if(id==='sCelebrant')populateCelebrantEvents();
 }
 function goBackAbout(){show(prevScreen||'sGuest');}
 
@@ -547,13 +633,32 @@ function loadEntryEventDetails(room){
 }
 
 // ── GUEST ──
-function enterGuest(){
+async function enterGuest(){
   const n=document.getElementById('nameInp').value.trim();
   if(!n){document.getElementById('nameInp').style.borderColor='var(--red)';return;}
-  guestName=n;
+
+  // Check if this guestId already has a registered name
+  const nameSnap=await get(fbRef(db,'guestNames/'+guestId));
+  const savedName=nameSnap.val();
+  if(savedName&&savedName!==n){
+    // Already registered under a different name — use saved name
+    guestName=savedName;
+    document.getElementById('nameInp').value=savedName;
+    toast('ברוך שובך, '+savedName+'! 👋','info');
+  } else {
+    guestName=n;
+    // Save name-to-guestId mapping in Firebase
+    if(!savedName){
+      await set(fbRef(db,'guestNames/'+guestId),n);
+    }
+  }
+
+  isCelebrant=false; // normal guest
   show('sGuest');
-  document.getElementById('gHdrSub').textContent='היי '+n+' 👋';
+  document.getElementById('gHdrSub').textContent='היי '+guestName+' 👋';
   loadGuestEvent();
+  // Show rules modal once per session
+  if(!sessionStorage.getItem('rules_seen'))setTimeout(()=>showRulesModal(),400);
 }
 document.getElementById('nameInp').addEventListener('keydown',e=>{if(e.key==='Enter')enterGuest();});
 
@@ -569,45 +674,293 @@ function loadGuestEvent(){
     if(ev.date){const d=new Date(ev.date+'T00:00:00');document.getElementById('hDateTxt').textContent=d.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('hDate').style.display='flex';}
     if(ev.time){document.getElementById('hTimeTxt').textContent=ev.time;document.getElementById('hTime').style.display='flex';}
     if(ev.location){document.getElementById('hLocTxt').textContent=ev.location;document.getElementById('hLoc').style.display='flex';}
+    // Always show rules (unless celebrant)
+    if(!isCelebrant){const r=document.getElementById('hRulesRow');if(r)r.style.display='block';}
+    // Show celebrant button if event has a celebrant pass set
+    if(ev.celebrantPass&&!isCelebrant){const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='block';}
   });
   renderGuestQ();
 }
 
 function getTypeEmoji(t){return({'חתונה 💍':'💍','בר מצווה ✡️':'✡️','בת מצווה ✨':'✨','יום הולדת 🎂':'🎂','מסיבה פרטית 🎉':'🎉','אירוע חברה 🏢':'🏢','אחר 🎵':'🎵'}[t])||'🎵';}
 
+function showRulesModal(){
+  const m=document.getElementById('rulesModal');
+  if(m)m.classList.add('show');
+}
+function closeRulesModal(){
+  const m=document.getElementById('rulesModal');
+  if(m)m.classList.remove('show');
+  sessionStorage.setItem('rules_seen','1');
+}
+
 function openSearch(){document.getElementById('searchPanel').style.display='block';document.getElementById('searchInp').focus();}
 function closeSearch(){document.getElementById('searchPanel').style.display='none';document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';}
+function clearSearchInput(){document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';document.getElementById('searchInp').focus();}
 
 // ── DJ LOGIN ──
+const LOGIN_ATTEMPTS_KEY='b_login_attempts';
+const LOGIN_LOCKOUT_KEY='b_login_lockout';
+const MAX_ATTEMPTS=5;
+const LOCKOUT_DURATION=30*60*1000; // 30 minutes
+
+function getLoginAttempts(){return parseInt(localStorage.getItem(LOGIN_ATTEMPTS_KEY)||'0');}
+function getLockoutEnd(){return parseInt(localStorage.getItem(LOGIN_LOCKOUT_KEY)||'0');}
+function isLockedOut(){return Date.now()<getLockoutEnd();}
+function getLockoutRemaining(){return Math.ceil((getLockoutEnd()-Date.now())/60000);}
+
 function checkPass(){
   const inp=document.getElementById('djPassInp');
   const userType=document.getElementById('userTypeSelect').value;
   const errEl=document.getElementById('loginError');
+
+  // Check lockout
+  if(isLockedOut()){
+    errEl.textContent='נעול! נסה שוב בעוד '+getLockoutRemaining()+' דקות 🔒';
+    errEl.style.display='block';
+    inp.value='';
+    return;
+  }
+
   if(!userType){inp.style.borderColor='var(--red)';errEl.textContent='אנא בחר סוג משתמש';errEl.style.display='block';inp.value='';setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},2000);return;}
-  if(inp.value===USER_PASSWORDS[userType]){
+  if(inp.value===_userPasswords[userType]){
+    // Success – reset attempts
+    localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+    localStorage.removeItem(LOGIN_LOCKOUT_KEY);
     isDJ=true;currentUserType=userType;currentUserName=DJ_NAMES[userType]||userType;
     localStorage.setItem('b_userType',userType);
     inp.value='';document.getElementById('userTypeSelect').value='';errEl.style.display='none';
     show('sDJ');updateDJHeader();
   }else{
-    inp.style.borderColor='var(--red)';errEl.textContent='סיסמה שגויה ❌';errEl.style.display='block';inp.value='';
-    setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},2000);
+    const attempts=getLoginAttempts()+1;
+    localStorage.setItem(LOGIN_ATTEMPTS_KEY,attempts);
+    if(attempts>=MAX_ATTEMPTS){
+      localStorage.setItem(LOGIN_LOCKOUT_KEY,Date.now()+LOCKOUT_DURATION);
+      localStorage.removeItem(LOGIN_ATTEMPTS_KEY);
+      inp.style.borderColor='var(--red)';
+      errEl.textContent='5 ניסיונות כושלים – נעול ל-30 דקות! 🔒';
+      errEl.style.display='block';
+    } else {
+      inp.style.borderColor='var(--red)';
+      errEl.textContent='סיסמה שגויה ❌ ('+attempts+'/'+MAX_ATTEMPTS+')';
+      errEl.style.display='block';
+    }
+    inp.value='';
+    setTimeout(()=>{inp.style.borderColor='';errEl.style.display='none';},3000);
   }
 }
 document.getElementById('djPassInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkPass();});
 function djLogout(){isDJ=false;currentUserType='';currentUserName='';localStorage.removeItem('b_userType');show('sDJPass');}
-function updateDJHeader(){const el=document.querySelector('#sDJ .hdr-sub');if(el&&currentUserName)el.textContent='שלום, '+currentUserName+' 👋';}
+
+// ── CELEBRANT ──
+let isCelebrant=false;
+let celebrantRoom='';
+
+function populateCelebrantEvents(){
+  const sel=document.getElementById('celebrantEventSelect');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">בחר אירוע...</option>';
+  Object.entries(allEvents)
+    .filter(([rid,ev])=>ev.celebrantPass) // only events with a celebrant pass
+    .sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0))
+    .forEach(([rid,ev])=>{
+      const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL',{day:'numeric',month:'numeric'}):'';
+      sel.innerHTML+=`<option value="${esc(rid)}">${esc(ev.name)}${dateStr?' ('+dateStr+')':''}</option>`;
+    });
+  if(cur)sel.value=cur;
+}
+
+async function checkCelebrant(){
+  const sel=document.getElementById('celebrantEventSelect');
+  const nameEl=document.getElementById('celebrantName');
+  const passEl=document.getElementById('celebrantPassInp');
+  const errEl=document.getElementById('celebrantError');
+  const rid=sel?sel.value:'';
+  const name=nameEl?nameEl.value.trim():'';
+  const pass=passEl?passEl.value.trim():'';
+
+  if(!rid){errEl.textContent='אנא בחר אירוע';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
+  if(!name){errEl.textContent='אנא הכנס את שמך';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
+
+  // Fetch event to check pass
+  const snap=await get(fbRef(db,'events/'+rid));
+  const ev=snap.val();
+  if(!ev){errEl.textContent='אירוע לא נמצא';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
+  if(!ev.celebrantPass||ev.celebrantPass!==pass){
+    passEl.style.borderColor='var(--red)';errEl.textContent='קוד שגוי ❌';errEl.style.display='block';passEl.value='';
+    setTimeout(()=>{passEl.style.borderColor='';errEl.style.display='none';},2500);
+    return;
+  }
+  // Success!
+  isCelebrant=true;
+  celebrantRoom=rid;
+  guestName=name;
+  currentRoom=rid;
+  passEl.value='';
+  errEl.style.display='none';
+  show('sGuest');
+  document.getElementById('gHdrSub').textContent='היי '+name+' 🎂 (חוגג/ת)';
+  loadGuestEvent();
+}
+
+async function promptCelebrantCode(){
+  const code=prompt('הזן את קוד החוגג/ת שלך:','');
+  if(!code||!code.trim())return;
+  // Check against current room's celebrant pass
+  const snap=await get(fbRef(db,'events/'+currentRoom));
+  const ev=snap.val();
+  if(!ev||!ev.celebrantPass){toast('אין קוד חוגג לאירוע זה','error');return;}
+  if(ev.celebrantPass!==code.trim()){toast('קוד שגוי ❌','error');return;}
+  // Unlock celebrant mode
+  isCelebrant=true;
+  celebrantRoom=currentRoom;
+  // Hide rules row and celebrant button, update header
+  const r=document.getElementById('hRulesRow');if(r)r.style.display='none';
+  const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='none';
+  document.getElementById('gHdrSub').textContent='היי '+guestName+' 🎂 (חוגג/ת)';
+  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success');
+}
+
+async function editCelebrantPass(rid,currentPass){
+  const newPass=prompt('קוד חוגג/ת לאירוע זה:\n(השאר ריק להסרת הגישה)',currentPass||'');
+  if(newPass===null)return; // cancelled
+  await set(fbRef(db,'events/'+rid+'/celebrantPass'),newPass.trim());
+  toast(newPass.trim()?'✅ קוד חוגג עודכן!':'קוד חוגג הוסר','info');
+}
 
 // ── DJ TABS ──
 function djTab(t){
-  [{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3}].forEach(x=>{
+  const tabs=[{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3},{k:'Manage',n:4}];
+  tabs.forEach(x=>{
     document.getElementById('djT'+x.n).classList.toggle('on',t===x.k.toLowerCase());
     document.getElementById('djB'+x.k).classList.toggle('on',t===x.k.toLowerCase());
   });
   if(t==='about')loadAboutFields();
   if(t==='events')renderDJEvents();
+  if(t==='manage')renderDJManage();
 }
-async function loadAboutFields(){
+// ── OWNER MANAGEMENT ──
+// Passwords & DJ list are stored in Firebase under 'config' node
+// We keep USER_PASSWORDS as runtime object, loaded from Firebase if available
+let _userPasswords={...USER_PASSWORDS};
+let _djNames={...DJ_NAMES};
+
+async function loadConfig(){
+  const snap=await get(fbRef(db,'config'));
+  const cfg=snap.val();
+  if(cfg){
+    if(cfg.passwords)Object.assign(_userPasswords,cfg.passwords);
+    if(cfg.djNames)Object.assign(_djNames,cfg.djNames);
+    // Rebuild login dropdown
+    rebuildLoginSelect();
+  }
+}
+
+function rebuildLoginSelect(){
+  const sel=document.getElementById('userTypeSelect');
+  if(!sel)return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">בחר סוג משתמש...</option>';
+  // Owner always first
+  sel.innerHTML+='<option value="owner">👑 בעלים</option>';
+  // DJs
+  const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
+  djKeys.forEach(k=>{
+    sel.innerHTML+=`<option value="${esc(k)}">🎧 ${esc(_djNames[k])}</option>`;
+  });
+  if(cur)sel.value=cur;
+}
+
+function renderDJManage(){
+  const list=document.getElementById('djManageList');if(!list)return;
+  const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
+  if(!djKeys.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center">אין דיג׳יים. הוסף דיג׳יי למטה.</div>';return;}
+  list.innerHTML=djKeys.map(k=>`
+    <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-family:'Fredoka One',cursive;font-size:16px">🎧 ${esc(_djNames[k])}</span>
+        <span style="font-size:11px;color:var(--muted);font-weight:700">(${esc(k)})</span>
+      </div>
+      <div class="fld-row">
+        <div class="fld"><label>שם חדש</label><input type="text" id="dj_name_${k}" value="${esc(_djNames[k])}" placeholder="שם הדיג׳יי"></div>
+        <div class="fld"><label>סיסמה חדשה</label><input type="password" id="dj_pass_${k}" placeholder="השאר ריק לא לשנות"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="ev-btn ev-btn-view" style="flex:1" onclick="saveDJ('${esc(k)}')">💾 שמור</button>
+        <button class="ev-btn ev-btn-del" onclick="removeDJ('${esc(k)}')">🗑️ מחק</button>
+      </div>
+    </div>`).join('');
+}
+
+async function saveDJ(key){
+  const nameEl=document.getElementById('dj_name_'+key);
+  const passEl=document.getElementById('dj_pass_'+key);
+  const newName=nameEl?nameEl.value.trim():'';
+  const newPass=passEl?passEl.value.trim():'';
+  if(!newName){toast('אנא הכנס שם','error');return;}
+  _djNames[key]=newName;
+  const upd={};
+  upd['config/djNames/'+key]=newName;
+  if(newPass){
+    _userPasswords[key]=newPass;
+    upd['config/passwords/'+key]=newPass;
+  }
+  await Promise.all(Object.entries(upd).map(([path,val])=>set(fbRef(db,path),val)));
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('✅ הדיג׳יי עודכן!','success');
+}
+
+async function removeDJ(key){
+  if(!confirm('למחוק את הדיג׳יי '+_djNames[key]+'?'))return;
+  delete _djNames[key];
+  delete _userPasswords[key];
+  await set(fbRef(db,'config/djNames/'+key),null);
+  await set(fbRef(db,'config/passwords/'+key),null);
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('הדיג׳יי נמחק','info');
+}
+
+async function addDJ(){
+  // Find next available djN key
+  let n=1;
+  while(_djNames['dj'+n])n++;
+  const key='dj'+n;
+  const name=prompt('שם הדיג׳יי החדש:','');
+  if(!name||!name.trim())return;
+  const pass=prompt('סיסמה לדיג׳יי:','');
+  if(!pass||!pass.trim())return;
+  _djNames[key]=name.trim();
+  _userPasswords[key]=pass.trim();
+  await set(fbRef(db,'config/djNames/'+key),name.trim());
+  await set(fbRef(db,'config/passwords/'+key),pass.trim());
+  rebuildLoginSelect();
+  renderDJManage();
+  toast('✅ דיג׳יי חדש נוסף!','success');
+}
+
+async function changeOwnerPass(){
+  const inp=document.getElementById('ownerNewPass');
+  const newPass=inp?inp.value.trim():'';
+  if(!newPass||newPass.length<4){toast('סיסמה קצרה מדי (מינ׳ 4 תווים)','error');return;}
+  _userPasswords['owner']=newPass;
+  await set(fbRef(db,'config/passwords/owner'),newPass);
+  inp.value='';
+  toast('✅ סיסמת הבעלים שונתה!','success');
+}
+
+// Patch checkPass to use _userPasswords (runtime, updated from Firebase)
+// Override the const USER_PASSWORDS check with _userPasswords
+
+function updateDJHeader(){
+  const el=document.querySelector('#sDJ .hdr-sub');
+  if(el&&currentUserName)el.textContent='שלום, '+currentUserName+' 👋';
+  // Show manage tab only for owner
+  const manageTab=document.getElementById('djT4');
+  if(manageTab)manageTab.style.display=currentUserType==='owner'?'':'none';
+}async function loadAboutFields(){
   const snap=await get(fbRef(db,'about'));
   const d=snap.val()||{};
   if(d.brand)document.getElementById('aboutBrand').value=d.brand;
@@ -693,26 +1046,35 @@ function renderSearch(results){
   });
 }
 
+function countMyRequests(room){
+  const q=allQueues[room]||{};
+  return Object.values(q).reduce((sum,s)=>(s.requesterId&&s.requesterId===guestId)?sum+1:sum,0);
+}
+
 async function addToQ(song){
   if(!db)return;
   const queue=allQueues[currentRoom]||{};
-  // Max 60 songs per queue
-  if(Object.keys(queue).length>=60){toast('הפלייליסט מלא! מקסימום 60 שירים 🎵','error');closeSearch();return;}
+  const ev=allEvents[currentRoom]||{};
+  const maxQ=ev.maxSongs||30;
+  // Max songs per queue
+  if(Object.keys(queue).length>=maxQ){toast('הפלייליסט מלא! מקסימום '+maxQ+' שירים 🎵','error');closeSearch();return;}
   const existing=Object.entries(queue).find(([k,s])=>s.name===song.name&&s.artist===song.artist);
   if(existing){
     const [existKey,existSong]=existing;
     if(existSong.voters&&existSong.voters[guestId]){toast('השיר כבר בתור והצבעת עליו 😊','info');closeSearch();return;}
-    if(countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
+    if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
     await runTransaction(fbRef(db,'rooms/'+currentRoom+'/queue/'+existKey),cur=>{
       if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
     });
-    toast('🔥 השיר כבר בתור – הצבעת עליו!','success');closeSearch();return;
+    toast('🔥 השיר כבר בתור – הצבעת עליו!','success');clearSearchInput();return;
   }
   try{
-    if(countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
-    await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,preview:song.preview||'',requestedBy:guestName||'אנונימי',votes:1,voters:{[guestId]:true},timestamp:Date.now()});
+    // Celebrant has no request/vote limits
+    if(!isCelebrant&&countMyRequests(currentRoom)>=3){toast('הגעת ל-3 שירים! 🎵 עדיין תוכל/י להצביע לשירים שכבר ברשימה 👆','error');clearSearchInput();return;}
+    if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
+    await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,preview:song.preview||'',requestedBy:(isCelebrant?'🎂 ':'')+( guestName||'אנונימי'),requesterId:guestId,votes:1,voters:{[guestId]:true},timestamp:Date.now()});
     votedSongs[song.name+song.artist]=true;localStorage.setItem('b_votes',JSON.stringify(votedSongs));
-    toast('✅ '+song.name+' נוסף!','success');closeSearch();
+    toast('✅ '+song.name+' נוסף!','success');clearSearchInput();
   }catch(e){toast('שגיאה, נסה שנית','error');}
 }
 
@@ -751,7 +1113,7 @@ function countMyVotes(room){
 async function vote(key){
   const song=(allQueues[currentRoom]||{})[key];if(!song)return;
   if(song.voters&&song.voters[guestId]){toast('כבר הצבעת על שיר זה 😊','info');return;}
-  if(countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');return;}
+  if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');return;}
   await runTransaction(fbRef(db,'rooms/'+currentRoom+'/queue/'+key),cur=>{if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;});
   toast('🔥 הצבעת!','success');
 }
@@ -759,7 +1121,12 @@ async function vote(key){
 // ── DJ EVENTS ──
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
-  const evArr=Object.entries(allEvents).sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  let evArr=Object.entries(allEvents);
+  // Owner sees all events; DJ sees only their own
+  if(currentUserType&&currentUserType!=='owner'){
+    evArr=evArr.filter(([rid,ev])=>ev.djId===currentUserType);
+  }
+  evArr=evArr.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
   if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
@@ -778,6 +1145,7 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(0,200,83,.1);color:#00C853;border-color:rgba(0,200,83,.3)" onclick="quickExportCSV('${escA(rid)}')">📥 CSV</button>
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ספוטיפיי</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
+        <button class="ev-btn" style="background:rgba(0,200,83,.08);color:#00C853;border-color:rgba(0,200,83,.3)" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג</button>
       </div>
     </div>`;
   }).join('');
@@ -790,12 +1158,15 @@ async function createEv(){
   const time=document.getElementById('evTime').value;
   const loc=document.getElementById('evLoc').value.trim();
   const lang=document.getElementById('evLang').value;
+  const maxSongs=parseInt(document.getElementById('evMaxSongs').value)||30;
+  const celebrantPass=document.getElementById('evCelebrantPass').value.trim();
   const djName=document.getElementById('evDJName').value.trim()||'Balaganza DJ';
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  await set(fbRef(db,'events/'+rid),{name,type,date,time,location:loc,lang,djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
-  ['evName','evDate','evTime','evLoc'].forEach(id=>document.getElementById(id).value='');
+  await set(fbRef(db,'events/'+rid),{name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
+  ['evName','evDate','evTime','evLoc','evCelebrantPass'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('evType').value='';
+  document.getElementById('evMaxSongs').value='30';
   toast('✅ האירוע נוצר!','success');
   djTab('events');
 }
@@ -815,9 +1186,14 @@ function openEQ(rid,name,type,date){
   renderEQ();show('sEQ');
 }
 
-function renderEQ(){
+function renderEQ(force){
   const list=document.getElementById('eqList');const cnt=document.getElementById('eqCount');
   if(!list||!currentEQRoom)return;
+  // Only render if sEQ is actually visible — unless forced (e.g. after export)
+  if(!force){
+    const sEQ=document.getElementById('sEQ');
+    if(!sEQ||!sEQ.classList.contains('on'))return;
+  }
   const songs=Object.entries(allQueues[currentEQRoom]||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.votes||0)-(a.votes||0));
   cnt.textContent=songs.length+(songs.length>=60?' (מקס)':'');
   cnt.style.background=songs.length>=60?'#FF8C00':'';
@@ -849,6 +1225,17 @@ async function editEvNameFromList(rid,currentName){
 async function delSong(key){await set(fbRef(db,'rooms/'+currentEQRoom+'/queue/'+key),null);}
 async function clearEQ(){if(!confirm('למחוק את כל התור?'))return;await set(fbRef(db,'rooms/'+currentEQRoom+'/queue'),null);toast('התור נוקה','info');}
 
+function quickExportCSV(rid){
+  const queue=allQueues[rid]||{};
+  const songs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  const ev=allEvents[rid]||{};const lang=ev.lang||'he';
+  const headers=lang==='he'?['#','שיר','אמן','קולות','בקשה של']:['#','Track','Artist','Votes','Requested by'];
+  const rows=[headers,...songs.map((s,i)=>[i+1,s.name||'',s.artist||'',s.votes||0,s.requestedBy||''])];
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}`).join(',')).join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`balaganza_${ev.name||'playlist'}_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+  toast('✅ CSV יוצא!','success');
+}
 function exportCSV(){
   const queue=allQueues[currentEQRoom]||{};
   const songs=Object.values(queue).sort((a,b)=>(b.votes||0)-(a.votes||0));
@@ -875,14 +1262,20 @@ async function handleSpotifyCB(){
     const res=await fetch('/api/spotify-token',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,redirect_uri:SP_REDIRECT})});
     const d=await res.json();
     if(d.access_token){
-      spToken=d.access_token;localStorage.setItem('b_spt',spToken);isDJ=true;show('sDJ');
+      spToken=d.access_token;localStorage.setItem('b_spt',spToken);isDJ=true;
       const savedRoom=localStorage.getItem('b_sp_room');
-      if(savedRoom&&allEvents[savedRoom])setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),600);
       if(localStorage.getItem('b_sp_pl')&&localStorage.getItem('b_sp_songs')){
         // Force clean URL reload so exportSpotify runs on a fresh page with clean token
         window.location.href='/';
       } else {
-        toast('\u2705 \u05de\u05d7\u05d5\u05d1\u05e8 \u05dc\u05e1\u05e4\u05d5\u05d8\u05d9\u05e4\u05d9\u05d9!','success');
+        // Wait for events to load before opening EQ
+        setTimeout(()=>{
+          show('sDJ');updateDJHeader();
+          if(savedRoom&&allEvents[savedRoom]){
+            setTimeout(()=>openEQ(savedRoom,allEvents[savedRoom].name,allEvents[savedRoom].type||'',''),400);
+          }
+          toast('\u2705 \u05de\u05d7\u05d5\u05d1\u05e8 \u05dc\u05e1\u05e4\u05d5\u05d8\u05d9\u05e4\u05d9\u05d9!','success');
+        },800);
       }
     }
   }catch(e){console.error(e);}
@@ -929,12 +1322,21 @@ async function exportSpotify(){
     const plRes=await spFetch(`https://api.spotify.com/v1/me/playlists`,{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
     const pl=await plRes.json();
     const uris=[];
+    const notFound=[];
     for(const s of songs){
       setSpMsg(`\u05de\u05d7\u05e4\u05e9: ${s.name}...`,'loading');
       const q=encodeURIComponent(s.name+(s.artist?' '+s.artist:''));
-      const sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);
-      const sd=await sr.json();
-      if(sd?.tracks?.items?.[0]) uris.push(sd.tracks.items[0].uri);
+      try{
+        const sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);
+        const sd=await sr.json();
+        if(sd?.tracks?.items?.[0]){
+          uris.push(sd.tracks.items[0].uri);
+        } else {
+          notFound.push({name:s.name,artist:s.artist||'',reason:'לא נמצא בספוטיפיי'});
+        }
+      }catch(searchErr){
+        notFound.push({name:s.name,artist:s.artist||'',reason:'שגיאת חיפוש'});
+      }
     }
     if(uris.length){
       setSpMsg('\u05de\u05d5\u05e1\u05d9\u05e3 \u05e9\u05d9\u05e8\u05d9\u05dd...','loading');
@@ -955,7 +1357,20 @@ async function exportSpotify(){
         }
       }
     }
-    setSpMsg(`\u2705 ${uris.length}/${songs.length} \u05e9\u05d9\u05e8\u05d9\u05dd \u05e0\u05d5\u05e1\u05e4\u05d5!`,'ok');
+    // Build result message
+    if(notFound.length===0){
+      setSpMsg(`✅ כל ${uris.length} השירים נוספו לפלייליסט!`,'ok');
+    } else {
+      const missingList=notFound.map(x=>`• ${x.name}${x.artist?' – '+x.artist:''} (${x.reason})`).join('\n');
+      setSpMsg(`✅ ${uris.length}/${songs.length} שירים נוספו.\n\n❌ ${notFound.length} שירים לא נמצאו:\n${missingList}`,'ok');
+      // Also show in a more readable format in the spMsg element
+      const el=document.getElementById('spMsg');
+      if(el){
+        el.innerHTML=`<div>✅ <strong>${uris.length}/${songs.length} שירים נוספו</strong></div>`+
+          (notFound.length?`<div style="margin-top:8px;color:#FF8C00;font-size:12px"><strong>❌ לא נמצאו בספוטיפיי (${notFound.length}):</strong><div style="margin-top:4px">${notFound.map(x=>`• ${esc(x.name)}${x.artist?' – '+esc(x.artist):''}`).join('<br>')}</div></div>`:'');
+        el.className='sp-msg show ok';
+      }
+    }
     toast('\uD83C\uDFB5 \u05d4\u05e4\u05dc\u05d9\u05d9\u05e1\u05d8 \u05e0\u05d5\u05e6\u05e8!','success');
     setTimeout(()=>window.open(`https://open.spotify.com/playlist/${pl.id}`,'_blank'),800);
   }catch(e){
@@ -963,6 +1378,8 @@ async function exportSpotify(){
     console.error(e);
   }
   document.getElementById('btnSP').disabled=false;
+  // Re-render queue to fix any visual glitch after export
+  setTimeout(()=>renderEQ(true),100);
 }
 function spFetch(url,opts={}){return fetch(url,{...opts,headers:{'Authorization':'Bearer '+spToken,'Content-Type':'application/json',...(opts.headers||{})}});}
 function copyLink(url){navigator.clipboard.writeText(url).then(()=>toast('🔗 הלינק הועתק!','success'));}
