@@ -216,6 +216,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 
 @media(max-width:400px){.fld-row{grid-template-columns:1fr}.ev-name{font-size:16px}}
 #rulesModal.show{display:flex!important}
+#limitModal.show{display:flex!important}
 </style>
 </head>
 <body>
@@ -262,29 +263,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <input class="comic-inp" type="password" id="djPassInp" placeholder="סיסמה...">
     <button class="btn-comic btn-blue" onclick="checkPass()">כניסה 🎧</button>
     <div id="loginError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">סיסמה שגויה ❌</div>
-    <div style="margin-top:14px;border-top:2px solid rgba(255,255,255,.1);padding-top:14px">
-      <button class="btn-comic btn-blue" style="font-size:16px;padding:10px" onclick="show('sCelebrant')">🎂 כניסת חוגג/ת</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ CELEBRANT LOGIN ══ -->
-<div id="sCelebrant" class="scr-center">
-  <div class="entry-card">
-    <img class="logo-mini" id="lCelebrant" src="" alt="">
-    <div class="brand-title">כניסת חוגג/ת 🎂</div>
-    <div class="brand-sub">✨ גישה מיוחדת</div>
-    <div class="fld" style="margin-bottom:12px">
-      <label style="display:block;font-size:11px;font-weight:900;color:#4a9fff;margin-bottom:6px;letter-spacing:1.5px;text-transform:uppercase">בחר את האירוע שלך</label>
-      <select class="comic-inp" id="celebrantEventSelect" style="text-align:center;direction:rtl;cursor:pointer">
-        <option value="">בחר אירוע...</option>
-      </select>
-    </div>
-    <input class="comic-inp" type="text" id="celebrantName" placeholder="השם שלך..." maxlength="20" style="margin-bottom:8px">
-    <input class="comic-inp" type="password" id="celebrantPassInp" placeholder="קוד חוגג...">
-    <button class="btn-comic btn-blue" onclick="checkCelebrant()">כניסה 🎉</button>
-    <div id="celebrantError" style="color:#FF8C00;font-size:13px;margin-top:8px;display:none">קוד שגוי ❌</div>
-    <button class="subtle-link" onclick="show('sDJPass')" style="margin-top:8px">← חזור לכניסת DJ</button>
   </div>
 </div>
 
@@ -456,6 +434,15 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <div class="q-list" id="eqList"></div>
     </div>
     <div class="eq-actions">
+      <!-- DJ NOTES — visible only to logged-in DJ/owner -->
+      <div class="admin-card" style="margin-bottom:4px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-family:'Fredoka One',cursive;font-size:16px;color:#4a9fff">📝 הערות DJ</span>
+          <span style="font-size:11px;color:var(--muted)">גלוי רק לממשק הניהול</span>
+        </div>
+        <textarea id="djNotesArea" rows="3" placeholder="הוסף הערות אישיות לאירוע זה..." style="width:100%;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;outline:none;direction:rtl;transition:border-color .2s" onfocus="this.style.borderColor='#4a9fff'" onblur="this.style.borderColor='rgba(255,255,255,.15)';saveDJNotes()" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){saveDJNotes();}"></textarea>
+        <button onclick="saveDJNotes()" style="margin-top:6px;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.35);border-radius:9px;color:#4a9fff;padding:7px 16px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer;width:100%;transition:all .2s" onmouseover="this.style.background='rgba(74,159,255,.25)'" onmouseout="this.style.background='rgba(74,159,255,.15)'">💾 שמור הערות</button>
+      </div>
       <button class="btn-full btn-green" id="btnSP" onclick="exportSpotify()">🎵 שמור פלייליסט לספוטיפיי</button>
       <div class="sp-msg" id="spMsg"></div>
       <button class="btn-full btn-blue" onclick="exportCSV()">📥 ייצא CSV</button>
@@ -509,7 +496,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       </div>
       <div style="background:rgba(255,184,0,.08);border:2px solid rgba(255,184,0,.3);border-radius:12px;padding:12px 14px">
         <div style="font-size:13px;font-weight:900;color:#FFB800;margin-bottom:4px">🗳️ הצבעות</div>
-        <div style="font-size:13px;color:rgba(255,255,255,.85)">ניתן <strong>להצביע עד 10 פעמים</strong> לשירים שכבר ברשימה<br>ולהשפיע על הסדר שהם ינוגנו!</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.85)">ניתן <strong>להצביע עד 10 פעמים</strong> לשירים שכבר ברשימה ולהשפיע על המיקום שלהם במצעד!</div>
       </div>
       <div style="background:rgba(0,200,83,.08);border:2px solid rgba(0,200,83,.25);border-radius:12px;padding:12px 14px">
         <div style="font-size:13px;font-weight:900;color:#00C853;margin-bottom:4px">🎂 חוגג/ת?</div>
@@ -518,6 +505,21 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <button onclick="closeRulesModal()" style="width:100%;margin-top:18px;background:var(--red);color:white;border:3px solid rgba(255,255,255,.5);border-radius:12px;padding:12px;font-family:'Fredoka One',cursive;font-size:18px;cursor:pointer;box-shadow:3px 3px 0 #9a0f11">
       בואו נתחיל! 🎉
+    </button>
+  </div>
+</div>
+
+<!-- ══ LIMIT MODAL ══ -->
+<div id="limitModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:20px">
+  <div style="background:var(--surface2);border:3px solid rgba(255,255,255,.2);border-radius:22px;padding:28px 22px;max-width:340px;width:100%;position:relative;box-shadow:6px 6px 0 rgba(232,23,26,.3);animation:popIn .35s cubic-bezier(.34,1.56,.64,1)">
+    <button onclick="closeLimitModal()" style="position:absolute;top:12px;left:14px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:8px;color:white;cursor:pointer;font-size:16px;padding:3px 9px;font-weight:900">✕</button>
+    <div style="text-align:center;margin-bottom:18px">
+      <div id="limitModalIcon" style="font-size:44px;margin-bottom:8px">🔒</div>
+      <div id="limitModalTitle" style="font-family:'Fredoka One',cursive;font-size:20px"></div>
+    </div>
+    <div id="limitModalBody" style="display:flex;flex-direction:column;gap:10px"></div>
+    <button onclick="closeLimitModal()" style="width:100%;margin-top:18px;background:var(--blue);color:white;border:3px solid rgba(255,255,255,.4);border-radius:12px;padding:11px;font-family:'Fredoka One',cursive;font-size:17px;cursor:pointer;box-shadow:3px 3px 0 #0f1e7a">
+      הבנתי 👍
     </button>
   </div>
 </div>
@@ -533,11 +535,33 @@ const SP_CLIENT_ID='4cd1ea39802a4358aa8c142b18662d57';
 const SP_REDIRECT=location.origin+'/';
 // iTunes used for search (free, no auth, has cover art + preview)
 
-['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2','lQueueTop','lCelebrant'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
+['lName','lDJ','lGuest','lDJP','lEQ','lAbout','lAbout2','lQueueTop'].forEach(id=>{const el=document.getElementById(id);if(el)el.src=LOGO_SRC;});
 
 let db,fbRef,push,onValue,runTransaction,get,set;
-let guestId=localStorage.getItem('b_gid')||('g_'+Math.random().toString(36).substr(2,9));
-localStorage.setItem('b_gid',guestId);
+// Generate stable browser fingerprint that survives incognito
+function getBrowserFingerprint(){
+  const stored=localStorage.getItem('b_gid');
+  if(stored&&stored.startsWith('fp_'))return stored;
+  // Build fingerprint from stable browser properties
+  const canvas=document.createElement('canvas');
+  const ctx=canvas.getContext('2d');
+  ctx.textBaseline='top';
+  ctx.font='14px Arial';
+  ctx.fillText('balaganza🎵',2,2);
+  const canvasHash=canvas.toDataURL().slice(-20);
+  const ua=navigator.userAgent;
+  const screen_info=`${screen.width}x${screen.height}x${screen.colorDepth}`;
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone||'';
+  const lang=navigator.language||'';
+  const raw=ua+screen_info+tz+lang+canvasHash;
+  // Simple hash
+  let h=0;
+  for(let i=0;i<raw.length;i++){h=((h<<5)-h)+raw.charCodeAt(i);h|=0;}
+  const fp='fp_'+(h>>>0).toString(36)+'_'+Math.abs(h^(h>>16)).toString(36);
+  localStorage.setItem('b_gid',fp);
+  return fp;
+}
+let guestId=getBrowserFingerprint();
 let guestName='';
 let isDJ=false;
 let currentUserType=localStorage.getItem('b_userType')||'';
@@ -607,8 +631,7 @@ function show(id,from){
   if(el.classList.contains('scr-center'))el.classList.add('on');
   else{el.classList.add('on');el.style.display='block';}
   window.scrollTo(0,0);
-  // Populate celebrant event list when showing that screen
-  if(id==='sCelebrant')populateCelebrantEvents();
+  // Populate celebrant event list when showing that screen — removed (no standalone screen)
 }
 function goBackAbout(){show(prevScreen||'sGuest');}
 
@@ -695,6 +718,40 @@ function closeRulesModal(){
   sessionStorage.setItem('rules_seen','1');
 }
 
+function showLimitModal(type){
+  // type: 'songs' or 'votes'
+  const icon=document.getElementById('limitModalIcon');
+  const title=document.getElementById('limitModalTitle');
+  const body=document.getElementById('limitModalBody');
+  if(type==='songs'){
+    icon.textContent='🎵';
+    title.textContent='הגעת למקסימום שירים!';
+    body.innerHTML=`
+      <div style="background:rgba(74,159,255,.1);border:2px solid rgba(74,159,255,.3);border-radius:12px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.9)">
+        <strong>בחרת 3 שירים</strong> — זה המקסימום לכל אורח 🎤
+      </div>
+      <div style="background:rgba(255,184,0,.08);border:2px solid rgba(255,184,0,.3);border-radius:12px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.9)">
+        🗳️ עדיין תוכל/י <strong>להצביע עד 10 פעמים</strong> לשירים שכבר ברשימה ולהשפיע על המיקום שלהם במצעד!
+      </div>`;
+  } else {
+    icon.textContent='🗳️';
+    title.textContent='הגעת למקסימום הצבעות!';
+    body.innerHTML=`
+      <div style="background:rgba(255,184,0,.08);border:2px solid rgba(255,184,0,.3);border-radius:12px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.9)">
+        <strong>הצבעת 10 פעמים</strong> — זה המקסימום לכל אורח 🗳️
+      </div>
+      <div style="background:rgba(74,159,255,.1);border:2px solid rgba(74,159,255,.3);border-radius:12px;padding:12px 14px;font-size:13px;color:rgba(255,255,255,.9)">
+        🎵 תזכיר/י — <strong>בחרת ${countMyRequests(currentRoom)} מתוך 3 שירים</strong> שמותר להוסיף
+      </div>`;
+  }
+  const m=document.getElementById('limitModal');
+  if(m)m.classList.add('show');
+}
+function closeLimitModal(){
+  const m=document.getElementById('limitModal');
+  if(m)m.classList.remove('show');
+}
+
 function openSearch(){document.getElementById('searchPanel').style.display='block';document.getElementById('searchInp').focus();}
 function closeSearch(){document.getElementById('searchPanel').style.display='none';document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';}
 function clearSearchInput(){document.getElementById('searchInp').value='';document.getElementById('searchRes').innerHTML='';document.getElementById('searchInp').focus();}
@@ -756,54 +813,6 @@ function djLogout(){isDJ=false;currentUserType='';currentUserName='';localStorag
 // ── CELEBRANT ──
 let isCelebrant=false;
 let celebrantRoom='';
-
-function populateCelebrantEvents(){
-  const sel=document.getElementById('celebrantEventSelect');
-  if(!sel)return;
-  const cur=sel.value;
-  sel.innerHTML='<option value="">בחר אירוע...</option>';
-  Object.entries(allEvents)
-    .filter(([rid,ev])=>ev.celebrantPass) // only events with a celebrant pass
-    .sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0))
-    .forEach(([rid,ev])=>{
-      const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL',{day:'numeric',month:'numeric'}):'';
-      sel.innerHTML+=`<option value="${esc(rid)}">${esc(ev.name)}${dateStr?' ('+dateStr+')':''}</option>`;
-    });
-  if(cur)sel.value=cur;
-}
-
-async function checkCelebrant(){
-  const sel=document.getElementById('celebrantEventSelect');
-  const nameEl=document.getElementById('celebrantName');
-  const passEl=document.getElementById('celebrantPassInp');
-  const errEl=document.getElementById('celebrantError');
-  const rid=sel?sel.value:'';
-  const name=nameEl?nameEl.value.trim():'';
-  const pass=passEl?passEl.value.trim():'';
-
-  if(!rid){errEl.textContent='אנא בחר אירוע';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
-  if(!name){errEl.textContent='אנא הכנס את שמך';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
-
-  // Fetch event to check pass
-  const snap=await get(fbRef(db,'events/'+rid));
-  const ev=snap.val();
-  if(!ev){errEl.textContent='אירוע לא נמצא';errEl.style.display='block';setTimeout(()=>errEl.style.display='none',2000);return;}
-  if(!ev.celebrantPass||ev.celebrantPass!==pass){
-    passEl.style.borderColor='var(--red)';errEl.textContent='קוד שגוי ❌';errEl.style.display='block';passEl.value='';
-    setTimeout(()=>{passEl.style.borderColor='';errEl.style.display='none';},2500);
-    return;
-  }
-  // Success!
-  isCelebrant=true;
-  celebrantRoom=rid;
-  guestName=name;
-  currentRoom=rid;
-  passEl.value='';
-  errEl.style.display='none';
-  show('sGuest');
-  document.getElementById('gHdrSub').textContent='היי '+name+' 🎂 (חוגג/ת)';
-  loadGuestEvent();
-}
 
 async function promptCelebrantCode(){
   const code=prompt('הזן את קוד החוגג/ת שלך:','');
@@ -1070,7 +1079,7 @@ async function addToQ(song){
   if(existing){
     const [existKey,existSong]=existing;
     if(existSong.voters&&existSong.voters[guestId]){toast('השיר כבר בתור והצבעת עליו 😊','info');closeSearch();return;}
-    if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
+    if(!isCelebrant&&countMyVotes(currentRoom)>=10){showLimitModal('votes');closeSearch();return;}
     await runTransaction(fbRef(db,'rooms/'+currentRoom+'/queue/'+existKey),cur=>{
       if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
     });
@@ -1078,8 +1087,8 @@ async function addToQ(song){
   }
   try{
     // Celebrant has no request/vote limits
-    if(!isCelebrant&&countMyRequests(currentRoom)>=3){toast('הגעת ל-3 שירים! 🎵 עדיין תוכל/י להצביע לשירים שכבר ברשימה 👆','error');clearSearchInput();return;}
-    if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');closeSearch();return;}
+    if(!isCelebrant&&countMyRequests(currentRoom)>=3){showLimitModal('songs');clearSearchInput();return;}
+    if(!isCelebrant&&countMyVotes(currentRoom)>=10){showLimitModal('votes');closeSearch();return;}
     await push(fbRef(db,'rooms/'+currentRoom+'/queue'),{name:song.name,artist:song.artist,art:song.art,preview:song.preview||'',requestedBy:(isCelebrant?'🎂 ':'')+( guestName||'אנונימי'),requesterId:guestId,votes:1,voters:{[guestId]:true},timestamp:Date.now()});
     votedSongs[song.name+song.artist]=true;localStorage.setItem('b_votes',JSON.stringify(votedSongs));
     toast('✅ '+song.name+' נוסף!','success');clearSearchInput();
@@ -1121,7 +1130,7 @@ function countMyVotes(room){
 async function vote(key){
   const song=(allQueues[currentRoom]||{})[key];if(!song)return;
   if(song.voters&&song.voters[guestId]){toast('כבר הצבעת על שיר זה 😊','info');return;}
-  if(!isCelebrant&&countMyVotes(currentRoom)>=10){toast('הגעת למגבלת 10 הצבעות! 🔒','error');return;}
+  if(!isCelebrant&&countMyVotes(currentRoom)>=10){showLimitModal('votes');return;}
   await runTransaction(fbRef(db,'rooms/'+currentRoom+'/queue/'+key),cur=>{if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;});
   toast('🔥 הצבעת!','success');
 }
@@ -1146,6 +1155,7 @@ function renderDJEvents(){
       <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
+      ${ev.djNotes?`<div style="font-size:12px;color:rgba(74,159,255,.8);background:rgba(74,159,255,.07);border:1px solid rgba(74,159,255,.2);border-radius:8px;padding:6px 10px;margin-bottom:8px;white-space:pre-line">📝 ${esc(ev.djNotes.slice(0,120))}${ev.djNotes.length>120?'…':''}</div>`:''}
       <div class="ev-btns">
         <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
         <button class="ev-btn ev-btn-copy" onclick="copyLink('${escA(gUrl)}')">🔗 העתק לינק לאורחים</button>
@@ -1191,7 +1201,23 @@ function openEQ(rid,name,type,date){
   document.getElementById('eqTitle').textContent=name;
   document.getElementById('eqMeta').textContent=(type?type+' • ':'')+date;
   document.getElementById('spMsg').className='sp-msg';
+  // Load DJ notes for this event
+  const notesArea=document.getElementById('djNotesArea');
+  if(notesArea){
+    notesArea.value='';
+    get(fbRef(db,'events/'+rid+'/djNotes')).then(snap=>{
+      notesArea.value=snap.val()||'';
+    });
+  }
   renderEQ();show('sEQ');
+}
+
+async function saveDJNotes(){
+  if(!currentEQRoom)return;
+  const notesArea=document.getElementById('djNotesArea');
+  const notes=notesArea?notesArea.value:'';
+  await set(fbRef(db,'events/'+currentEQRoom+'/djNotes'),notes);
+  toast('✅ הערות נשמרו!','success');
 }
 
 function renderEQ(force){
