@@ -217,6 +217,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 @media(max-width:400px){.fld-row{grid-template-columns:1fr}.ev-name{font-size:16px}}
 #rulesModal.show{display:flex!important}
 #limitModal.show{display:flex!important}
+#editEvModal.show{display:flex!important}
 </style>
 </head>
 <body>
@@ -373,15 +374,18 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="admin-card">
           <h3>✨ צור אירוע חדש</h3>
           <div class="fld-row">
-            <div class="fld"><label>שם החוגג / האירוע</label><input type="text" id="evName" placeholder='יום הולדת של דנה'></div>
+            <div class="fld"><label>שם החוגג/ת</label><input type="text" id="evName" placeholder='דנה' oninput="updateEvNamePreview()"></div>
             <div class="fld"><label>סוג אירוע</label>
-              <select id="evType">
+              <select id="evType" onchange="updateEvNamePreview()">
                 <option value="">בחר...</option>
-                <option>חתונה</option><option>בר מצווה</option><option>בת מצווה</option>
+                <option>חתונה</option><option>בר מצווה</option><option selected>בת מצווה</option>
                 <option>יום הולדת</option><option>מסיבה פרטית</option>
                 <option>אירוע חברה</option><option>אחר</option>
               </select>
             </div>
+          </div>
+          <div style="margin-top:-4px;margin-bottom:8px;padding:7px 12px;background:rgba(74,159,255,.08);border:2px solid rgba(74,159,255,.2);border-radius:10px;font-size:13px;color:#4a9fff">
+            <span style="color:var(--muted)">שם האירוע: </span><span id="evNamePreview" style="font-weight:900;color:white">בת המצווה ...</span>
           </div>
           <div class="fld-row">
             <div class="fld"><label>תאריך</label><input type="date" id="evDate"></div>
@@ -395,7 +399,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
             <div class="fld"><label>שפת פלייליסט</label>
               <select id="evLang"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
             </div>
-            <div class="fld"><label>מקס׳ שירים לפלייליסט</label><input type="number" id="evMaxSongs" min="5" max="200" value="30" placeholder="30"></div>
+            <div class="fld"><label>מקס׳ שירים לפלייליסט</label><input type="number" id="evMaxSongs" min="5" max="200" value="20" placeholder="20"></div>
           </div>
           <div class="fld"><label>קוד חוגג/ת (גישה ללא הגבלה)</label><input type="text" id="evCelebrantPass" placeholder="ייווצר אוטומטית אם ריק (6 ספרות)"></div>
           <button class="btn-full btn-red" onclick="createEv()">🎉 צור אירוע</button>
@@ -416,6 +420,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <p style="font-size:12px;color:var(--muted);margin-bottom:10px">הטקסט שיישלח לפני קוד החוגג והלינק לפלייליסט</p>
           <div class="fld"><textarea id="waMsgTemplate" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="לדוגמה: היי! אתם מוזמנים לבחור שירים לאירוע 🎵&#10;קוד החוגג שלכם:"></textarea></div>
           <button class="btn-full btn-red" onclick="saveWaMsgTemplate()">💾 שמור תבנית</button>
+        </div>
+        <!-- Event Prefixes -->
+        <div class="admin-card">
+          <h3>✏️ קידומת שם לפי סוג אירוע</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">הטקסט שיצורף לשם החוגג/ת — בחר אם לפני או אחרי</p>
+          <div id="prefixesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
+          <button class="btn-full btn-red" onclick="savePrefixes()">💾 שמור קידומות</button>
         </div>
         <!-- Manage DJs -->
         <div class="admin-card">
@@ -490,6 +501,33 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   <div class="pb-info"><div class="pb-name" id="pbName"></div><div class="pb-artist" id="pbArtist"></div></div>
   <span style="font-size:11px;color:var(--green);font-weight:700">▶ 30s</span>
   <button class="pb-close" onclick="stopPreview()">✕</button>
+</div>
+<!-- ══ EDIT EVENT MODAL ══ -->
+<div id="editEvModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:500;align-items:center;justify-content:center;padding:16px">
+  <div style="background:var(--surface2);border:3px solid rgba(255,165,0,.4);border-radius:22px;padding:24px 20px;max-width:400px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:6px 6px 0 rgba(255,165,0,.2)">
+    <button onclick="closeEditEvModal()" style="position:absolute;top:12px;left:14px;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);border-radius:8px;color:white;cursor:pointer;font-size:16px;padding:3px 9px;font-weight:900">✕</button>
+    <div style="font-family:'Fredoka One',cursive;font-size:20px;margin-bottom:18px">✏️ עריכת פרטי אירוע</div>
+    <input type="hidden" id="editEvRid">
+    <div class="fld-row">
+      <div class="fld"><label>שם החוגג/ת</label><input type="text" id="editEvName" placeholder='דנה'></div>
+      <div class="fld"><label>סוג אירוע</label>
+        <select id="editEvType">
+          <option>חתונה</option><option>בר מצווה</option><option>בת מצווה</option>
+          <option>יום הולדת</option><option>מסיבה פרטית</option><option>אירוע חברה</option><option>אחר</option>
+        </select>
+      </div>
+    </div>
+    <div class="fld-row">
+      <div class="fld"><label>תאריך</label><input type="date" id="editEvDate"></div>
+      <div class="fld"><label>שעה</label><input type="time" id="editEvTime"></div>
+    </div>
+    <div class="fld-row">
+      <div class="fld"><label>מיקום</label><input type="text" id="editEvLoc" placeholder="אולם X, תל אביב"></div>
+      <div class="fld"><label>שם הDJ</label><input type="text" id="editEvDJName" placeholder="Balaganza DJ"></div>
+    </div>
+    <div class="fld"><label>מקס׳ שירים</label><input type="number" id="editEvMaxSongs" min="5" max="200" placeholder="20"></div>
+    <button class="btn-full btn-red" onclick="saveEvDetails()" style="margin-top:8px">💾 שמור שינויים</button>
+  </div>
 </div>
 <!-- ══ RULES MODAL ══ -->
 <div id="rulesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:400;align-items:center;justify-content:center;padding:20px">
@@ -609,11 +647,13 @@ document.addEventListener('fb-ready',()=>{
       Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
       renderGuestQ();renderEQ();renderDJEvents();
     });
-    // Pre-fill guest name if already registered
-    get(fbRef(db,'guestNames/'+guestId)).then(snap=>{
-      const saved=snap.val();
-      if(saved){const el=document.getElementById('nameInp');if(el)el.value=saved;}
-    });
+    // Pre-fill guest name if already registered FOR THIS ROOM (scoped to prevent cross-room name leakage)
+    if(urlRoom){
+      get(fbRef(db,'guestNames/'+urlRoom+'/'+guestId)).then(snap=>{
+        const saved=snap.val();
+        if(saved){const el=document.getElementById('nameInp');if(el)el.value=saved;}
+      });
+    }
     initScreen();
   });
 });
@@ -676,19 +716,18 @@ async function enterGuest(){
   const n=document.getElementById('nameInp').value.trim();
   if(!n){document.getElementById('nameInp').style.borderColor='var(--red)';return;}
 
-  // Check if this guestId already has a registered name
-  const nameSnap=await get(fbRef(db,'guestNames/'+guestId));
+  // Check name scoped to this room only (prevents cross-room/user name leakage)
+  const nameKey='guestNames/'+(urlRoom||currentRoom)+'/'+guestId;
+  const nameSnap=await get(fbRef(db,nameKey));
   const savedName=nameSnap.val();
   if(savedName&&savedName!==n){
-    // Already registered under a different name — use saved name
     guestName=savedName;
     document.getElementById('nameInp').value=savedName;
     toast('ברוך שובך, '+savedName+'! 👋','info');
   } else {
     guestName=n;
-    // Save name-to-guestId mapping in Firebase
     if(!savedName){
-      await set(fbRef(db,'guestNames/'+guestId),n);
+      await set(fbRef(db,nameKey),n);
     }
   }
 
@@ -1060,23 +1099,50 @@ function djTab(t){
 // We keep USER_PASSWORDS as runtime object, loaded from Firebase if available
 let _userPasswords={owner:USER_PASSWORDS.owner};
 let _djNames={owner:DJ_NAMES.owner};
+const EVENT_TYPES=['חתונה','בר מצווה','בת מצווה','יום הולדת','מסיבה פרטית','אירוע חברה','אחר'];
+const DEFAULT_PREFIXES={'חתונה':{text:'חתונת',pos:'before'},'בר מצווה':{text:'בר המצווה',pos:'before'},'בת מצווה':{text:'בת המצווה',pos:'before'},'יום הולדת':{text:'יום הולדת של',pos:'before'},'מסיבה פרטית':{text:'המסיבה של',pos:'before'},'אירוע חברה':{text:'אירוע',pos:'before'},'אחר':{text:'',pos:'before'}};
+let _eventPrefixes={};
+Object.keys(DEFAULT_PREFIXES).forEach(k=>{_eventPrefixes[k]={...DEFAULT_PREFIXES[k]};});
+
+function getEventPrefix(type,name){
+  const cfg=_eventPrefixes[type]||DEFAULT_PREFIXES[type]||{text:'',pos:'before'};
+  const t=cfg.text||'';
+  if(!t)return name||'';
+  return cfg.pos==='after'?(name||'')+' '+t:t+' '+(name||'');
+}
+function updateEvNamePreview(){
+  const name=document.getElementById('evName').value.trim()||'...';
+  const type=document.getElementById('evType').value||'בת מצווה';
+  const el=document.getElementById('evNamePreview');
+  if(el)el.textContent=getEventPrefix(type,name);
+}
 
 async function loadConfig(){
-  const snap=await get(fbRef(db,'config'));
-  const cfg=snap.val();
-  if(cfg){
-    // Replace entirely from Firebase (don't merge with hardcoded DJ list)
-    if(cfg.passwords){
-      _userPasswords={owner:cfg.passwords.owner||USER_PASSWORDS.owner};
-      Object.keys(cfg.passwords).forEach(k=>{if(k!=='owner')_userPasswords[k]=cfg.passwords[k];});
-    }
-    if(cfg.djNames){
-      _djNames={owner:DJ_NAMES.owner};
-      Object.keys(cfg.djNames).forEach(k=>{if(k!=='owner')_djNames[k]=cfg.djNames[k];});
-    }
-    // Rebuild login dropdown
-    rebuildLoginSelect();
+  // Read each node separately — config/passwords is blocked by Firebase rules
+  const [namesSnap,prefixesSnap,tmplSnap]=await Promise.all([
+    get(fbRef(db,'config/djNames')),
+    get(fbRef(db,'config/eventPrefixes')),
+    get(fbRef(db,'config/waMsgTemplate'))
+  ]);
+  const djNames=namesSnap.val();
+  const eventPrefixes=prefixesSnap.val();
+  const waMsgTemplate=tmplSnap.val();
+  if(djNames){
+    _djNames={owner:DJ_NAMES.owner};
+    Object.keys(djNames).forEach(k=>{if(k!=='owner')_djNames[k]=djNames[k];});
   }
+  if(eventPrefixes){
+    Object.keys(DEFAULT_PREFIXES).forEach(k=>{
+      _eventPrefixes[k]=eventPrefixes[k]!==undefined?eventPrefixes[k]:DEFAULT_PREFIXES[k];
+    });
+  }
+  if(waMsgTemplate){
+    _waMsgTemplate=waMsgTemplate;
+    const el=document.getElementById('waMsgTemplate');
+    if(el)el.value=waMsgTemplate;
+  }
+  // Rebuild login dropdown
+  rebuildLoginSelect();
 }
 
 function rebuildLoginSelect(){
@@ -1094,10 +1160,59 @@ function rebuildLoginSelect(){
   if(cur)sel.value=cur;
 }
 
+function renderPrefixesCard(){
+  const list=document.getElementById('prefixesList');if(!list)return;
+  list.innerHTML=EVENT_TYPES.map(type=>{
+    const cfg=_eventPrefixes[type]||DEFAULT_PREFIXES[type]||{text:'',pos:'before'};
+    const isBefore=cfg.pos!=='after';
+    return `<div style="background:var(--surface2);border:2px solid rgba(255,255,255,.08);border-radius:12px;padding:10px 12px">
+      <div style="font-size:13px;font-weight:900;color:rgba(255,255,255,.7);margin-bottom:8px">${esc(type)}</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button type="button" onclick="togglePrefixPos('${esc(type)}')" id="prefixPosBtn_${esc(type)}" style="background:${isBefore?'rgba(74,159,255,.25)':'rgba(255,165,0,.2)'};border:2px solid ${isBefore?'#4a9fff':'#FFA500'};border-radius:8px;color:${isBefore?'#4a9fff':'#FFA500'};padding:5px 10px;font-size:12px;font-weight:900;cursor:pointer;flex-shrink:0;font-family:'Heebo',sans-serif">${isBefore?'לפני השם ←':'→ אחרי השם'}</button>
+        <input type="text" id="prefixText_${esc(type)}" value="${esc(cfg.text||'')}" placeholder="(ריק = ללא טקסט)" oninput="updatePrefixPreview('${esc(type)}')" style="flex:1;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:9px;color:white;padding:6px 10px;font-family:'Heebo',sans-serif;font-size:13px;direction:rtl">
+      </div>
+      <div id="prefixPreview_${esc(type)}" style="font-size:11px;color:rgba(255,255,255,.35);margin-top:5px"></div>
+    </div>`;
+  }).join('');
+  EVENT_TYPES.forEach(type=>updatePrefixPreview(type));
+}
+function updatePrefixPreview(type){
+  const inp=document.getElementById('prefixText_'+type);
+  const btn=document.getElementById('prefixPosBtn_'+type);
+  const prev=document.getElementById('prefixPreview_'+type);
+  if(!inp||!btn||!prev)return;
+  const t=inp.value.trim();
+  const isAfter=btn.textContent.includes('אחרי');
+  const ex='דנה';
+  prev.textContent=t?(isAfter?ex+' '+t:t+' '+ex):'(ללא קידומת — רק השם)';
+}
+function togglePrefixPos(type){
+  const btn=document.getElementById('prefixPosBtn_'+type);if(!btn)return;
+  const isBefore=btn.textContent.includes('לפני');
+  if(isBefore){
+    btn.textContent='→ אחרי השם';btn.style.background='rgba(255,165,0,.2)';btn.style.borderColor='#FFA500';btn.style.color='#FFA500';
+  } else {
+    btn.textContent='לפני השם ←';btn.style.background='rgba(74,159,255,.25)';btn.style.borderColor='#4a9fff';btn.style.color='#4a9fff';
+  }
+  updatePrefixPreview(type);
+}
+async function savePrefixes(){
+  if(currentUserType!=='owner'){toast('הרשאת בעלים נדרשת','error');return;}
+  const updated={};
+  EVENT_TYPES.forEach(type=>{
+    const inp=document.getElementById('prefixText_'+type);
+    const btn=document.getElementById('prefixPosBtn_'+type);
+    if(inp&&btn)updated[type]={text:inp.value.trim(),pos:btn.textContent.includes('אחרי')?'after':'before'};
+  });
+  _eventPrefixes={...updated};
+  await set(fbRef(db,'config/eventPrefixes'),updated);
+  toast('✅ הקידומות נשמרו!','success');
+}
+
 function renderDJManage(){
-  // Load WhatsApp template into field
   const waTmplEl=document.getElementById('waMsgTemplate');
   if(waTmplEl&&_waMsgTemplate)waTmplEl.value=_waMsgTemplate;
+  renderPrefixesCard();
   const list=document.getElementById('djManageList');if(!list)return;
   const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
   if(!djKeys.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center">אין דיג׳יים. הוסף דיג׳יי למטה.</div>';return;}
@@ -1337,6 +1452,7 @@ function renderGuestQ(){
       <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
       <button class="preview-btn" data-preview="${s.preview||''}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" onclick="event.stopPropagation();playQueuePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>
       <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${mv?'#FFB800':voteColor(s.votes||0,maxVotes)}">${s.votes||0}</span></button>
+      ${isCelebrant?`<button onclick="event.stopPropagation();delGuestSong('${s.key}')" style="background:rgba(232,23,26,.15);border:2px solid rgba(232,23,26,.35);border-radius:8px;color:#ff6b6b;cursor:pointer;padding:5px 8px;font-size:13px;flex-shrink:0" title="מחק שיר">🗑️</button>`:''}
     </div>`;
   }).join('');
   list.querySelectorAll('.vote-btn').forEach(btn=>btn.addEventListener('click',()=>vote(btn.dataset.key)));
@@ -1345,6 +1461,12 @@ function renderGuestQ(){
 function countMyVotes(room){
   const q=allQueues[room]||{};
   return Object.values(q).reduce((sum,s)=>(s.voters&&s.voters[guestId])?sum+1:sum,0);
+}
+async function delGuestSong(key){
+  if(!isCelebrant)return;
+  if(!confirm('למחוק את השיר מהתור?'))return;
+  await set(fbRef(db,'rooms/'+currentRoom+'/queue/'+key),null);
+  toast('🗑️ השיר נמחק','info');
 }
 async function vote(key){
   const song=(allQueues[currentRoom]||{})[key];if(!song)return;
@@ -1381,9 +1503,9 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
         <button class="ev-btn ev-btn-copy" onclick="sendWhatsAppLink('${escA(gUrl)}','${escA(ev.celebrantPass||'')}')">💬 שלח לינק בווטסאפ</button>
         <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}')">📋 תור (${cnt})</button>
-        <button class="ev-btn" style="background:rgba(0,200,83,.1);color:#00C853;border-color:rgba(0,200,83,.3)" onclick="quickExportCSV('${escA(rid)}')">📥 CSV</button>
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
+        <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
@@ -1399,17 +1521,19 @@ async function createEv(){
   const time=document.getElementById('evTime').value;
   const loc=document.getElementById('evLoc').value.trim();
   const lang=document.getElementById('evLang').value;
-  const maxSongs=parseInt(document.getElementById('evMaxSongs').value)||30;
+  const maxSongs=parseInt(document.getElementById('evMaxSongs').value)||20;
   const _cpInput=document.getElementById('evCelebrantPass').value.trim();
   const celebrantPass=_cpInput||String(Math.floor(100000+Math.random()*900000));
   const _djNameInput=document.getElementById('evDJName').value.trim();
   const djName=_djNameInput||(currentUserType==='owner'?'ברק':(_djNames[currentUserType]||currentUserType||'Balaganza DJ'));
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
+  const fullName=getEventPrefix(type,name);
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  await set(fbRef(db,'events/'+rid),{name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
+  await set(fbRef(db,'events/'+rid),{name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
   ['evName','evDate','evTime','evLoc','evCelebrantPass'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('evType').value='';
-  document.getElementById('evMaxSongs').value='30';
+  document.getElementById('evType').value='בת מצווה';
+  document.getElementById('evMaxSongs').value='20';
+  updateEvNamePreview();
   toast('✅ האירוע נוצר!','success');
   djTab('events');
 }
@@ -1481,6 +1605,38 @@ async function editEvNameFromList(rid,currentName){
   await set(fbRef(db,'events/'+rid+'/name'),newName.trim());
   toast('✅ השם עודכן!','success');
 }
+async function editEvDetails(rid){
+  const snap=await get(fbRef(db,'events/'+rid));
+  const ev=snap.val();if(!ev)return;
+  document.getElementById('editEvRid').value=rid;
+  document.getElementById('editEvName').value=ev.celebrantName||ev.name||'';
+  document.getElementById('editEvType').value=ev.type||'בת מצווה';
+  document.getElementById('editEvDate').value=ev.date||'';
+  document.getElementById('editEvTime').value=ev.time||'';
+  document.getElementById('editEvLoc').value=ev.location||'';
+  document.getElementById('editEvDJName').value=ev.djName||'';
+  document.getElementById('editEvMaxSongs').value=ev.maxSongs||20;
+  document.getElementById('editEvModal').classList.add('show');
+}
+async function saveEvDetails(){
+  const rid=document.getElementById('editEvRid').value;
+  if(!rid)return;
+  const name=document.getElementById('editEvName').value.trim();
+  const type=document.getElementById('editEvType').value;
+  if(!name||!type){toast('שם וסוג אירוע חובה','error');return;}
+  const fullName=getEventPrefix(type,name);
+  const updates={name:fullName,celebrantName:name,type,
+    date:document.getElementById('editEvDate').value,
+    time:document.getElementById('editEvTime').value,
+    location:document.getElementById('editEvLoc').value.trim(),
+    djName:document.getElementById('editEvDJName').value.trim(),
+    maxSongs:parseInt(document.getElementById('editEvMaxSongs').value)||20};
+  const snap=await get(fbRef(db,'events/'+rid));
+  await set(fbRef(db,'events/'+rid),{...(snap.val()||{}),...updates});
+  document.getElementById('editEvModal').classList.remove('show');
+  toast('✅ פרטי האירוע עודכנו!','success');
+}
+function closeEditEvModal(){document.getElementById('editEvModal').classList.remove('show');}
 async function delSong(key){await set(fbRef(db,'rooms/'+currentEQRoom+'/queue/'+key),null);}
 async function clearEQ(){if(!confirm('למחוק את כל התור?'))return;await set(fbRef(db,'rooms/'+currentEQRoom+'/queue'),null);toast('התור נוקה','info');}
 
