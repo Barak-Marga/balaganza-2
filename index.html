@@ -375,11 +375,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <div class="fld"><label>טקסט ברכה לחוגג/ת</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
-        <div class="admin-card">
-          <h3>🎮 ערוך הסברי משחקים</h3>
-          <div class="fld"><label>💋 נשיקה סטירה</label><textarea id="gameDesc_kiss_slap" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎒 משחק החפצים</label><textarea id="gameDesc_objects" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎵 משחק השירים</label><textarea id="gameDesc_songs" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🕺 תחרות ריקודים</label><textarea id="gameDesc_dance" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🔐 משחק הכספות</label><textarea id="gameDesc_vault" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🏅 כלוב הזהב</label><textarea id="gameDesc_goldcage" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div>
-          <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור הסברים</button>
-        </div>
+
       </div>
     </div>
     <div class="tab-body" id="djBCreate">
@@ -441,7 +437,21 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <div id="prefixesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
           <button class="btn-full btn-red" onclick="savePrefixes()">💾 שמור קידומות</button>
         </div>
-        <!-- Manage DJs -->
+        <!-- Manage Games -->
+        <div class="admin-card">
+          <h3>🎮 ניהול משחקים</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">הגדר שם, סוג (חינם/פרימיום), הערה והסבר לכל משחק. ניתן להוסיף ולהסיר משחקים.</p>
+          <div id="gamesAdminList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
+          <button class="btn-full btn-blue" style="margin-bottom:8px" onclick="addGame()">+ הוסף משחק</button>
+          <button class="btn-full btn-red" onclick="saveGames()">💾 שמור משחקים</button>
+        </div>
+        <!-- DJ Q&A Section Text -->
+        <div class="admin-card">
+          <h3>📬 ערוך טקסט אזור שאלות לDJ</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px">הטקסט שמוצג לחוגג/ת מעל תיבת השאלות לדיג׳יי</p>
+          <div class="fld"><textarea id="djQIntroText" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע."></textarea></div>
+          <button class="btn-full btn-red" onclick="saveDJQIntro()">💾 שמור טקסט</button>
+        </div>
         <div class="admin-card">
           <h3>🎧 ניהול דיג׳יים</h3>
           <div id="djManageList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
@@ -540,9 +550,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div style="font-size:22px;text-align:center;margin-bottom:6px">👑</div>
     <div id="premiumModalTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:#D4AF37;text-align:center;margin-bottom:12px"></div>
     <input type="hidden" id="premiumModalGameId">
-    <div style="font-size:13px;color:#aaa;margin-bottom:16px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. השאר/י מספר טלפון של הורה ואנחנו ניצור קשר לתיאום ותשלום.</div>
-    <div style="font-size:13px;color:#888;margin-bottom:6px;font-weight:700">📱 טלפון הורה ליצירת קשר</div>
-    <input type="tel" id="premiumModalPhone" placeholder="050-000-0000" style="width:100%;background:rgba(255,255,255,.08);border:2px solid rgba(212,175,55,.3);border-radius:10px;color:white;padding:10px 12px;font-family:'Heebo',sans-serif;font-size:15px;direction:rtl;outline:none;box-sizing:border-box;margin-bottom:16px">
+    <div style="font-size:13px;color:#aaa;margin-bottom:20px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. לחיצה על "שלח בקשה" תשלח הודעה לדיג׳יי ולמשרד, ואנחנו ניצור קשר לתיאום ותשלום.</div>
     <button onclick="submitPremiumInterest()" style="width:100%;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:12px;cursor:pointer;margin-bottom:8px">שלח בקשה 👑</button>
     <button onclick="closePremiumModal()" style="width:100%;background:transparent;border:none;color:#666;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer">ביטול</button>
   </div>
@@ -713,7 +721,7 @@ let currentUserName='';
 // Restore DJ session if previously logged in
 if(currentUserType){isDJ=true;}
 let currentRoom='main';
-let allQueues={},allEvents={};
+let allQueues={},allEvents={},_unreadMsgs={};
 let currentEQRoom=null,prevScreen=null;
 let votedSongs={};
 let _sRes=[],searchT;
@@ -738,6 +746,17 @@ document.addEventListener('fb-ready',()=>{
       setTimeout(()=>exportSpotify(),1500);
     }
     onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
+    // Track unread DJ messages across all events
+    onValue(fbRef(db,'events'),snap=>{
+      const evs=snap.val()||{};
+      Object.keys(evs).forEach(rid=>{
+        onValue(fbRef(db,'events/'+rid+'/djMessages'),mSnap=>{
+          const msgs=mSnap.val()||{};
+          _unreadMsgs[rid]=Object.values(msgs).filter(m=>!m.reply&&m.from==='celebrant').length;
+          renderDJEvents();
+        });
+      });
+    });
     onValue(fbRef(db,'rooms'),snap=>{
       const r=snap.val()||{};allQueues={};
       Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
@@ -1181,7 +1200,7 @@ async function editDJNote(rid,currentNote){
 const CELEBRANT_GAMES = [
   {id:'kiss_slap',   name:'נשיקה סטירה',          emoji:'💋',  premium:false},
   {id:'objects',     name:'משחק החפצים',           emoji:'🎒',  premium:false},
-  {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:false},
+  {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:true},
   {id:'dance',       name:'תחרות ריקודים "הכל הולך"', emoji:'🕺', premium:false},
   {id:'vault',       name:'משחק הכספות',            emoji:'🔐',  premium:true},
   {id:'goldcage',    name:'כלוב הזהב',              emoji:'🏅',  premium:true},
@@ -1195,6 +1214,11 @@ const GAME_DESC_DEFAULTS = {
   goldcage:  'החוגג/ת בתוך כלוב הזהב — הקהל מרים אותו/ה ומעניק מחמאות ואהבה. חוויה שלא תישכח! שדרוג פרימיום.',
 };
 let _gameDescriptions = {...GAME_DESC_DEFAULTS};
+// Dynamic games list — overrides CELEBRANT_GAMES when loaded from Firebase
+let _dynamicGames = CELEBRANT_GAMES.map(g=>({...g, desc:GAME_DESC_DEFAULTS[g.id]||'', note:''}));
+let _djQIntroText = 'רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע.';
+// Helper: get active games list (dynamic if loaded, else static)
+function getActiveGames(){return _dynamicGames;}
 let celebrantChoicesSelected = new Set();
 
 async function openCelebrantActivities(){
@@ -1240,15 +1264,15 @@ async function openCelebrantActivities(){
 function renderCelebrantGameList(){
   const list=document.getElementById('celebActGameList');
   if(!list)return;
-  const freeGames=CELEBRANT_GAMES.filter(g=>!g.premium);
-  const premiumGames=CELEBRANT_GAMES.filter(g=>g.premium);
+  const freeGames=getActiveGames().filter(g=>!g.premium);
+  const premiumGames=getActiveGames().filter(g=>g.premium);
   function renderGame(g){
     const sel=celebrantChoicesSelected.has(g.id);
     const bg=sel?'rgba(168,85,247,.15)':'rgba(255,255,255,.04)';
     const border=sel?'rgba(168,85,247,.6)':'rgba(255,255,255,.1)';
     const chkBg=sel?'#a855f7':'transparent';
     const chkBorder=sel?'#a855f7':'rgba(255,255,255,.2)';
-    const freeBadge=(g.id==='songs')?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">&#x1F7E2; ללא עלות זמנית</span>':'';
+    const noteBadge=g.note?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">🟢 '+esc(g.note)+'</span>':'';
     const premiumSub=g.premium?'<div style="font-size:11px;color:#aaa;margin-top:2px">שדרוג בתשלום — המשרד ייצור קשר</div>':'';
     const id=g.id;
     const infoBtn='<button onclick="event.stopPropagation();showGameInfo(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
@@ -1257,7 +1281,7 @@ function renderCelebrantGameList(){
     const clickHandler='toggleCelebrantGame(&quot;'+id+'&quot;)';
     return '<div style="display:flex;align-items:center;gap:10px;background:'+bg+';border:2px solid '+border+';border-radius:12px;padding:12px 14px;cursor:'+cursor+'" onclick="'+clickHandler+'">'
       +'<span style="font-size:22px">'+g.emoji+'</span>'
-      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+freeBadge+'</div>'+premiumSub+'</div>'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+noteBadge+'</div>'+premiumSub+'</div>'
       +infoBtn
       +chk
       +'</div>';
@@ -1271,9 +1295,9 @@ function renderCelebrantGameList(){
 }
 
 function showGameInfo(id){
-  const game=CELEBRANT_GAMES.find(g=>g.id===id);
+  const game=getActiveGames().find(g=>g.id===id);
   if(!game)return;
-  const desc=_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
+  const desc=game.desc||_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
   const modal=document.getElementById('gameInfoModal');
   document.getElementById('gameInfoTitle').textContent=game.emoji+' '+game.name;
   document.getElementById('gameInfoDesc').textContent=desc;
@@ -1285,7 +1309,7 @@ function updateCelebChoiceSummary(){
   const summary=document.getElementById('celebChoiceSummary');
   const list=document.getElementById('celebChoiceSummaryList');
   if(!summary||!list)return;
-  const sel=CELEBRANT_GAMES.filter(g=>celebrantChoicesSelected.has(g.id));
+  const sel=getActiveGames().filter(g=>celebrantChoicesSelected.has(g.id));
   if(sel.length){
     list.innerHTML=sel.map(g=>'<span style="background:rgba(168,85,247,.2);border:1.5px solid rgba(168,85,247,.5);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#c084fc">'+g.emoji+' '+g.name+'</span>').join('');
     summary.style.display='block';
@@ -1297,14 +1321,11 @@ function updateCelebChoiceSummary(){
 function openPremiumModal(id,game){
   document.getElementById('premiumModalTitle').textContent=game.emoji+' '+game.name;
   document.getElementById('premiumModalGameId').value=id;
-  document.getElementById('premiumModalPhone').value='';
   document.getElementById('premiumModal').style.display='flex';
 }
 function closePremiumModal(){document.getElementById('premiumModal').style.display='none';}
 async function submitPremiumInterest(){
   const id=document.getElementById('premiumModalGameId').value;
-  const phone=document.getElementById('premiumModalPhone').value.trim();
-  if(!phone){toast('יש להזין מספר טלפון','error');return;}
   if(!currentRoom){closePremiumModal();return;}
   // בדיקת 24ש' לפני האירוע
   try{
@@ -1320,9 +1341,9 @@ async function submitPremiumInterest(){
       }
     }
   }catch(e){}
-  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת',phone});
+  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת'});
   closePremiumModal();
-  toast('💌 קיבלנו! המשרד ייצור קשר למספר '+phone,'success',5000);
+  toast('💌 קיבלנו! הדיג׳יי והמשרד יצרו איתך קשר בהקדם','success',5000);
 }
 
 async function notifyPremiumInterest(gameId){
@@ -1332,13 +1353,13 @@ async function notifyPremiumInterest(gameId){
   }catch(e){}
 }
 async function toggleCelebrantGame(id){
-  const game=CELEBRANT_GAMES.find(g=>g.id===id);
+  const game=getActiveGames().find(g=>g.id===id);
   if(!game)return;
   if(game.premium){
     openPremiumModal(id,game);
     return;
   }
-  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!CELEBRANT_GAMES.find(x=>x.id===sid)?.premium);
+  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!getActiveGames().find(x=>x.id===sid)?.premium);
   if(celebrantChoicesSelected.has(id)){
     celebrantChoicesSelected.delete(id);
   } else {
@@ -1350,14 +1371,14 @@ async function toggleCelebrantGame(id){
   if(!currentRoom)return;
   try{
     const obj={};
-    CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+    getActiveGames().filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
     await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
   }catch(e){toast('שגיאה בשמירה','error');}
 }
 
 async function saveCelebrantChoices(){
   const obj={};
-  CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+  getActiveGames().filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
   await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
   toast('✅ הבחירה נשמרה!','success');
   // הצג שאלות לDJ אחרי אישור
@@ -1470,22 +1491,25 @@ function updateEvNamePreview(){
 }
 
 async function loadConfig(){
-  const [namesSnap,passSnap,prefixesSnap,tmplSnap]=await Promise.all([
+  const [namesSnap,passSnap,prefixesSnap,tmplSnap,gamesSnap,djQSnap]=await Promise.all([
     get(fbRef(db,'config/djNames')),
     get(fbRef(db,'config/passwords')),
     get(fbRef(db,'config/eventPrefixes')),
-    get(fbRef(db,'config/waMsgTemplate'))
+    get(fbRef(db,'config/waMsgTemplate')),
+    get(fbRef(db,'config/games')),
+    get(fbRef(db,'config/djQIntroText'))
   ]);
   const djNames=namesSnap.val();
   const djPasswords=passSnap.val();
   const eventPrefixes=prefixesSnap.val();
   const waMsgTemplate=tmplSnap.val();
+  const gamesData=gamesSnap.val();
+  const djQText=djQSnap.val();
   if(djNames){
     _djNames={owner:DJ_NAMES.owner};
     Object.keys(djNames).forEach(k=>{if(k!=='owner')_djNames[k]=djNames[k];});
   }
   if(djPasswords){
-    // שמור את סיסמת הבעלים מהקוד, טען את שאר הסיסמאות מ-Firebase
     _userPasswords={owner:_userPasswords.owner};
     Object.keys(djPasswords).forEach(k=>{if(k!=='owner')_userPasswords[k]=djPasswords[k];});
   }
@@ -1498,6 +1522,14 @@ async function loadConfig(){
     _waMsgTemplate=waMsgTemplate;
     const el=document.getElementById('waMsgTemplate');
     if(el)el.value=waMsgTemplate;
+  }
+  if(gamesData&&Array.isArray(gamesData)){
+    _dynamicGames=[...gamesData];
+  }
+  if(djQText){
+    _djQIntroText=djQText;
+    const el=document.getElementById('celebActDjQIntro');
+    if(el)el.textContent=djQText;
   }
   // Rebuild login dropdown
   rebuildLoginSelect();
@@ -1567,10 +1599,98 @@ async function savePrefixes(){
   toast('✅ הקידומות נשמרו!','success');
 }
 
+// ── GAMES ADMIN ──
+function renderGamesAdmin(){
+  const list=document.getElementById('gamesAdminList');if(!list)return;
+  list.innerHTML=_dynamicGames.map((g,i)=>`
+    <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px">
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <input type="text" id="geEmoji_${i}" value="${esc(g.emoji||'🎮')}" maxlength="4"
+          style="width:46px;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px;font-size:18px;text-align:center;direction:ltr;outline:none">
+        <input type="text" id="geName_${i}" value="${esc(g.name)}" placeholder="שם המשחק"
+          style="flex:1;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:7px 10px;font-family:Heebo,sans-serif;font-size:13px;font-weight:700;direction:rtl;outline:none">
+        <button onclick="removeGame(${i})" style="background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.3);border-radius:8px;color:#ff5050;padding:6px 10px;cursor:pointer;font-size:16px;flex-shrink:0">🗑️</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+        <label style="font-size:12px;color:var(--muted);flex-shrink:0">סוג:</label>
+        <button onclick="toggleGamePremium(${i})" id="gePrem_${i}" style="background:${g.premium?'rgba(212,175,55,.2)':'rgba(0,200,83,.15)'};border:2px solid ${g.premium?'rgba(212,175,55,.5)':'rgba(0,200,83,.4)'};border-radius:8px;color:${g.premium?'#D4AF37':'#00C853'};padding:5px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:Heebo,sans-serif">
+          ${g.premium?'👑 פרימיום':'✅ חינם'}
+        </button>
+      </div>
+      <div class="fld" style="margin-bottom:6px">
+        <label style="font-size:11px;color:var(--muted)">הערה (מוצגת לחוגג/ת)</label>
+        <input type="text" id="geNote_${i}" value="${esc(g.note||'')}" placeholder="לדוגמה: זמנית ללא עלות נוספת"
+          style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:#a0c4ff;padding:7px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
+      </div>
+      <div class="fld">
+        <label style="font-size:11px;color:var(--muted)">הסבר למשחק</label>
+        <textarea id="geDesc_${i}" rows="2"
+          style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:12px;resize:vertical;direction:rtl;outline:none">${esc(g.desc||'')}</textarea>
+      </div>
+    </div>`).join('');
+}
+
+function toggleGamePremium(i){
+  _dynamicGames[i].premium=!_dynamicGames[i].premium;
+  renderGamesAdmin();
+}
+
+function removeGame(i){
+  if(!confirm('למחוק את המשחק "'+_dynamicGames[i].name+'"?'))return;
+  _dynamicGames.splice(i,1);
+  renderGamesAdmin();
+}
+
+function addGame(){
+  _dynamicGames.push({id:'game_'+Date.now(),name:'משחק חדש',emoji:'🎮',premium:false,desc:'',note:''});
+  renderGamesAdmin();
+}
+
+function collectGamesFromUI(){
+  return _dynamicGames.map((g,i)=>{
+    const name=(document.getElementById('geName_'+i)||{}).value||g.name;
+    const emoji=(document.getElementById('geEmoji_'+i)||{}).value||g.emoji;
+    const desc=(document.getElementById('geDesc_'+i)||{}).value||'';
+    const note=(document.getElementById('geNote_'+i)||{}).value||'';
+    return {...g,name,emoji,desc,note};
+  });
+}
+
+async function saveGames(){
+  const games=collectGamesFromUI();
+  _dynamicGames=[...games];
+  // גם שמור gameDescriptions ב-about לתאימות לאחור
+  const gameDescriptions={};
+  games.forEach(g=>{gameDescriptions[g.id]=g.desc;});
+  _gameDescriptions={...gameDescriptions};
+  await Promise.all([
+    set(fbRef(db,'config/games'),games),
+    set(fbRef(db,'about/gameDescriptions'),gameDescriptions)
+  ]);
+  toast('✅ המשחקים נשמרו!','success');
+  renderGamesAdmin();
+}
+
+async function saveDJQIntro(){
+  const el=document.getElementById('djQIntroText');
+  if(!el)return;
+  const txt=el.value.trim()||_djQIntroText;
+  _djQIntroText=txt;
+  await set(fbRef(db,'config/djQIntroText'),txt);
+  // עדכן מיידית במסך החוגג
+  const introEl=document.getElementById('celebActDjQIntro');
+  if(introEl)introEl.textContent=txt;
+  toast('✅ הטקסט נשמר!','success');
+}
+
 function renderDJManage(){
   const waTmplEl=document.getElementById('waMsgTemplate');
   if(waTmplEl&&_waMsgTemplate)waTmplEl.value=_waMsgTemplate;
   renderPrefixesCard();
+  renderGamesAdmin();
+  // Load DJ Q intro text
+  const djQText=document.getElementById('djQIntroText');
+  if(djQText&&_djQIntroText)djQText.value=_djQIntroText;
   const list=document.getElementById('djManageList');if(!list)return;
   const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
   if(!djKeys.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center">אין דיג׳יים. הוסף דיג׳יי למטה.</div>';return;}
@@ -1671,23 +1791,12 @@ function updateDJHeader(){
   if(d.wa)document.getElementById('aboutWA').value=d.wa;
   if(d.ig)document.getElementById('aboutIG').value=d.ig;
   if(d.fb)document.getElementById('aboutFB').value=d.fb;
-  const gd=d.gameDescriptions||{};
-  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
-    const el=document.getElementById('gameDesc_'+id);
-    if(el)el.value=gd[id]||GAME_DESC_DEFAULTS[id]||'';
-  });
   if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
   const welEl=document.getElementById('aboutCelebrantWelcome');
   if(welEl)welEl.value=d.celebrantWelcome||'';
 }
 async function saveAbout(){
   if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
-  const gameDescriptions={};
-  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
-    const el=document.getElementById('gameDesc_'+id);
-    if(el)gameDescriptions[id]=el.value.trim()||GAME_DESC_DEFAULTS[id];
-  });
-  _gameDescriptions={...gameDescriptions};
   const d={
     brand:document.getElementById('aboutBrand').value.trim(),
     tagline:document.getElementById('aboutTagline').value.trim(),
@@ -1696,7 +1805,6 @@ async function saveAbout(){
     wa:document.getElementById('aboutWA').value.trim(),
     ig:document.getElementById('aboutIG').value.trim(),
     fb:document.getElementById('aboutFB').value.trim(),
-    gameDescriptions,
     celebrantWelcome:(document.getElementById('aboutCelebrantWelcome')||{}).value||'',
   };
   await set(fbRef(db,'about'),d);
@@ -1889,7 +1997,9 @@ function renderDJEvents(){
     const typeEmoji=getTypeEmoji(ev.type);
     const evTypeColor=ev.type==='חתונה'?'rgba(255,215,0,0.25)':ev.type==='אירוע חברה'?'rgba(138,43,226,0.2)':'';
     const evTypeBorder=ev.type==='חתונה'?'3px solid gold':ev.type==='אירוע חברה'?'3px solid #8B2BE2':'';
-    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}">
+    const unread=_unreadMsgs[rid]||0;
+    const msgBadge=unread?`<span style="background:#e8171a;color:white;border-radius:50%;min-width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;margin-right:4px;padding:0 3px;font-family:Heebo,sans-serif">${unread}</span> הודעות`:'📬 הודעות';
+    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}${unread?'border-color:rgba(232,23,26,.5);':''}">
       <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
@@ -1901,7 +2011,7 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
         <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
-        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות</button>
+        <button class="ev-btn" style="background:${unread?'rgba(232,23,26,.15)':'rgba(168,85,247,.1)'};color:${unread?'#ff6b6b':'#a78bfa'};border-color:${unread?'rgba(232,23,26,.5)':'rgba(168,85,247,.3)'};font-weight:${unread?'900':'700'}" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">${msgBadge}</button>
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
@@ -1962,7 +2072,7 @@ function openEQ(rid,name,type,date,fromOwner){
   // Load celebrant choices + premium interest for this event
   get(fbRef(db,'events/'+rid+'/celebrantChoices')).then(snap=>{
     const choices=snap.val()||{};
-    const selected=CELEBRANT_GAMES.filter(g=>choices[g.id]);
+    const selected=getActiveGames().filter(g=>choices[g.id]);
     const display=document.getElementById('celebrantChoicesDisplay');
     const list=document.getElementById('celebrantChoicesList');
     if(display&&list){
@@ -1981,7 +2091,7 @@ function openEQ(rid,name,type,date,fromOwner){
     const premiumEl=document.getElementById('premiumInterestDisplay');
     if(!premiumEl)return;
     if(keys.length){
-      const games=CELEBRANT_GAMES.filter(g=>keys.includes(g.id));
+      const games=getActiveGames().filter(g=>keys.includes(g.id));
       premiumEl.innerHTML='<div style="font-size:12px;font-weight:700;color:#D4AF37;margin-bottom:6px">👑 החוגג/ת מתעניין/ת בפרימיום:</div>'
         +games.map(g=>`<span style="background:rgba(212,175,55,.15);border:1.5px solid rgba(212,175,55,.5);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:#D4AF37">${g.emoji} ${g.name}</span>`).join(' ');
       premiumEl.style.display='block';
