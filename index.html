@@ -739,18 +739,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   }
   .wf-toast.show { opacity: 1; }
 
-  /* ── סרגל לוגו MARGA בראש ── */
-  .wf-marga-bar {
-    text-align: center;
-    padding: 14px 0 8px;
-    border-bottom: 0.5px solid rgba(0,0,0,0.06);
-  }
-  .wf-marga-bar-logo {
-    height: 22px;
-    width: auto;
-    opacity: 0.85;
-  }
-
   /* ── תמונת קאבר עם כפתור עריכה ── */
   .wf-hero-wrap {
     position: relative;
@@ -784,31 +772,27 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     cursor: wait;
   }
 
-  /* ── קרדיט תחתון ── */
+  /* ── קרדיט "Music by MARGA" — יושב בין פרטי החתונה לסקציית הפסקול ── */
   .wf-credit {
     text-align: center;
-    padding: 24px 20px 28px;
-    border-top: 0.5px solid rgba(0,0,0,0.06);
-    background: #fafafa;
+    padding: 16px 20px 36px;
+    background: transparent;
   }
   .wf-credit-by {
-    font-size: 10px;
-    letter-spacing: 4px;
-    color: #999;
-    margin-bottom: 10px;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: #888;
+    margin-bottom: 14px;
     text-transform: uppercase;
   }
   .wf-credit-logo {
-    height: 32px;
+    height: 54px;
     width: auto;
-    opacity: 0.9;
+    opacity: 1;
   }
 </style>
 
 <div class="wf-frame" id="weddingFrame">
-  <div class="wf-marga-bar">
-    <img class="wf-marga-bar-logo" id="wfMargaBarLogo" alt="MARGA">
-  </div>
   <div class="wf-topbar">
     <span style="width:34px;display:inline-block;"></span>
     <span class="wf-mono" id="wfMonogram"></span>
@@ -836,6 +820,10 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div class="wf-divider"></div>
     <p class="wf-location-line" id="wfLocationLine"></p>
   </div>
+  <div class="wf-credit">
+    <div class="wf-credit-by" id="wfCreditBy">Music by</div>
+    <img class="wf-credit-logo" id="wfCreditLogo" alt="MARGA">
+  </div>
   <section class="wf-songs-section">
     <p class="wf-songs-heading wf-script" id="wfSongsHeading"></p>
     <p class="wf-songs-sub" id="wfSongsSub"></p>
@@ -861,10 +849,6 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div class="wf-song-list" id="wfSongList"></div>
     <p class="wf-count-line" id="wfCountLine"></p>
   </section>
-  <div class="wf-credit">
-    <div class="wf-credit-by" id="wfCreditBy">Music by</div>
-    <img class="wf-credit-logo" id="wfCreditLogo" alt="MARGA">
-  </div>
 </div>
 <div class="wf-toast" id="wfToast"></div>
 </div>
@@ -1283,13 +1267,11 @@ function wfRenderStatic(){
   const ev=wfState.event;if(!ev)return;
   const cfg=ev.weddingConfig||{};
   const lang=wfState.lang;
-  // לוגו MARGA — סרגל למעלה + קרדיט למטה
-  const barLogo=document.getElementById('wfMargaBarLogo');
+  // לוגו MARGA — קרדיט באמצע הדף
   const creditLogo=document.getElementById('wfCreditLogo');
-  if(barLogo)barLogo.src=MARGA_LOGO_B64;
   if(creditLogo)creditLogo.src=MARGA_LOGO_B64;
   const creditBy=document.getElementById('wfCreditBy');
-  if(creditBy)creditBy.textContent=lang==='he'?'Music by':'Music by';
+  if(creditBy)creditBy.textContent='Music by';
   // מונוגרמה + הירו
   document.getElementById('wfMonogram').textContent=cfg.monogram||'';
   const heroEl=document.getElementById('wfHero');
