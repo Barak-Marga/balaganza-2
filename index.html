@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>בלאגנזה 🎵</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Fredoka+One&family=Allura&display=swap" rel="stylesheet">
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, runTransaction, get, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
@@ -375,7 +375,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <div class="fld"><label>טקסט ברכה לחוגג/ת</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
-
+        <div class="admin-card">
+          <h3>🎮 ערוך הסברי משחקים</h3>
+          <div class="fld"><label>💋 נשיקה סטירה</label><textarea id="gameDesc_kiss_slap" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎒 משחק החפצים</label><textarea id="gameDesc_objects" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎵 משחק השירים</label><textarea id="gameDesc_songs" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🕺 תחרות ריקודים</label><textarea id="gameDesc_dance" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🔐 משחק הכספות</label><textarea id="gameDesc_vault" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🏅 כלוב הזהב</label><textarea id="gameDesc_goldcage" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div>
+          <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור הסברים</button>
+        </div>
       </div>
     </div>
     <div class="tab-body" id="djBCreate">
@@ -383,9 +387,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="admin-card">
           <h3>✨ צור אירוע חדש</h3>
           <div class="fld-row">
-            <div class="fld"><label>שם החוגג/ת</label><input type="text" id="evName" placeholder='דנה' oninput="updateEvNamePreview()"></div>
+            <div class="fld"><label id="evNameLabel">שם החוגג/ת</label><input type="text" id="evName" placeholder='דנה' oninput="updateEvNamePreview()"></div>
             <div class="fld"><label>סוג אירוע</label>
-              <select id="evType" onchange="updateEvNamePreview()">
+              <select id="evType" onchange="updateEvNamePreview();onEvTypeChange()">
                 <option value="">בחר...</option>
                 <option>חתונה</option><option>בר מצווה</option><option selected>בת מצווה</option>
                 <option>יום הולדת</option><option>מסיבה פרטית</option>
@@ -395,6 +399,24 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           </div>
           <div style="margin-top:-4px;margin-bottom:8px;padding:7px 12px;background:rgba(74,159,255,.08);border:2px solid rgba(74,159,255,.2);border-radius:10px;font-size:13px;color:#4a9fff">
             <span style="color:var(--muted)">שם האירוע: </span><span id="evNamePreview" style="font-weight:900;color:white">בת המצווה ...</span>
+          </div>
+          <!-- ══ שדות ייעודיים לחתונה ══ -->
+          <div id="weddingFields" style="display:none;margin-bottom:10px;padding:12px;background:rgba(255,215,0,.06);border:2px solid rgba(255,215,0,.25);border-radius:12px">
+            <div style="font-size:13px;font-weight:900;color:#FFD700;margin-bottom:10px">💍 פרטי חתונה</div>
+            <div class="fld-row">
+              <div class="fld"><label>שם בן/בת זוג</label><input type="text" id="evPartner" placeholder='למשל: ליאם'></div>
+              <div class="fld"><label>מונוגרמה (אופציונלי)</label><input type="text" id="evMonogram" placeholder='M & L' maxlength="10"></div>
+            </div>
+            <div class="fld"><label>URL לתמונת ההירו (אופציונלי)</label><input type="text" id="evHeroImage" placeholder='https://...'></div>
+            <div class="fld-row">
+              <div class="fld"><label>שפת ברירת מחדל לדף האורח</label>
+                <select id="evWeddingLang"><option value="auto">אוטומטי לפי דפדפן</option><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
+              </div>
+              <div class="fld"><label>מקס׳ כוכבי Must לכל אורח</label><input type="number" id="evMaxStars" min="1" max="30" value="10"></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px">
+              💡 דף החתונה מציג שתי רשימות נפרדות: <b>קבלת פנים</b> ו<b>מסיבה</b>. כל אורח יבחר שירים לכל אחת בנפרד, ויוכל לסמן עד 10 כ-Must.
+            </div>
           </div>
           <div class="fld-row">
             <div class="fld"><label>תאריך</label><input type="date" id="evDate"></div>
@@ -437,21 +459,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <div id="prefixesList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:12px"></div>
           <button class="btn-full btn-red" onclick="savePrefixes()">💾 שמור קידומות</button>
         </div>
-        <!-- Manage Games -->
-        <div class="admin-card">
-          <h3>🎮 ניהול משחקים</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">הגדר שם, סוג (חינם/פרימיום), הערה והסבר לכל משחק. ניתן להוסיף ולהסיר משחקים.</p>
-          <div id="gamesAdminList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
-          <button class="btn-full btn-blue" style="margin-bottom:8px" onclick="addGame()">+ הוסף משחק</button>
-          <button class="btn-full btn-red" onclick="saveGames()">💾 שמור משחקים</button>
-        </div>
-        <!-- DJ Q&A Section Text -->
-        <div class="admin-card">
-          <h3>📬 ערוך טקסט אזור שאלות לDJ</h3>
-          <p style="font-size:12px;color:var(--muted);margin-bottom:10px">הטקסט שמוצג לחוגג/ת מעל תיבת השאלות לדיג׳יי</p>
-          <div class="fld"><textarea id="djQIntroText" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע."></textarea></div>
-          <button class="btn-full btn-red" onclick="saveDJQIntro()">💾 שמור טקסט</button>
-        </div>
+        <!-- Manage DJs -->
         <div class="admin-card">
           <h3>🎧 ניהול דיג׳יים</h3>
           <div id="djManageList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px"></div>
@@ -490,6 +498,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <button class="btn-full btn-danger" onclick="clearEQ()">🗑️ נקה תור</button>
     </div>
     <div class="qsec">
+      <!-- Wedding-only: tabs for reception / party -->
+      <div id="eqWeddingTabs" style="display:none;gap:8px;margin:8px 0 12px">
+        <button id="eqWTReception" onclick="setEqWeddingList('reception')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,215,0,.5);background:rgba(255,215,0,.15);color:#FFD700;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">💐 קבלת פנים <span id="eqWTReceptionCount" style="font-weight:400;color:#bbb">(0)</span></button>
+        <button id="eqWTParty" onclick="setEqWeddingList('party')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">🪩 מסיבה <span id="eqWTPartyCount" style="font-weight:400">(0)</span></button>
+      </div>
       <!-- Celebrant choices display -->
       <div id="celebrantChoicesDisplay" style="display:none;background:rgba(168,85,247,.08);border:2px solid rgba(168,85,247,.3);border-radius:14px;padding:12px 16px;margin-bottom:6px">
         <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:8px">🎮 פעילויות שבחר/ה החוגג/ת</div>
@@ -550,7 +563,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <div style="font-size:22px;text-align:center;margin-bottom:6px">👑</div>
     <div id="premiumModalTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:#D4AF37;text-align:center;margin-bottom:12px"></div>
     <input type="hidden" id="premiumModalGameId">
-    <div style="font-size:13px;color:#aaa;margin-bottom:20px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. לחיצה על "שלח בקשה" תשלח הודעה לדיג׳יי ולמשרד, ואנחנו ניצור קשר לתיאום ותשלום.</div>
+    <div style="font-size:13px;color:#aaa;margin-bottom:16px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. השאר/י מספר טלפון של הורה ואנחנו ניצור קשר לתיאום ותשלום.</div>
+    <div style="font-size:13px;color:#888;margin-bottom:6px;font-weight:700">📱 טלפון הורה ליצירת קשר</div>
+    <input type="tel" id="premiumModalPhone" placeholder="050-000-0000" style="width:100%;background:rgba(255,255,255,.08);border:2px solid rgba(212,175,55,.3);border-radius:10px;color:white;padding:10px 12px;font-family:'Heebo',sans-serif;font-size:15px;direction:rtl;outline:none;box-sizing:border-box;margin-bottom:16px">
     <button onclick="submitPremiumInterest()" style="width:100%;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:12px;cursor:pointer;margin-bottom:8px">שלח בקשה 👑</button>
     <button onclick="closePremiumModal()" style="width:100%;background:transparent;border:none;color:#666;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer">ביטול</button>
   </div>
@@ -574,6 +589,203 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <div id="djMsgModalList" style="flex:1;overflow-y:auto;padding:16px;direction:rtl"></div>
   </div>
+</div>
+
+<!-- ══ WEDDING GUEST VIEW ══ -->
+<div id="sWedding" class="scr">
+<style>
+  /* CSS מקומי למסך החתונה — לא משפיע על שאר האפליקציה */
+  #sWedding {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    direction: ltr;
+    min-height: 100vh;
+    padding: 0 !important;
+  }
+  #sWedding * { box-sizing: border-box; }
+  .wf-frame {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1a1a1a;
+  }
+  .wf-script { font-family: 'Allura', 'Brush Script MT', cursive; font-weight: 400; }
+  .wf-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .wf-lang-btn {
+    background: none; border: 0.5px solid #1a1a1a; padding: 4px 10px;
+    border-radius: 3px; font-size: 12px; letter-spacing: 2px;
+    color: #1a1a1a; cursor: pointer; font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-mono {
+    font-family: 'Times New Roman', Times, serif; font-size: 15px;
+    letter-spacing: 2px; color: #1a1a1a;
+  }
+  .wf-hero {
+    width: 100%; aspect-ratio: 4/5;
+    background-size: cover; background-position: center 30%;
+    background-color: #f5f5f0;
+  }
+  .wf-body { padding: 28px 28px 24px; text-align: center; }
+  .wf-the, .wf-of { font-size: 13px; letter-spacing: 6px; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-the { font-size: 14px; }
+  .wf-of { margin-bottom: 22px; }
+  .wf-wedding-word { font-size: 64px; line-height: 1; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-names { font-size: 19px; letter-spacing: 2px; margin: 0 0 20px; color: #1a1a1a; font-weight: 400; }
+  .wf-meta, .wf-countdown { font-size: 11px; letter-spacing: 2px; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-countdown { margin-bottom: 24px; }
+  .wf-divider { width: 60px; height: 0.5px; background: #1a1a1a; margin: 0 auto 14px; }
+  .wf-date-line { font-size: 13px; letter-spacing: 3px; margin: 0 0 18px; color: #1a1a1a; }
+  .wf-location-line { font-size: 12px; letter-spacing: 4px; margin: 0; color: #1a1a1a; }
+
+  html[dir="rtl"] #sWedding .wf-the,
+  html[dir="rtl"] #sWedding .wf-of,
+  html[dir="rtl"] #sWedding .wf-names,
+  html[dir="rtl"] #sWedding .wf-meta,
+  html[dir="rtl"] #sWedding .wf-countdown,
+  html[dir="rtl"] #sWedding .wf-date-line,
+  html[dir="rtl"] #sWedding .wf-location-line { letter-spacing: 1px; }
+
+  .wf-songs-section { border-top: 0.5px solid #1a1a1a; padding: 30px 22px 28px; text-align: center; }
+  .wf-songs-heading { font-size: 44px; margin: 0 0 6px; line-height: 1; color: #1a1a1a; }
+  .wf-songs-sub { font-size: 11px; letter-spacing: 3px; margin: 0 0 24px; color: #666; }
+
+  .wf-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  .wf-tab {
+    border: 0.5px solid #1a1a1a; padding: 12px 6px; border-radius: 4px;
+    background: #fff; color: #1a1a1a; text-align: center; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-tab.active { background: #1a1a1a; color: #fff; }
+  .wf-tab-label { font-size: 10px; letter-spacing: 2px; margin: 0 0 2px; text-transform: uppercase; }
+  .wf-tab-name { font-size: 13px; margin: 0; font-weight: 500; }
+
+  .wf-search-box { position: relative; margin-bottom: 14px; }
+  .wf-search-input {
+    width: 100%; padding: 11px 38px 11px 12px;
+    border: 0.5px solid #1a1a1a; border-radius: 4px;
+    font-size: 14px; background: #fff; color: #1a1a1a;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  html[dir="rtl"] #sWedding .wf-search-input { padding: 11px 12px 11px 38px; }
+  .wf-search-input:focus { outline: none; border-width: 1px; }
+  .wf-search-icon {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    right: 12px; font-size: 14px; opacity: 0.5; pointer-events: none;
+  }
+  html[dir="rtl"] #sWedding .wf-search-icon { right: auto; left: 12px; }
+
+  .wf-search-results { background: #f7f7f5; border-radius: 4px; margin-bottom: 14px; max-height: 320px; overflow-y: auto; }
+  .wf-search-results:empty { display: none; }
+  .wf-search-result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-bottom: 0.5px solid rgba(0,0,0,0.08);
+    text-align: start;
+  }
+  .wf-search-result:last-child { border-bottom: none; }
+  .wf-search-result-cover {
+    width: 38px; height: 38px; border-radius: 4px;
+    background: #ddd; background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .wf-search-result-info { flex: 1; min-width: 0; }
+  .wf-search-result-title { font-size: 13px; margin: 0 0 2px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
+  .wf-search-result-artist { font-size: 11px; color: #666; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wf-search-result-actions { display: flex; gap: 6px; align-items: center; }
+  .wf-icon-btn {
+    background: none; border: 0.5px solid #1a1a1a; border-radius: 4px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #1a1a1a; padding: 0; cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-icon-btn.add { font-size: 16px; }
+  .wf-icon-btn.preview { font-size: 11px; }
+
+  .wf-must-hint {
+    display: flex; align-items: center; gap: 8px;
+    background: #faf6e8; border: 0.5px solid rgba(224,169,0,0.4);
+    border-radius: 4px; padding: 9px 12px; margin-bottom: 14px;
+    text-align: start;
+  }
+  .wf-must-hint-star { color: #e0a900; font-size: 15px; line-height: 1; flex-shrink: 0; }
+  .wf-must-hint-text { font-size: 11px; line-height: 1.4; color: #6b5400; }
+
+  .wf-song-list { text-align: start; }
+  .wf-song-list-empty { text-align: center; font-size: 12px; color: #666; padding: 20px 0; }
+  .wf-song-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+  .wf-song-row:last-child { border-bottom: none; }
+  .wf-song-cover { width: 40px; height: 40px; border-radius: 4px; background: #ddd; background-size: cover; background-position: center; flex-shrink: 0; }
+  .wf-song-info { flex: 1; min-width: 0; }
+  .wf-song-title { font-size: 13px; margin: 0 0 2px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
+  .wf-song-artist { font-size: 11px; color: #666; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wf-song-actions { display: flex; gap: 6px; }
+  .wf-star-btn, .wf-remove-btn { background: none; border: none; font-size: 18px; line-height: 1; padding: 4px 6px; color: #bbb; cursor: pointer; font-family: Arial, Helvetica, sans-serif; }
+  .wf-star-btn.starred { color: #e0a900; }
+  .wf-remove-btn { font-size: 20px; color: #aaa; }
+
+  .wf-count-line { font-size: 10px; letter-spacing: 2px; color: #666; margin: 18px 0 0; text-align: center; }
+  .wf-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #1a1a1a; color: #fff; padding: 10px 18px; border-radius: 4px;
+    font-size: 12px; letter-spacing: 1px; z-index: 100; opacity: 0;
+    transition: opacity 0.2s; pointer-events: none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-toast.show { opacity: 1; }
+</style>
+
+<div class="wf-frame" id="weddingFrame">
+  <div class="wf-topbar">
+    <span style="width:34px;display:inline-block;"></span>
+    <span class="wf-mono" id="wfMonogram"></span>
+    <button class="wf-lang-btn" id="wfLangToggle">EN</button>
+  </div>
+  <div class="wf-hero" id="wfHero"></div>
+  <div class="wf-body">
+    <p class="wf-the" id="wfWordThe"></p>
+    <p class="wf-wedding-word wf-script" id="wfWordWedding"></p>
+    <p class="wf-of" id="wfWordOf"></p>
+    <p class="wf-names" id="wfCoupleNames"></p>
+    <p class="wf-meta" id="wfMetaLine"></p>
+    <p class="wf-countdown" id="wfCountdown"></p>
+    <div class="wf-divider"></div>
+    <p class="wf-date-line" id="wfDateLine"></p>
+    <div class="wf-divider"></div>
+    <p class="wf-location-line" id="wfLocationLine"></p>
+  </div>
+  <section class="wf-songs-section">
+    <p class="wf-songs-heading wf-script" id="wfSongsHeading"></p>
+    <p class="wf-songs-sub" id="wfSongsSub"></p>
+    <div class="wf-tabs">
+      <button class="wf-tab active" data-list="reception" onclick="wfSwitchTab('reception')">
+        <p class="wf-tab-label" id="wfTabReceptionLabel"></p>
+        <p class="wf-tab-name" id="wfTabReceptionName"></p>
+      </button>
+      <button class="wf-tab" data-list="party" onclick="wfSwitchTab('party')">
+        <p class="wf-tab-label" id="wfTabPartyLabel"></p>
+        <p class="wf-tab-name" id="wfTabPartyName"></p>
+      </button>
+    </div>
+    <div class="wf-search-box">
+      <input type="text" class="wf-search-input" id="wfSearchInput">
+      <span class="wf-search-icon">🔍</span>
+    </div>
+    <div class="wf-search-results" id="wfSearchResults"></div>
+    <div class="wf-must-hint">
+      <span class="wf-must-hint-star">★</span>
+      <span class="wf-must-hint-text" id="wfMustHintText"></span>
+    </div>
+    <div class="wf-song-list" id="wfSongList"></div>
+    <p class="wf-count-line" id="wfCountLine"></p>
+  </section>
+</div>
+<div class="wf-toast" id="wfToast"></div>
 </div>
 
 <!-- ══ ABOUT ══ -->
@@ -721,7 +933,7 @@ let currentUserName='';
 // Restore DJ session if previously logged in
 if(currentUserType){isDJ=true;}
 let currentRoom='main';
-let allQueues={},allEvents={},_unreadMsgs={};
+let allQueues={},allEvents={};
 let currentEQRoom=null,prevScreen=null;
 let votedSongs={};
 let _sRes=[],searchT;
@@ -742,21 +954,22 @@ document.addEventListener('fb-ready',()=>{
     loadWaMsgTemplate();
     handleSpotifyCB();
     // Auto-finish pending Spotify export after page reload
-    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
-      setTimeout(()=>exportSpotify(),1500);
+    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_spt')){
+      if(localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs')){
+        setTimeout(()=>exportSpotify(),1500);
+      } else if(localStorage.getItem('b_sp_wedding')){
+        // השלמת ייצוא חתונה — נטפל אחרי שהאירועים נטענים ופותחים את ה-EQ
+        const savedRoom=localStorage.getItem('b_sp_room');
+        setTimeout(()=>{
+          if(savedRoom&&allEvents[savedRoom]){
+            const ev=allEvents[savedRoom];
+            openEQ(savedRoom,ev.name,ev.type||'','');
+            setTimeout(()=>exportSpotifyWedding(),800);
+          }
+        },1500);
+      }
     }
     onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
-    // Track unread DJ messages across all events
-    onValue(fbRef(db,'events'),snap=>{
-      const evs=snap.val()||{};
-      Object.keys(evs).forEach(rid=>{
-        onValue(fbRef(db,'events/'+rid+'/djMessages'),mSnap=>{
-          const msgs=mSnap.val()||{};
-          _unreadMsgs[rid]=Object.values(msgs).filter(m=>!m.reply&&m.from==='celebrant').length;
-          renderDJEvents();
-        });
-      });
-    });
     onValue(fbRef(db,'rooms'),snap=>{
       const r=snap.val()||{};allQueues={};
       Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
@@ -775,16 +988,30 @@ document.addEventListener('fb-ready',()=>{
 
 function initScreen(){
   if(urlRoom){
-    // Guest event page – show name entry with event details
-    show('sName');
-    loadEntryEventDetails(urlRoom);
+    // בדיקה מקדימה: אם האירוע מסוג חתונה — דילוג על מסך השם
+    get(fbRef(db,'events/'+urlRoom)).then(snap=>{
+      const ev=snap.val();
+      if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
+        // אורח אנונימי בחתונה — guestName ריק, המזהה הקיים של הדפדפן (guestId) מספיק
+        guestName='';
+        isCelebrant=false;
+        wfInit(ev);
+      } else {
+        // אירוע רגיל — זרימת הג'וקבוקס הקיימת
+        show('sName');
+        loadEntryEventDetails(urlRoom);
+      }
+    }).catch(()=>{
+      // אם נכשלה הבדיקה, נופלים לזרימה הרגילה
+      show('sName');
+      loadEntryEventDetails(urlRoom);
+    });
   } else {
     // Admin area – require login
     if(currentUserType){
-      // Set name from Firebase-loaded _djNames (fixes wrong name bug)
       currentUserName=(_djNames&&_djNames[currentUserType])||currentUserType;
       updateDJHeader();
-      djTab('events'); // always start on events, never manage
+      djTab('events');
       show('sDJ');
     } else {
       show('sDJPass');
@@ -847,6 +1074,17 @@ async function enterGuest(){
   }
 
   isCelebrant=false; // normal guest
+
+  // ── אם זו חתונה, מפנים למסך החתונה הייעודי ──
+  if(urlRoom){
+    const evSnap=await get(fbRef(db,'events/'+urlRoom));
+    const ev=evSnap.val();
+    if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
+      wfInit(ev);
+      return;
+    }
+  }
+
   show('sGuest');
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 👋';
   loadGuestEvent();
@@ -878,6 +1116,371 @@ function loadGuestEvent(){
   });
   renderGuestQ();
 }
+
+// ════════════════════════════════════════════════════════════════
+// WEDDING GUEST PAGE — לוגיקה עצמאית למסך החתונה
+// ════════════════════════════════════════════════════════════════
+const WF_I18N={
+  he:{
+    "the":"ה","wedding":"חתונה","of":"של",
+    "songs-heading":"הפסקול שלנו","songs-sub":"עזרו לנו לבנות את הפלייליסט",
+    "tab-reception-label":"RECEPTION","tab-reception-name":"קבלת פנים",
+    "tab-party-label":"PARTY","tab-party-name":"מסיבה",
+    "search-placeholder":"חפשו שיר או אמן…",
+    "must-hint":"סמנו עד ${n} שירים בכוכב — אלה השירים שחייבים להתנגן באירוע.",
+    "empty-reception":"עדיין לא נוספו שירים לקבלת פנים",
+    "empty-party":"עדיין לא נוספו שירים למסיבה",
+    "count-line":"${added}/${max} שירים · ${stars}/${maxStars} סומנו ב-★",
+    "added":"השיר נוסף","removed":"השיר הוסר",
+    "starred":"סומן כ-Must","unstarred":"הסימון הוסר",
+    "limit-reached":"הגעת למקסימום השירים ברשימה",
+    "stars-limit":"הגעת למקסימום סימוני Must",
+    "days-to-go":"נשארו ${n} ימים!",
+    "preview-error":"לא ניתן להשמיע preview לשיר זה"
+  },
+  en:{
+    "the":"THE","wedding":"Wedding","of":"OF",
+    "songs-heading":"Our Soundtrack","songs-sub":"HELP US BUILD THE PLAYLIST",
+    "tab-reception-label":"RECEPTION","tab-reception-name":"Cocktail Hour",
+    "tab-party-label":"PARTY","tab-party-name":"Dance Floor",
+    "search-placeholder":"Search song or artist…",
+    "must-hint":"Star up to ${n} songs as Must — these are the tracks the couple wants played for sure.",
+    "empty-reception":"No songs added to reception yet",
+    "empty-party":"No songs added to party yet",
+    "count-line":"${added}/${max} songs · ${stars}/${maxStars} marked ★",
+    "added":"Song added","removed":"Song removed",
+    "starred":"Marked as Must","unstarred":"Mark removed",
+    "limit-reached":"You reached the song limit",
+    "stars-limit":"You reached the Must limit",
+    "days-to-go":"${n} DAYS TO GO!",
+    "preview-error":"Preview not available for this song"
+  }
+};
+
+const wfState={
+  lang:"he",
+  activeList:"reception",
+  guestId:null,
+  guestName:null,
+  songs:{reception:[],party:[]},
+  searchTimeout:null,
+  audio:null,
+  currentPreviewId:null,
+  event:null,
+  unsubs:[]
+};
+
+function wfT(key,vars){
+  let s=WF_I18N[wfState.lang][key]||"";
+  if(vars){Object.keys(vars).forEach(k=>{s=s.split('${'+k+'}').join(vars[k]);});}
+  return s;
+}
+
+function wfDetectInitialLang(){
+  const cfg=wfState.event&&wfState.event.weddingConfig;
+  if(cfg){
+    if(cfg.defaultLanguage==='he')return 'he';
+    if(cfg.defaultLanguage==='en')return 'en';
+  }
+  const bl=(navigator.language||'en').toLowerCase();
+  return bl.startsWith('he')?'he':'en';
+}
+
+function wfSetLang(lang){
+  wfState.lang=lang;
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='he'?'rtl':'ltr';
+  const btn=document.getElementById('wfLangToggle');
+  if(btn)btn.textContent=lang==='he'?'EN':'עב';
+  wfRenderStatic();
+  wfRenderSongList();
+  wfUpdateCountLine();
+}
+
+function wfRenderStatic(){
+  const ev=wfState.event;if(!ev)return;
+  const cfg=ev.weddingConfig||{};
+  const lang=wfState.lang;
+  // מונוגרמה + הירו
+  document.getElementById('wfMonogram').textContent=cfg.monogram||'';
+  const heroEl=document.getElementById('wfHero');
+  if(cfg.heroImage)heroEl.style.backgroundImage="url('"+cfg.heroImage+"')";
+  else heroEl.style.backgroundImage="url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80')";
+  // טקסט בכותרת
+  document.getElementById('wfWordThe').textContent=wfT('the');
+  document.getElementById('wfWordWedding').textContent=wfT('wedding');
+  document.getElementById('wfWordOf').textContent=wfT('of');
+  const couple=cfg.coupleNames||{he:'',en:''};
+  document.getElementById('wfCoupleNames').textContent=couple[lang]||couple.he||couple.en||'';
+  // תאריך + מיקום
+  let dateDisplay='';
+  if(ev.date){
+    const d=new Date(ev.date+'T00:00:00');
+    if(lang==='he')dateDisplay=d.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
+    else dateDisplay=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  }
+  document.getElementById('wfDateLine').textContent=dateDisplay;
+  document.getElementById('wfLocationLine').textContent=(ev.location||'').toUpperCase();
+  document.getElementById('wfMetaLine').textContent=dateDisplay+(ev.location?' · '+ev.location:'');
+  // ספירה לאחור
+  if(ev.date){
+    const today=new Date();
+    const eventDate=new Date(ev.date+'T00:00:00');
+    const days=Math.max(0,Math.ceil((eventDate-today)/(1000*60*60*24)));
+    document.getElementById('wfCountdown').textContent=wfT('days-to-go',{n:days});
+  }
+  // סקציית שירים
+  document.getElementById('wfSongsHeading').textContent=wfT('songs-heading');
+  document.getElementById('wfSongsSub').textContent=wfT('songs-sub');
+  document.getElementById('wfTabReceptionLabel').textContent=wfT('tab-reception-label');
+  document.getElementById('wfTabReceptionName').textContent=wfT('tab-reception-name');
+  document.getElementById('wfTabPartyLabel').textContent=wfT('tab-party-label');
+  document.getElementById('wfTabPartyName').textContent=wfT('tab-party-name');
+  document.getElementById('wfSearchInput').placeholder=wfT('search-placeholder');
+  const maxStars=cfg.maxStarsPerGuest||10;
+  document.getElementById('wfMustHintText').textContent=wfT('must-hint',{n:maxStars});
+}
+
+function wfSwitchTab(listName){
+  wfState.activeList=listName;
+  document.querySelectorAll('#sWedding .wf-tab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.list===listName);
+  });
+  document.getElementById('wfSearchInput').value='';
+  document.getElementById('wfSearchResults').innerHTML='';
+  wfRenderSongList();
+  wfUpdateCountLine();
+}
+
+function wfInit(ev){
+  // ניקוי מאזיני Firebase קודמים אם יש
+  wfState.unsubs.forEach(unsub=>{try{unsub();}catch(e){}});
+  wfState.unsubs=[];
+  wfState.event=ev;
+  wfState.guestId=guestId; // מזהה דפדפן יציב
+  wfState.guestName=guestName||'Guest'; // אורח אנונימי בחתונה
+  wfState.songs={reception:[],party:[]};
+  wfState.activeList='reception';
+  // קביעת שפה
+  wfSetLang(wfDetectInitialLang());
+  // טוגל שפה
+  const btn=document.getElementById('wfLangToggle');
+  if(btn){btn.onclick=()=>wfSetLang(wfState.lang==='he'?'en':'he');}
+  // הצגת המסך
+  show('sWedding');
+  // התחלת חיפוש
+  wfSetupSearch();
+  // האזנה ל-Firebase
+  wfStartSongListeners();
+}
+
+function wfStartSongListeners(){
+  const rid=wfState.event.roomId||urlRoom;
+  if(!rid)return;
+  ['reception','party'].forEach(listName=>{
+    const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+listName+'/songs');
+    const unsub=onValue(listRef,snap=>{
+      const all=[];const mine=[];
+      snap.forEach(child=>{
+        const song={_id:child.key,...child.val()};
+        all.push(song);
+        if(song.addedBy===wfState.guestId)mine.push(song);
+      });
+      mine.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      wfState.songs[listName]=mine;
+      if(listName===wfState.activeList){wfRenderSongList();}
+      wfUpdateCountLine();
+    });
+    wfState.unsubs.push(unsub);
+  });
+}
+
+function wfSetupSearch(){
+  const input=document.getElementById('wfSearchInput');
+  const results=document.getElementById('wfSearchResults');
+  input.oninput=()=>{
+    const q=input.value.trim();
+    clearTimeout(wfState.searchTimeout);
+    if(q.length<2){results.innerHTML='';return;}
+    results.innerHTML='<div style="text-align:center;padding:14px;font-size:11px;color:#999;letter-spacing:2px">…</div>';
+    wfState.searchTimeout=setTimeout(()=>wfDoSearch(q),350);
+  };
+}
+
+async function wfDoSearch(query){
+  const results=document.getElementById('wfSearchResults');
+  try{
+    const res=await fetch('/api/itunes-search?term='+encodeURIComponent(query)+'&limit=8');
+    const data=await res.json();
+    wfRenderSearchResults(data.results||[]);
+  }catch(err){
+    console.error(err);
+    // fallback ישיר ל-iTunes אם ה-proxy לא עובד
+    try{
+      const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(query)+'&entity=song&limit=8');
+      const d2=await r2.json();
+      wfRenderSearchResults(d2.results||[]);
+    }catch(e2){results.innerHTML='';}
+  }
+}
+
+function wfEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+
+function wfRenderSearchResults(items){
+  const results=document.getElementById('wfSearchResults');
+  if(!items.length){results.innerHTML='';return;}
+  results.innerHTML=items.map((item,idx)=>{
+    const cover=(item.artworkUrl100||'').replace('100x100','200x200');
+    return `<div class="wf-search-result" data-idx="${idx}">
+      <div class="wf-search-result-cover" style="background-image:url('${wfEsc(cover)}')"></div>
+      <div class="wf-search-result-info">
+        <p class="wf-search-result-title">${wfEsc(item.trackName)}</p>
+        <p class="wf-search-result-artist">${wfEsc(item.artistName)}</p>
+      </div>
+      <div class="wf-search-result-actions">
+        <button class="wf-icon-btn preview" data-preview="${wfEsc(item.previewUrl||'')}">▶</button>
+        <button class="wf-icon-btn add" data-add="${idx}">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  // wire buttons
+  results.querySelectorAll('.wf-icon-btn.add').forEach(btn=>{
+    btn.onclick=()=>{
+      const idx=parseInt(btn.dataset.add);
+      const item=items[idx];
+      wfAddSong({
+        trackId:item.trackId,
+        title:item.trackName,
+        artist:item.artistName,
+        album:item.collectionName||'',
+        cover:(item.artworkUrl100||'').replace('100x100','200x200'),
+        previewUrl:item.previewUrl||'',
+        spotifyQuery:item.trackName+' '+item.artistName
+      });
+    };
+  });
+  results.querySelectorAll('.wf-icon-btn.preview').forEach(btn=>{
+    btn.onclick=()=>{
+      const url=btn.dataset.preview;
+      if(!url){wfShowToast(wfT('preview-error'));return;}
+      wfTogglePreview(url,btn);
+    };
+  });
+}
+
+function wfTogglePreview(url,btn){
+  if(wfState.audio&&wfState.currentPreviewId===url){
+    wfState.audio.pause();
+    wfState.audio=null;wfState.currentPreviewId=null;
+    document.querySelectorAll('#sWedding .wf-icon-btn.preview').forEach(b=>b.textContent='▶');
+    return;
+  }
+  if(wfState.audio)wfState.audio.pause();
+  wfState.audio=new Audio(url);
+  wfState.currentPreviewId=url;
+  wfState.audio.play().catch(()=>wfShowToast(wfT('preview-error')));
+  document.querySelectorAll('#sWedding .wf-icon-btn.preview').forEach(b=>b.textContent='▶');
+  btn.textContent='⏸';
+  wfState.audio.addEventListener('ended',()=>{btn.textContent='▶';wfState.currentPreviewId=null;});
+}
+
+async function wfAddSong(songData){
+  const cfg=wfState.event.weddingConfig||{};
+  const maxSongs=cfg.maxSongsPerGuestPerList||5;
+  const list=wfState.songs[wfState.activeList];
+  if(list.length>=maxSongs){wfShowToast(wfT('limit-reached'));return;}
+  if(list.some(s=>s.trackId===songData.trackId))return;
+  const rid=wfState.event.roomId||urlRoom;
+  const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs');
+  const newRef=push(listRef);
+  await set(newRef,{
+    trackId:songData.trackId,title:songData.title,artist:songData.artist,
+    album:songData.album,cover:songData.cover,previewUrl:songData.previewUrl,
+    spotifyQuery:songData.spotifyQuery,
+    addedBy:wfState.guestId,addedByName:wfState.guestName,
+    starred:false,createdAt:Date.now()
+  });
+  wfShowToast(wfT('added'));
+  document.getElementById('wfSearchInput').value='';
+  document.getElementById('wfSearchResults').innerHTML='';
+}
+
+async function wfRemoveSong(songId){
+  const rid=wfState.event.roomId||urlRoom;
+  await set(fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs/'+songId),null);
+  wfShowToast(wfT('removed'));
+}
+
+async function wfToggleStar(songId){
+  const list=wfState.songs[wfState.activeList];
+  const song=list.find(s=>s._id===songId);
+  if(!song)return;
+  const cfg=wfState.event.weddingConfig||{};
+  const maxStars=cfg.maxStarsPerGuest||10;
+  if(!song.starred){
+    const totalStars=wfCountStars();
+    if(totalStars>=maxStars){wfShowToast(wfT('stars-limit'));return;}
+  }
+  const rid=wfState.event.roomId||urlRoom;
+  const newStarred=!song.starred;
+  await set(fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs/'+songId+'/starred'),newStarred);
+  wfShowToast(newStarred?wfT('starred'):wfT('unstarred'));
+}
+
+function wfCountStars(){
+  return wfState.songs.reception.filter(s=>s.starred).length+
+         wfState.songs.party.filter(s=>s.starred).length;
+}
+
+function wfRenderSongList(){
+  const list=wfState.songs[wfState.activeList];
+  const container=document.getElementById('wfSongList');
+  if(!list.length){
+    const emptyKey=wfState.activeList==='reception'?'empty-reception':'empty-party';
+    container.innerHTML='<p class="wf-song-list-empty">'+wfT(emptyKey)+'</p>';
+    return;
+  }
+  container.innerHTML=list.map(song=>`
+    <div class="wf-song-row">
+      <div class="wf-song-cover" style="background-image:url('${wfEsc(song.cover)}')"></div>
+      <div class="wf-song-info">
+        <p class="wf-song-title">${wfEsc(song.title)}</p>
+        <p class="wf-song-artist">${wfEsc(song.artist)}</p>
+      </div>
+      <div class="wf-song-actions">
+        <button class="wf-star-btn ${song.starred?'starred':''}" data-star="${wfEsc(song._id)}">${song.starred?'★':'☆'}</button>
+        <button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>
+      </div>
+    </div>`).join('');
+  container.querySelectorAll('[data-star]').forEach(btn=>{
+    btn.onclick=()=>wfToggleStar(btn.dataset.star);
+  });
+  container.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.onclick=()=>wfRemoveSong(btn.dataset.remove);
+  });
+}
+
+function wfUpdateCountLine(){
+  const cfg=(wfState.event&&wfState.event.weddingConfig)||{};
+  const list=wfState.songs[wfState.activeList];
+  const stars=wfCountStars();
+  document.getElementById('wfCountLine').textContent=wfT('count-line',{
+    added:list.length,
+    max:cfg.maxSongsPerGuestPerList||5,
+    stars:stars,
+    maxStars:cfg.maxStarsPerGuest||10
+  });
+}
+
+function wfShowToast(msg){
+  const t=document.getElementById('wfToast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(wfShowToast._t);
+  wfShowToast._t=setTimeout(()=>t.classList.remove('show'),1800);
+}
+// ════════════════════════════════════════════════════════════════
 
 function getTypeEmoji(t){return({'חתונה 💍':'💍','בר מצווה ✡️':'✡️','בת מצווה ✨':'✨','יום הולדת 🎂':'🎂','מסיבה פרטית 🎉':'🎉','אירוע חברה 🏢':'🏢','אחר 🎵':'🎵'}[t])||'🎵';}
 
@@ -1200,7 +1803,7 @@ async function editDJNote(rid,currentNote){
 const CELEBRANT_GAMES = [
   {id:'kiss_slap',   name:'נשיקה סטירה',          emoji:'💋',  premium:false},
   {id:'objects',     name:'משחק החפצים',           emoji:'🎒',  premium:false},
-  {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:true},
+  {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:false},
   {id:'dance',       name:'תחרות ריקודים "הכל הולך"', emoji:'🕺', premium:false},
   {id:'vault',       name:'משחק הכספות',            emoji:'🔐',  premium:true},
   {id:'goldcage',    name:'כלוב הזהב',              emoji:'🏅',  premium:true},
@@ -1214,11 +1817,6 @@ const GAME_DESC_DEFAULTS = {
   goldcage:  'החוגג/ת בתוך כלוב הזהב — הקהל מרים אותו/ה ומעניק מחמאות ואהבה. חוויה שלא תישכח! שדרוג פרימיום.',
 };
 let _gameDescriptions = {...GAME_DESC_DEFAULTS};
-// Dynamic games list — overrides CELEBRANT_GAMES when loaded from Firebase
-let _dynamicGames = CELEBRANT_GAMES.map(g=>({...g, desc:GAME_DESC_DEFAULTS[g.id]||'', note:''}));
-let _djQIntroText = 'רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע.';
-// Helper: get active games list (dynamic if loaded, else static)
-function getActiveGames(){return _dynamicGames;}
 let celebrantChoicesSelected = new Set();
 
 async function openCelebrantActivities(){
@@ -1264,15 +1862,15 @@ async function openCelebrantActivities(){
 function renderCelebrantGameList(){
   const list=document.getElementById('celebActGameList');
   if(!list)return;
-  const freeGames=getActiveGames().filter(g=>!g.premium);
-  const premiumGames=getActiveGames().filter(g=>g.premium);
+  const freeGames=CELEBRANT_GAMES.filter(g=>!g.premium);
+  const premiumGames=CELEBRANT_GAMES.filter(g=>g.premium);
   function renderGame(g){
     const sel=celebrantChoicesSelected.has(g.id);
     const bg=sel?'rgba(168,85,247,.15)':'rgba(255,255,255,.04)';
     const border=sel?'rgba(168,85,247,.6)':'rgba(255,255,255,.1)';
     const chkBg=sel?'#a855f7':'transparent';
     const chkBorder=sel?'#a855f7':'rgba(255,255,255,.2)';
-    const noteBadge=g.note?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">🟢 '+esc(g.note)+'</span>':'';
+    const freeBadge=(g.id==='songs')?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">&#x1F7E2; ללא עלות זמנית</span>':'';
     const premiumSub=g.premium?'<div style="font-size:11px;color:#aaa;margin-top:2px">שדרוג בתשלום — המשרד ייצור קשר</div>':'';
     const id=g.id;
     const infoBtn='<button onclick="event.stopPropagation();showGameInfo(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
@@ -1281,7 +1879,7 @@ function renderCelebrantGameList(){
     const clickHandler='toggleCelebrantGame(&quot;'+id+'&quot;)';
     return '<div style="display:flex;align-items:center;gap:10px;background:'+bg+';border:2px solid '+border+';border-radius:12px;padding:12px 14px;cursor:'+cursor+'" onclick="'+clickHandler+'">'
       +'<span style="font-size:22px">'+g.emoji+'</span>'
-      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+noteBadge+'</div>'+premiumSub+'</div>'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+freeBadge+'</div>'+premiumSub+'</div>'
       +infoBtn
       +chk
       +'</div>';
@@ -1295,9 +1893,9 @@ function renderCelebrantGameList(){
 }
 
 function showGameInfo(id){
-  const game=getActiveGames().find(g=>g.id===id);
+  const game=CELEBRANT_GAMES.find(g=>g.id===id);
   if(!game)return;
-  const desc=game.desc||_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
+  const desc=_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
   const modal=document.getElementById('gameInfoModal');
   document.getElementById('gameInfoTitle').textContent=game.emoji+' '+game.name;
   document.getElementById('gameInfoDesc').textContent=desc;
@@ -1309,7 +1907,7 @@ function updateCelebChoiceSummary(){
   const summary=document.getElementById('celebChoiceSummary');
   const list=document.getElementById('celebChoiceSummaryList');
   if(!summary||!list)return;
-  const sel=getActiveGames().filter(g=>celebrantChoicesSelected.has(g.id));
+  const sel=CELEBRANT_GAMES.filter(g=>celebrantChoicesSelected.has(g.id));
   if(sel.length){
     list.innerHTML=sel.map(g=>'<span style="background:rgba(168,85,247,.2);border:1.5px solid rgba(168,85,247,.5);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#c084fc">'+g.emoji+' '+g.name+'</span>').join('');
     summary.style.display='block';
@@ -1321,11 +1919,14 @@ function updateCelebChoiceSummary(){
 function openPremiumModal(id,game){
   document.getElementById('premiumModalTitle').textContent=game.emoji+' '+game.name;
   document.getElementById('premiumModalGameId').value=id;
+  document.getElementById('premiumModalPhone').value='';
   document.getElementById('premiumModal').style.display='flex';
 }
 function closePremiumModal(){document.getElementById('premiumModal').style.display='none';}
 async function submitPremiumInterest(){
   const id=document.getElementById('premiumModalGameId').value;
+  const phone=document.getElementById('premiumModalPhone').value.trim();
+  if(!phone){toast('יש להזין מספר טלפון','error');return;}
   if(!currentRoom){closePremiumModal();return;}
   // בדיקת 24ש' לפני האירוע
   try{
@@ -1341,9 +1942,9 @@ async function submitPremiumInterest(){
       }
     }
   }catch(e){}
-  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת'});
+  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת',phone});
   closePremiumModal();
-  toast('💌 קיבלנו! הדיג׳יי והמשרד יצרו איתך קשר בהקדם','success',5000);
+  toast('💌 קיבלנו! המשרד ייצור קשר למספר '+phone,'success',5000);
 }
 
 async function notifyPremiumInterest(gameId){
@@ -1353,13 +1954,13 @@ async function notifyPremiumInterest(gameId){
   }catch(e){}
 }
 async function toggleCelebrantGame(id){
-  const game=getActiveGames().find(g=>g.id===id);
+  const game=CELEBRANT_GAMES.find(g=>g.id===id);
   if(!game)return;
   if(game.premium){
     openPremiumModal(id,game);
     return;
   }
-  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!getActiveGames().find(x=>x.id===sid)?.premium);
+  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!CELEBRANT_GAMES.find(x=>x.id===sid)?.premium);
   if(celebrantChoicesSelected.has(id)){
     celebrantChoicesSelected.delete(id);
   } else {
@@ -1371,14 +1972,14 @@ async function toggleCelebrantGame(id){
   if(!currentRoom)return;
   try{
     const obj={};
-    getActiveGames().filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+    CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
     await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
   }catch(e){toast('שגיאה בשמירה','error');}
 }
 
 async function saveCelebrantChoices(){
   const obj={};
-  getActiveGames().filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+  CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
   await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
   toast('✅ הבחירה נשמרה!','success');
   // הצג שאלות לDJ אחרי אישור
@@ -1490,26 +2091,36 @@ function updateEvNamePreview(){
   if(el)el.textContent=getEventPrefix(type,name);
 }
 
+// מציג/מסתיר שדות חתונה לפי סוג האירוע + מחליף תוויות
+function onEvTypeChange(){
+  const type=document.getElementById('evType').value;
+  const isWedding=type==='חתונה';
+  const wf=document.getElementById('weddingFields');
+  if(wf)wf.style.display=isWedding?'block':'none';
+  const nameLabel=document.getElementById('evNameLabel');
+  if(nameLabel)nameLabel.textContent=isWedding?'שם בן/בת זוג ראשון':'שם החוגג/ת';
+  const nameInput=document.getElementById('evName');
+  if(nameInput&&isWedding&&nameInput.placeholder==='דנה')nameInput.placeholder='מרגרט';
+  if(nameInput&&!isWedding&&nameInput.placeholder==='מרגרט')nameInput.placeholder='דנה';
+}
+
 async function loadConfig(){
-  const [namesSnap,passSnap,prefixesSnap,tmplSnap,gamesSnap,djQSnap]=await Promise.all([
+  const [namesSnap,passSnap,prefixesSnap,tmplSnap]=await Promise.all([
     get(fbRef(db,'config/djNames')),
     get(fbRef(db,'config/passwords')),
     get(fbRef(db,'config/eventPrefixes')),
-    get(fbRef(db,'config/waMsgTemplate')),
-    get(fbRef(db,'config/games')),
-    get(fbRef(db,'config/djQIntroText'))
+    get(fbRef(db,'config/waMsgTemplate'))
   ]);
   const djNames=namesSnap.val();
   const djPasswords=passSnap.val();
   const eventPrefixes=prefixesSnap.val();
   const waMsgTemplate=tmplSnap.val();
-  const gamesData=gamesSnap.val();
-  const djQText=djQSnap.val();
   if(djNames){
     _djNames={owner:DJ_NAMES.owner};
     Object.keys(djNames).forEach(k=>{if(k!=='owner')_djNames[k]=djNames[k];});
   }
   if(djPasswords){
+    // שמור את סיסמת הבעלים מהקוד, טען את שאר הסיסמאות מ-Firebase
     _userPasswords={owner:_userPasswords.owner};
     Object.keys(djPasswords).forEach(k=>{if(k!=='owner')_userPasswords[k]=djPasswords[k];});
   }
@@ -1522,14 +2133,6 @@ async function loadConfig(){
     _waMsgTemplate=waMsgTemplate;
     const el=document.getElementById('waMsgTemplate');
     if(el)el.value=waMsgTemplate;
-  }
-  if(gamesData&&Array.isArray(gamesData)){
-    _dynamicGames=[...gamesData];
-  }
-  if(djQText){
-    _djQIntroText=djQText;
-    const el=document.getElementById('celebActDjQIntro');
-    if(el)el.textContent=djQText;
   }
   // Rebuild login dropdown
   rebuildLoginSelect();
@@ -1599,98 +2202,10 @@ async function savePrefixes(){
   toast('✅ הקידומות נשמרו!','success');
 }
 
-// ── GAMES ADMIN ──
-function renderGamesAdmin(){
-  const list=document.getElementById('gamesAdminList');if(!list)return;
-  list.innerHTML=_dynamicGames.map((g,i)=>`
-    <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:14px;padding:12px 14px">
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <input type="text" id="geEmoji_${i}" value="${esc(g.emoji||'🎮')}" maxlength="4"
-          style="width:46px;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px;font-size:18px;text-align:center;direction:ltr;outline:none">
-        <input type="text" id="geName_${i}" value="${esc(g.name)}" placeholder="שם המשחק"
-          style="flex:1;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:7px 10px;font-family:Heebo,sans-serif;font-size:13px;font-weight:700;direction:rtl;outline:none">
-        <button onclick="removeGame(${i})" style="background:rgba(255,80,80,.15);border:2px solid rgba(255,80,80,.3);border-radius:8px;color:#ff5050;padding:6px 10px;cursor:pointer;font-size:16px;flex-shrink:0">🗑️</button>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
-        <label style="font-size:12px;color:var(--muted);flex-shrink:0">סוג:</label>
-        <button onclick="toggleGamePremium(${i})" id="gePrem_${i}" style="background:${g.premium?'rgba(212,175,55,.2)':'rgba(0,200,83,.15)'};border:2px solid ${g.premium?'rgba(212,175,55,.5)':'rgba(0,200,83,.4)'};border-radius:8px;color:${g.premium?'#D4AF37':'#00C853'};padding:5px 12px;font-size:12px;font-weight:900;cursor:pointer;font-family:Heebo,sans-serif">
-          ${g.premium?'👑 פרימיום':'✅ חינם'}
-        </button>
-      </div>
-      <div class="fld" style="margin-bottom:6px">
-        <label style="font-size:11px;color:var(--muted)">הערה (מוצגת לחוגג/ת)</label>
-        <input type="text" id="geNote_${i}" value="${esc(g.note||'')}" placeholder="לדוגמה: זמנית ללא עלות נוספת"
-          style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:#a0c4ff;padding:7px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
-      </div>
-      <div class="fld">
-        <label style="font-size:11px;color:var(--muted)">הסבר למשחק</label>
-        <textarea id="geDesc_${i}" rows="2"
-          style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:12px;resize:vertical;direction:rtl;outline:none">${esc(g.desc||'')}</textarea>
-      </div>
-    </div>`).join('');
-}
-
-function toggleGamePremium(i){
-  _dynamicGames[i].premium=!_dynamicGames[i].premium;
-  renderGamesAdmin();
-}
-
-function removeGame(i){
-  if(!confirm('למחוק את המשחק "'+_dynamicGames[i].name+'"?'))return;
-  _dynamicGames.splice(i,1);
-  renderGamesAdmin();
-}
-
-function addGame(){
-  _dynamicGames.push({id:'game_'+Date.now(),name:'משחק חדש',emoji:'🎮',premium:false,desc:'',note:''});
-  renderGamesAdmin();
-}
-
-function collectGamesFromUI(){
-  return _dynamicGames.map((g,i)=>{
-    const name=(document.getElementById('geName_'+i)||{}).value||g.name;
-    const emoji=(document.getElementById('geEmoji_'+i)||{}).value||g.emoji;
-    const desc=(document.getElementById('geDesc_'+i)||{}).value||'';
-    const note=(document.getElementById('geNote_'+i)||{}).value||'';
-    return {...g,name,emoji,desc,note};
-  });
-}
-
-async function saveGames(){
-  const games=collectGamesFromUI();
-  _dynamicGames=[...games];
-  // גם שמור gameDescriptions ב-about לתאימות לאחור
-  const gameDescriptions={};
-  games.forEach(g=>{gameDescriptions[g.id]=g.desc;});
-  _gameDescriptions={...gameDescriptions};
-  await Promise.all([
-    set(fbRef(db,'config/games'),games),
-    set(fbRef(db,'about/gameDescriptions'),gameDescriptions)
-  ]);
-  toast('✅ המשחקים נשמרו!','success');
-  renderGamesAdmin();
-}
-
-async function saveDJQIntro(){
-  const el=document.getElementById('djQIntroText');
-  if(!el)return;
-  const txt=el.value.trim()||_djQIntroText;
-  _djQIntroText=txt;
-  await set(fbRef(db,'config/djQIntroText'),txt);
-  // עדכן מיידית במסך החוגג
-  const introEl=document.getElementById('celebActDjQIntro');
-  if(introEl)introEl.textContent=txt;
-  toast('✅ הטקסט נשמר!','success');
-}
-
 function renderDJManage(){
   const waTmplEl=document.getElementById('waMsgTemplate');
   if(waTmplEl&&_waMsgTemplate)waTmplEl.value=_waMsgTemplate;
   renderPrefixesCard();
-  renderGamesAdmin();
-  // Load DJ Q intro text
-  const djQText=document.getElementById('djQIntroText');
-  if(djQText&&_djQIntroText)djQText.value=_djQIntroText;
   const list=document.getElementById('djManageList');if(!list)return;
   const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
   if(!djKeys.length){list.innerHTML='<div style="color:var(--muted);font-size:13px;text-align:center">אין דיג׳יים. הוסף דיג׳יי למטה.</div>';return;}
@@ -1791,12 +2306,23 @@ function updateDJHeader(){
   if(d.wa)document.getElementById('aboutWA').value=d.wa;
   if(d.ig)document.getElementById('aboutIG').value=d.ig;
   if(d.fb)document.getElementById('aboutFB').value=d.fb;
+  const gd=d.gameDescriptions||{};
+  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
+    const el=document.getElementById('gameDesc_'+id);
+    if(el)el.value=gd[id]||GAME_DESC_DEFAULTS[id]||'';
+  });
   if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
   const welEl=document.getElementById('aboutCelebrantWelcome');
   if(welEl)welEl.value=d.celebrantWelcome||'';
 }
 async function saveAbout(){
   if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  const gameDescriptions={};
+  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
+    const el=document.getElementById('gameDesc_'+id);
+    if(el)gameDescriptions[id]=el.value.trim()||GAME_DESC_DEFAULTS[id];
+  });
+  _gameDescriptions={...gameDescriptions};
   const d={
     brand:document.getElementById('aboutBrand').value.trim(),
     tagline:document.getElementById('aboutTagline').value.trim(),
@@ -1805,6 +2331,7 @@ async function saveAbout(){
     wa:document.getElementById('aboutWA').value.trim(),
     ig:document.getElementById('aboutIG').value.trim(),
     fb:document.getElementById('aboutFB').value.trim(),
+    gameDescriptions,
     celebrantWelcome:(document.getElementById('aboutCelebrantWelcome')||{}).value||'',
   };
   await set(fbRef(db,'about'),d);
@@ -1997,9 +2524,7 @@ function renderDJEvents(){
     const typeEmoji=getTypeEmoji(ev.type);
     const evTypeColor=ev.type==='חתונה'?'rgba(255,215,0,0.25)':ev.type==='אירוע חברה'?'rgba(138,43,226,0.2)':'';
     const evTypeBorder=ev.type==='חתונה'?'3px solid gold':ev.type==='אירוע חברה'?'3px solid #8B2BE2':'';
-    const unread=_unreadMsgs[rid]||0;
-    const msgBadge=unread?`<span style="background:#e8171a;color:white;border-radius:50%;min-width:18px;height:18px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;margin-right:4px;padding:0 3px;font-family:Heebo,sans-serif">${unread}</span> הודעות`:'📬 הודעות';
-    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}${unread?'border-color:rgba(232,23,26,.5);':''}">
+    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}">
       <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
@@ -2011,7 +2536,7 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
         <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
-        <button class="ev-btn" style="background:${unread?'rgba(232,23,26,.15)':'rgba(168,85,247,.1)'};color:${unread?'#ff6b6b':'#a78bfa'};border-color:${unread?'rgba(232,23,26,.5)':'rgba(168,85,247,.3)'};font-weight:${unread?'900':'700'}" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">${msgBadge}</button>
+        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות</button>
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
@@ -2033,12 +2558,37 @@ async function createEv(){
   const _djNameInput=document.getElementById('evDJName').value.trim();
   const djName=_djNameInput||(currentUserType==='owner'?'ברק':(_djNames[currentUserType]||currentUserType||'Balaganza DJ'));
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
+  // ── בניית האירוע ──
   const fullName=getEventPrefix(type,name);
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  await set(fbRef(db,'events/'+rid),{name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
-  ['evName','evDate','evTime','evLoc','evCelebrantPass'].forEach(id=>document.getElementById(id).value='');
+  const eventData={name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()};
+  // ── שדות ייחודיים לחתונה ──
+  if(type==='חתונה'){
+    const partner=document.getElementById('evPartner').value.trim();
+    if(!partner){toast('אנא הזן שם בן/בת זוג','error');return;}
+    const monogram=document.getElementById('evMonogram').value.trim()||((name[0]||'')+' & '+(partner[0]||'')).toUpperCase();
+    const heroImage=document.getElementById('evHeroImage').value.trim();
+    const weddingLang=document.getElementById('evWeddingLang').value||'auto';
+    const maxStars=parseInt(document.getElementById('evMaxStars').value)||10;
+    eventData.weddingConfig={
+      partnerName:partner,
+      coupleNames:{he:name+' ו'+partner,en:(name+' & '+partner).toUpperCase()},
+      monogram,
+      heroImage,
+      defaultLanguage:weddingLang,
+      maxSongsPerGuestPerList:maxSongs,
+      maxStarsPerGuest:maxStars
+    };
+    // ב-חתונה השם המוצג הוא של שני הזוג, לא רק החוגג/ת
+    eventData.name=getEventPrefix(type,name+' ו'+partner);
+  }
+  await set(fbRef(db,'events/'+rid),eventData);
+  ['evName','evDate','evTime','evLoc','evCelebrantPass','evPartner','evMonogram','evHeroImage'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('evType').value='בת מצווה';
   document.getElementById('evMaxSongs').value='20';
+  const _mst=document.getElementById('evMaxStars');if(_mst)_mst.value='10';
+  const _wl=document.getElementById('evWeddingLang');if(_wl)_wl.value='auto';
+  onEvTypeChange();
   updateEvNamePreview();
   toast('✅ האירוע נוצר!','success');
   djTab('events');
@@ -2061,6 +2611,22 @@ function openEQ(rid,name,type,date,fromOwner){
   const backOwnerBtn=document.getElementById('eqBackOwnerBtn');
   if(backBtn)backBtn.style.display='';
   if(backOwnerBtn)backOwnerBtn.style.display='none';
+  // ── זיהוי אירוע חתונה והפעלת מצב חתונה ──
+  const isWedding=type==='חתונה';
+  const wTabs=document.getElementById('eqWeddingTabs');
+  const stdFilter=document.querySelector('#sEQ .qsec > div[style*="display:flex;gap:6px"]');
+  if(wTabs)wTabs.style.display=isWedding?'flex':'none';
+  if(stdFilter)stdFilter.style.display=isWedding?'none':'';
+  // ניקוי מאזיני חתונה קודמים
+  eqWeddingState.unsubs.forEach(u=>{try{u();}catch(e){}});
+  eqWeddingState.unsubs=[];
+  eqWeddingState.isWedding=isWedding;
+  eqWeddingState.activeList='reception';
+  eqWeddingState.songs={reception:[],party:[]};
+  if(isWedding){
+    setEqWeddingList('reception',true);
+    startEqWeddingListeners(rid);
+  }
   // Load DJ notes for this event
   const notesArea=document.getElementById('djNotesArea');
   if(notesArea){
@@ -2072,11 +2638,11 @@ function openEQ(rid,name,type,date,fromOwner){
   // Load celebrant choices + premium interest for this event
   get(fbRef(db,'events/'+rid+'/celebrantChoices')).then(snap=>{
     const choices=snap.val()||{};
-    const selected=getActiveGames().filter(g=>choices[g.id]);
+    const selected=CELEBRANT_GAMES.filter(g=>choices[g.id]);
     const display=document.getElementById('celebrantChoicesDisplay');
     const list=document.getElementById('celebrantChoicesList');
     if(display&&list){
-      if(selected.length){
+      if(selected.length&&!isWedding){
         list.innerHTML=selected.map(g=>`<span style="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.5);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:#c084fc">${g.emoji} ${g.name}</span>`).join('');
         display.style.display='block';
       } else {
@@ -2090,8 +2656,8 @@ function openEQ(rid,name,type,date,fromOwner){
     const keys=Object.keys(interest);
     const premiumEl=document.getElementById('premiumInterestDisplay');
     if(!premiumEl)return;
-    if(keys.length){
-      const games=getActiveGames().filter(g=>keys.includes(g.id));
+    if(keys.length&&!isWedding){
+      const games=CELEBRANT_GAMES.filter(g=>keys.includes(g.id));
       premiumEl.innerHTML='<div style="font-size:12px;font-weight:700;color:#D4AF37;margin-bottom:6px">👑 החוגג/ת מתעניין/ת בפרימיום:</div>'
         +games.map(g=>`<span style="background:rgba(212,175,55,.15);border:1.5px solid rgba(212,175,55,.5);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:#D4AF37">${g.emoji} ${g.name}</span>`).join(' ');
       premiumEl.style.display='block';
@@ -2101,7 +2667,7 @@ function openEQ(rid,name,type,date,fromOwner){
   });
   // Reset filter
   if(typeof setEqFilter==='function') setEqFilter('all');
-  show('sEQ');renderEQ();
+  show('sEQ');renderEQ(true);
 }
 
 async function saveDJNotes(){
@@ -2133,6 +2699,11 @@ function renderEQ(force){
     const sEQ=document.getElementById('sEQ');
     if(!sEQ||!sEQ.classList.contains('on'))return;
   }
+  // ── מצב חתונה: רנדור נפרד ──
+  if(eqWeddingState.isWedding){
+    renderEqWedding();
+    return;
+  }
   let songs=Object.entries(allQueues[currentEQRoom]||{}).map(function([k,v]){return {key:k,...v};}).sort(function(a,b){return (b.votes||0)-(a.votes||0);});
   if(eqFilter==='celebrant') songs=songs.filter(function(s){return (s.requestedBy||'').startsWith('🎂');});
   else if(eqFilter==='guests') songs=songs.filter(function(s){return !(s.requestedBy||'').startsWith('🎂');});
@@ -2163,6 +2734,96 @@ function renderEQ(force){
       +'</div>';
   }).join('');
 }
+
+// ════════════════════════════════════════════════════════════════
+// WEDDING ADMIN — ניהול שתי רשימות חתונה באדמין
+// ════════════════════════════════════════════════════════════════
+const eqWeddingState={
+  isWedding:false,
+  activeList:'reception',
+  songs:{reception:[],party:[]},
+  unsubs:[]
+};
+
+function startEqWeddingListeners(rid){
+  ['reception','party'].forEach(listName=>{
+    const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+listName+'/songs');
+    const unsub=onValue(listRef,snap=>{
+      const all=[];
+      snap.forEach(child=>{all.push({_id:child.key,...child.val()});});
+      all.sort((a,b)=>{
+        // ממוין: כוכבי Must בראש, אחר כך לפי זמן הוספה
+        if(a.starred&&!b.starred)return -1;
+        if(!a.starred&&b.starred)return 1;
+        return (a.createdAt||0)-(b.createdAt||0);
+      });
+      eqWeddingState.songs[listName]=all;
+      updateEqWeddingCounts();
+      if(listName===eqWeddingState.activeList){renderEqWedding();}
+    });
+    eqWeddingState.unsubs.push(unsub);
+  });
+}
+
+function setEqWeddingList(listName,skipRender){
+  eqWeddingState.activeList=listName;
+  // עדכון מראה הטאבים
+  const tR=document.getElementById('eqWTReception');
+  const tP=document.getElementById('eqWTParty');
+  if(tR&&tP){
+    const active='border:2px solid rgba(255,215,0,.5);background:rgba(255,215,0,.15);color:#FFD700;';
+    const inactive='border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;';
+    const style=(s,isActive)=>{
+      const base='flex:1;padding:10px 0;border-radius:10px;font-family:\'Heebo\',sans-serif;font-size:13px;font-weight:900;cursor:pointer;';
+      s.style.cssText=base+(isActive?active:inactive);
+    };
+    style(tR,listName==='reception');
+    style(tP,listName==='party');
+  }
+  if(!skipRender)renderEqWedding();
+}
+
+function updateEqWeddingCounts(){
+  const rc=document.getElementById('eqWTReceptionCount');
+  const pc=document.getElementById('eqWTPartyCount');
+  if(rc)rc.textContent='('+eqWeddingState.songs.reception.length+')';
+  if(pc)pc.textContent='('+eqWeddingState.songs.party.length+')';
+}
+
+function renderEqWedding(){
+  const list=document.getElementById('eqList');
+  const cnt=document.getElementById('eqCount');
+  const songs=eqWeddingState.songs[eqWeddingState.activeList]||[];
+  cnt.textContent=songs.length;
+  cnt.style.background='';
+  if(!songs.length){
+    const emptyMsg=eqWeddingState.activeList==='reception'?'עדיין לא נוספו שירים לקבלת פנים':'עדיין לא נוספו שירים למסיבה';
+    list.innerHTML='<div class="empty"><span class="ico">🎵</span><p>'+emptyMsg+'</p></div>';
+    return;
+  }
+  list.innerHTML=songs.map((s,i)=>{
+    const starBadge=s.starred?' <span style="font-size:11px;background:rgba(224,169,0,.25);color:#FFD700;border-radius:5px;padding:1px 6px;font-weight:700;margin-right:4px">★ MUST</span>':'';
+    const starBorder=s.starred?'border:2px solid rgba(224,169,0,.6);background:rgba(224,169,0,.07);':'';
+    const artImg=s.cover?'<img src="'+s.cover+'" alt="" onerror="this.style.display=\'none\'">':'<div class="qi-art">🎵</div>';
+    const previewBtn=s.previewUrl?'<button class="preview-btn" data-preview="'+s.previewUrl+'" onclick="event.stopPropagation();togglePreview(this,\''+escA(s.title)+'\',\''+escA(s.artist)+'\',\''+escA(s.cover||'')+'\')">\u25b6</button>':'';
+    return '<div class="qi" style="'+starBorder+'">'
+      +artImg
+      +'<div class="qi-info">'
+        +'<div class="qi-name">'+(i+1)+'. '+esc(s.title)+starBadge+'</div>'
+        +'<div class="qi-artist">'+esc(s.artist||'')+'</div>'
+        +'<div class="qi-by">בקשה של '+esc(s.addedByName||'אורח')+'</div>'
+      +'</div>'
+      +previewBtn
+      +'<button class="del-btn" onclick="delWeddingSong(\''+escA(s._id)+'\')">&#x1F5D1;&#xFE0F;</button>'
+      +'</div>';
+  }).join('');
+}
+
+async function delWeddingSong(songId){
+  if(!currentEQRoom)return;
+  await set(fbRef(db,'events/'+currentEQRoom+'/weddingLists/'+eqWeddingState.activeList+'/songs/'+songId),null);
+}
+// ════════════════════════════════════════════════════════════════
 async function editEvName(){
   const newName=prompt('שם חדש לאירוע:',document.getElementById('eqTitle').textContent.replace(' ✏️',''));
   if(!newName||!newName.trim()||!currentEQRoom)return;
@@ -2253,6 +2914,9 @@ async function handleSpotifyCB(){
       if(localStorage.getItem('b_sp_pl')&&localStorage.getItem('b_sp_songs')){
         // Force clean URL reload so exportSpotify runs on a fresh page with clean token
         window.location.href='/';
+      } else if(localStorage.getItem('b_sp_wedding')){
+        // Wedding multi-playlist export — reload to clean state, will auto-resume
+        window.location.href='/';
       } else {
         // Wait for events to load before opening EQ
         setTimeout(()=>{
@@ -2269,6 +2933,11 @@ async function handleSpotifyCB(){
 
 async function exportSpotify(){
   if(!spToken){spLogin();return;}
+
+  // ── אם זו חתונה, מפנים לזרימה ייעודית של שני פלייליסטים ──
+  if(eqWeddingState.isWedding){
+    return exportSpotifyWedding();
+  }
 
   // After re-login, finish adding tracks to existing playlist
   const pendingPl=localStorage.getItem('b_sp_pl');
@@ -2371,6 +3040,155 @@ async function exportSpotify(){
   setTimeout(()=>renderEQ(true),100);
 }
 function spFetch(url,opts={}){return fetch(url,{...opts,headers:{'Authorization':'Bearer '+spToken,'Content-Type':'application/json',...(opts.headers||{})}});}
+
+// ════════════════════════════════════════════════════════════════
+// WEDDING SPOTIFY EXPORT — ייצוא שני פלייליסטים נפרדים לחתונה
+// ════════════════════════════════════════════════════════════════
+async function exportSpotifyWedding(){
+  if(!spToken){spLogin();return;}
+  const ev=allEvents[currentEQRoom]||{};
+  const cfg=ev.weddingConfig||{};
+  const couple=cfg.coupleNames?(cfg.coupleNames.he||cfg.coupleNames.en||ev.celebrantName):(ev.celebrantName||'החתונה');
+  const djName=ev.djName||'Balaganza DJ';
+
+  // אחרי re-login: שמירת state לשני שלבים
+  const pendingMulti=localStorage.getItem('b_sp_wedding');
+  if(pendingMulti){
+    localStorage.removeItem('b_sp_wedding');
+    try{
+      const data=JSON.parse(pendingMulti);
+      document.getElementById('btnSP').disabled=true;
+      setSpMsg('משלים ייצוא אחרי התחברות...','loading');
+      for(const item of data.queue){
+        for(let i=0;i<item.uris.length;i+=100){
+          await spFetch(`https://api.spotify.com/v1/playlists/${item.plId}/items`,{method:'POST',body:JSON.stringify({uris:item.uris.slice(i,i+100)})});
+        }
+      }
+      setSpMsg('✅ הייצוא הושלם!','ok');
+      document.getElementById('btnSP').disabled=false;
+      return;
+    }catch(e){
+      setSpMsg('שגיאה בהשלמה: '+e.message,'err');
+      document.getElementById('btnSP').disabled=false;
+      return;
+    }
+  }
+
+  const lists=eqWeddingState.songs;
+  const totalSongs=lists.reception.length+lists.party.length;
+  if(!totalSongs){toast('שתי הרשימות ריקות','error');return;}
+
+  document.getElementById('btnSP').disabled=true;
+  try{
+    setSpMsg('מאמת...','loading');
+    const meRes=await spFetch('https://api.spotify.com/v1/me');
+    if(!meRes.ok){spToken=null;localStorage.removeItem('b_spt');spLogin();return;}
+    await meRes.json();
+
+    const results=[];
+    const pendingState=[]; // ייווצר רק אם 403
+
+    for(const listName of ['reception','party']){
+      const listSongs=lists[listName];
+      if(!listSongs.length){
+        results.push({listName,plId:null,uris:[],notFound:[],skipped:true});
+        continue;
+      }
+      const niceList=listName==='reception'?'קבלת פנים':'מסיבה';
+      const plName=`💍 ${couple} – ${niceList}`;
+      const plDesc=`${niceList} | פלייליסט שנוצר ע"י ${djName} | בלאגנזה`;
+
+      setSpMsg(`יוצר פלייליסט: ${niceList}...`,'loading');
+      const plRes=await spFetch('https://api.spotify.com/v1/me/playlists',{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
+      const pl=await plRes.json();
+      if(!pl.id){throw new Error('יצירת פלייליסט נכשלה ל-'+niceList);}
+
+      // חיפוש כל שיר בספוטיפיי — קודם השירים המסומנים ב-Must (חשוב לדיג'יי שיהיו בראש)
+      const sortedSongs=[...listSongs].sort((a,b)=>{
+        if(a.starred&&!b.starred)return -1;
+        if(!a.starred&&b.starred)return 1;
+        return (a.createdAt||0)-(b.createdAt||0);
+      });
+      const uris=[];const notFound=[];
+      for(const s of sortedSongs){
+        setSpMsg(`${niceList}: מחפש ${s.title}...`,'loading');
+        const q=encodeURIComponent((s.spotifyQuery||(s.title+' '+s.artist)));
+        try{
+          const sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);
+          const sd=await sr.json();
+          if(sd?.tracks?.items?.[0]){
+            uris.push(sd.tracks.items[0].uri);
+          } else {
+            notFound.push({name:s.title,artist:s.artist||'',reason:'לא נמצא בספוטיפיי'});
+          }
+        }catch(searchErr){
+          notFound.push({name:s.title,artist:s.artist||'',reason:'שגיאת חיפוש'});
+        }
+      }
+
+      // הוספת השירים לפלייליסט
+      if(uris.length){
+        setSpMsg(`${niceList}: מוסיף ${uris.length} שירים...`,'loading');
+        for(let i=0;i<uris.length;i+=100){
+          const addRes=await spFetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
+          if(!addRes.ok){
+            const err=await addRes.json();
+            console.error('Add tracks error ('+niceList+'):',addRes.status,err);
+            if(addRes.status===403){
+              // צריך login מחדש — שומרים את המצב כדי להשלים אחרי החזרה
+              pendingState.push({plId:pl.id,uris,listName});
+              continue;
+            }
+          }
+        }
+      }
+
+      results.push({listName,plId:pl.id,uris,notFound,skipped:false});
+    }
+
+    // אם היו 403 — שומרים state ושולחים ל-login
+    if(pendingState.length){
+      localStorage.setItem('b_sp_wedding',JSON.stringify({queue:pendingState}));
+      spToken=null;localStorage.removeItem('b_spt');
+      setSpMsg('מתחבר מחדש לספוטיפיי...','loading');
+      setTimeout(()=>spLogin(),1000);
+      return;
+    }
+
+    // שמירת ה-URLs ב-Firebase
+    const urlMap={};
+    results.forEach(r=>{if(r.plId){urlMap[r.listName]=`https://open.spotify.com/playlist/${r.plId}`;}});
+    if(currentEQRoom)await set(fbRef(db,'events/'+currentEQRoom+'/spotifyWeddingUrls'),urlMap);
+
+    // הצגת תוצאות
+    const el=document.getElementById('spMsg');
+    if(el){
+      let html='';
+      results.forEach(r=>{
+        if(r.skipped){return;}
+        const niceList=r.listName==='reception'?'💐 קבלת פנים':'🪩 מסיבה';
+        html+=`<div style="margin-bottom:10px;padding:8px;background:rgba(29,185,84,.1);border-radius:8px"><strong>${niceList}:</strong> ${r.uris.length}/${r.uris.length+r.notFound.length} שירים נוספו`;
+        if(r.notFound.length){
+          html+=`<div style="margin-top:4px;color:#FF8C00;font-size:12px"><strong>❌ לא נמצאו (${r.notFound.length}):</strong><div style="margin-top:2px">${r.notFound.map(x=>`• ${esc(x.name)}${x.artist?' – '+esc(x.artist):''}`).join('<br>')}</div></div>`;
+        }
+        html+=`<div style="margin-top:6px"><a href="https://open.spotify.com/playlist/${r.plId}" target="_blank" style="color:#1DB954;font-size:12px;font-weight:700">🔗 פתח ב-Spotify</a></div></div>`;
+      });
+      el.innerHTML=html;
+      el.className='sp-msg show ok';
+    }
+    toast('🎵 שני הפלייליסטים נוצרו!','success');
+    // פותח את שניהם בלשוניות חדשות
+    setTimeout(()=>{
+      results.forEach(r=>{if(r.plId)window.open(`https://open.spotify.com/playlist/${r.plId}`,'_blank');});
+    },800);
+  }catch(e){
+    setSpMsg('שגיאה: '+e.message,'err');
+    console.error(e);
+  }
+  document.getElementById('btnSP').disabled=false;
+  setTimeout(()=>renderEQ(true),100);
+}
+// ════════════════════════════════════════════════════════════════
 function copyLink(url){navigator.clipboard.writeText(url).then(()=>toast('🔗 הלינק הועתק!','success'));}
 
 // WhatsApp message template (loaded from Firebase)
