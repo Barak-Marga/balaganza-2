@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>בלאגנזה 🎵</title>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Fredoka+One&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Fredoka+One&family=Allura&display=swap" rel="stylesheet">
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, push, onValue, runTransaction, get, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
@@ -293,6 +293,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div id="hCelebrantBtn" style="display:none;margin-top:8px">
           <button onclick="promptCelebrantCode()" style="background:rgba(26,47,191,.2);border:2px solid rgba(26,47,191,.5);border-radius:10px;padding:7px 14px;color:#818cf8;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת עם קוד</button>
         </div>
+        <div id="hCelebrantActBtn" style="display:none;margin-top:8px">
+          <button onclick="openCelebrantActivities()" style="background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:7px 14px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎮 הפעילויות שלי</button>
+        </div>
       </div>
     </div>
     <a href="https://wa.me/972509896598?text=%D7%94%D7%99%D7%99%20%D7%90%D7%A0%D7%99%20%D7%97%D7%95%D7%92%D7%92%20%D7%90%D7%99%D7%A8%D7%95%D7%A2%20%D7%91%D7%A7%D7%A8%D7%95%D7%91%20%D7%95%D7%A8%D7%95%D7%A6%D7%94%20%D7%93%D7%99%D7%92'%D7%99%D7%99%20%D7%9E%D7%A2%D7%95%D7%9C%D7%94" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.4);border-radius:12px;padding:10px 16px;margin:10px 16px 0;text-decoration:none;color:white;font-family:'Fredoka One',cursive;font-size:15px;box-shadow:2px 2px 0 rgba(37,211,102,.3)"><svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366" style="flex-shrink:0"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>חוגג/ת אירוע בקרוב? לחץ כאן 🎉</a>
@@ -349,6 +352,10 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
+        <div style="display:flex;gap:8px;margin-bottom:12px;padding:0 2px">
+          <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">🕐 לפי יצירה</button>
+          <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">📅 לפי תאריך קרוב</button>
+        </div>
         <div class="ev-list" id="djEvList">
           <div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>
         </div>
@@ -365,7 +372,13 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           <div class="fld"><label>וואטסאפ (מספר)</label><input type="text" id="aboutWA" placeholder="972509896598"></div>
           <div class="fld"><label>אינסטגרם</label><input type="text" id="aboutIG" placeholder="balaganza"></div>
           <div class="fld"><label>פייסבוק</label><input type="text" id="aboutFB" placeholder="balaganza"></div>
+          <div class="fld"><label>טקסט ברכה לחוגג/ת</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
+        </div>
+        <div class="admin-card">
+          <h3>🎮 ערוך הסברי משחקים</h3>
+          <div class="fld"><label>💋 נשיקה סטירה</label><textarea id="gameDesc_kiss_slap" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎒 משחק החפצים</label><textarea id="gameDesc_objects" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎵 משחק השירים</label><textarea id="gameDesc_songs" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🕺 תחרות ריקודים</label><textarea id="gameDesc_dance" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🔐 משחק הכספות</label><textarea id="gameDesc_vault" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🏅 כלוב הזהב</label><textarea id="gameDesc_goldcage" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div>
+          <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור הסברים</button>
         </div>
       </div>
     </div>
@@ -374,9 +387,9 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
         <div class="admin-card">
           <h3>✨ צור אירוע חדש</h3>
           <div class="fld-row">
-            <div class="fld"><label>שם החוגג/ת</label><input type="text" id="evName" placeholder='דנה' oninput="updateEvNamePreview()"></div>
+            <div class="fld"><label id="evNameLabel">שם החוגג/ת</label><input type="text" id="evName" placeholder='דנה' oninput="updateEvNamePreview()"></div>
             <div class="fld"><label>סוג אירוע</label>
-              <select id="evType" onchange="updateEvNamePreview()">
+              <select id="evType" onchange="updateEvNamePreview();onEvTypeChange()">
                 <option value="">בחר...</option>
                 <option>חתונה</option><option>בר מצווה</option><option selected>בת מצווה</option>
                 <option>יום הולדת</option><option>מסיבה פרטית</option>
@@ -386,6 +399,24 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           </div>
           <div style="margin-top:-4px;margin-bottom:8px;padding:7px 12px;background:rgba(74,159,255,.08);border:2px solid rgba(74,159,255,.2);border-radius:10px;font-size:13px;color:#4a9fff">
             <span style="color:var(--muted)">שם האירוע: </span><span id="evNamePreview" style="font-weight:900;color:white">בת המצווה ...</span>
+          </div>
+          <!-- ══ שדות ייעודיים לחתונה ══ -->
+          <div id="weddingFields" style="display:none;margin-bottom:10px;padding:12px;background:rgba(255,215,0,.06);border:2px solid rgba(255,215,0,.25);border-radius:12px">
+            <div style="font-size:13px;font-weight:900;color:#FFD700;margin-bottom:10px">💍 פרטי חתונה</div>
+            <div class="fld-row">
+              <div class="fld"><label>שם בן/בת זוג</label><input type="text" id="evPartner" placeholder='למשל: ליאם'></div>
+              <div class="fld"><label>מונוגרמה (אופציונלי)</label><input type="text" id="evMonogram" placeholder='M & L' maxlength="10"></div>
+            </div>
+            <div class="fld"><label>URL לתמונת ההירו (אופציונלי)</label><input type="text" id="evHeroImage" placeholder='https://...'></div>
+            <div class="fld-row">
+              <div class="fld"><label>שפת ברירת מחדל לדף האורח</label>
+                <select id="evWeddingLang"><option value="auto">אוטומטי לפי דפדפן</option><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
+              </div>
+              <div class="fld"><label>מקס׳ כוכבי Must לכל אורח</label><input type="number" id="evMaxStars" min="1" max="30" value="10"></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px">
+              💡 דף החתונה מציג שתי רשימות נפרדות: <b>קבלת פנים</b> ו<b>מסיבה</b>. כל אורח יבחר שירים לכל אחת בנפרד, ויוכל לסמן עד 10 כ-Must.
+            </div>
           </div>
           <div class="fld-row">
             <div class="fld"><label>תאריך</label><input type="date" id="evDate"></div>
@@ -446,7 +477,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <img class="hdr-logo" id="lEQ" src="" alt="">
       <div><div class="hdr-title" id="eqTitle" style="cursor:pointer" onclick="editEvName()">תור האירוע ✏️</div><div class="hdr-sub" id="eqMeta"></div></div>
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-      <button class="icon-btn" onclick="currentEQRoom=null;show('sDJ')">← חזור</button>
+      <button class="icon-btn" id="eqBackBtn" onclick="currentEQRoom=null;show('sDJ')">← חזור</button>
+      <button class="icon-btn" id="eqBackOwnerBtn" style="display:none;background:rgba(212,175,55,.15);color:#D4AF37;border-color:rgba(212,175,55,.4)" onclick="currentEQRoom=null;djTab('events');show('sDJ')">👑 חזור לאזור הניהול</button>
     </div>
     <!-- DJ NOTES — right under header, always visible -->
     <div style="padding:12px 16px 0">
@@ -466,10 +498,359 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
       <button class="btn-full btn-danger" onclick="clearEQ()">🗑️ נקה תור</button>
     </div>
     <div class="qsec">
+      <!-- Wedding-only: tabs for reception / party -->
+      <div id="eqWeddingTabs" style="display:none;gap:8px;margin:8px 0 12px">
+        <button id="eqWTReception" onclick="setEqWeddingList('reception')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,215,0,.5);background:rgba(255,215,0,.15);color:#FFD700;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">💐 קבלת פנים <span id="eqWTReceptionCount" style="font-weight:400;color:#bbb">(0)</span></button>
+        <button id="eqWTParty" onclick="setEqWeddingList('party')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">🪩 מסיבה <span id="eqWTPartyCount" style="font-weight:400">(0)</span></button>
+      </div>
+      <!-- Celebrant choices display -->
+      <div id="celebrantChoicesDisplay" style="display:none;background:rgba(168,85,247,.08);border:2px solid rgba(168,85,247,.3);border-radius:14px;padding:12px 16px;margin-bottom:6px">
+        <div style="font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:8px">🎮 פעילויות שבחר/ה החוגג/ת</div>
+        <div id="celebrantChoicesList" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+      </div>
+      <div id="premiumInterestDisplay" style="display:none;background:rgba(212,175,55,.07);border:2px solid rgba(212,175,55,.4);border-radius:14px;padding:12px 16px;margin-bottom:6px;display:flex;flex-direction:column;gap:6px"></div>
+      <div style="display:flex;gap:6px;margin:8px 0 4px">
+        <button id="eqFAll" onclick="setEqFilter('all')" style="flex:1;padding:6px 0;border-radius:8px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🎵 הכל</button>
+        <button id="eqFCelebrant" onclick="setEqFilter('celebrant')" style="flex:1;padding:6px 0;border-radius:8px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🎂 חוגג/ת</button>
+        <button id="eqFGuests" onclick="setEqFilter('guests')" style="flex:1;padding:6px 0;border-radius:8px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">👥 אורחים</button>
+      </div>
       <div class="q-hdr"><span class="q-title">תור השירים</span><span class="q-count" id="eqCount">0</span></div>
       <div class="q-list" id="eqList"></div>
     </div>
   </div>
+</div>
+
+<!-- ══ CELEBRANT ACTIVITIES ══ -->
+<div id="sCelebrantActivities" class="scr-center">
+  <div style="max-width:480px;width:100%;padding:28px 20px 40px;text-align:center">
+    <img class="hdr-logo" id="lCelebrantAct" src="" alt="" style="width:64px;height:64px;object-fit:contain;margin:0 auto 10px;display:block">
+    <div id="celebActNameTag" style="display:none;font-family:'Fredoka One',cursive;font-size:22px;color:white;text-align:center;margin-bottom:16px;text-shadow:2px 2px 0 rgba(168,85,247,.5)"></div>
+    <!-- Info screen -->
+    <div id="celebActInfo">
+      <div style="font-size:36px;margin-bottom:12px">🎂</div>
+      <div id="celebActWelcomeText" style="font-size:15px;line-height:1.8;color:#e0e0e0;background:rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:right;direction:rtl">היי! אנחנו מתרגשים לקראת האירוע שלך: זה אתר האירוע האישי שלך וניתן לבחור בו את הפעילויות שתרצה לאירוע! בואו נתחיל</div>
+      <button onclick="document.getElementById('celebActInfo').style.display='none';document.getElementById('celebActChoose').style.display='block'" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:14px;padding:14px 40px;color:white;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;width:100%">בואו נתחיל 🎉</button>
+    </div>
+    <!-- Choose screen -->
+    <div id="celebActChoose" style="display:none;text-align:right;direction:rtl">
+      <div style="font-size:15px;font-weight:700;color:#a78bfa;margin-bottom:4px">בחרו עד 2 פעילויות לאירוע</div>
+      <div style="font-size:12px;color:#888;margin-bottom:16px">משך כל פעילות כרבע שעה — לכן ניתן לבחור עד 2</div>
+      <div id="celebActGameList" style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px"></div>
+      <div id="celebChoiceSummary" style="display:none;background:rgba(168,85,247,.1);border:2px solid rgba(168,85,247,.4);border-radius:12px;padding:12px 14px;margin-bottom:14px;text-align:right">
+        <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px">✅ בחרת:</div>
+        <div id="celebChoiceSummaryList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+      <div style="font-size:11px;color:#666;margin-bottom:16px;text-align:center">ניתן לשנות את הבחירה עד שעת תחילת האירוע</div>
+      <button onclick="saveCelebrantChoices()" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:14px;padding:14px 40px;color:white;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;width:100%">אישור הבחירה ✅</button>
+    </div>
+    <!-- DJ Questions -->
+    <div id="celebActDjQ" style="margin-top:24px;text-align:right;direction:rtl;display:none">
+      <div style="font-size:16px;font-weight:900;color:#4a9fff;margin-bottom:6px">📬 שאלות ובקשות לDJ</div>
+      <div id="celebActDjQIntro" style="font-size:13px;color:#aaa;line-height:1.7;background:rgba(74,159,255,.06);border:1px solid rgba(74,159,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;direction:rtl">רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע.</div>
+      <div id="celebDjMessages" style="max-height:200px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px"></div>
+      <div style="display:flex;gap:8px">
+        <textarea id="celebDjMsgInput" rows="2" placeholder="כתוב שאלה או בקשה לDJ..." style="flex:1;background:rgba(255,255,255,.07);border:2px solid rgba(74,159,255,.3);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:13px;resize:none;outline:none;direction:rtl"></textarea>
+        <button onclick="sendCelebrantDjMessage()" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:10px;color:#4a9fff;padding:10px 14px;font-weight:900;cursor:pointer;font-size:18px;flex-shrink:0">➤</button>
+      </div>
+    </div>
+    <button onclick="show('sGuest')" style="margin-top:20px;background:transparent;border:none;color:#666;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer;text-decoration:underline">← חזור לפלייליסט</button>
+  </div>
+</div>
+
+<!-- ══ PREMIUM INTEREST MODAL ══ -->
+<div id="premiumModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#1e3060;border:2px solid rgba(212,175,55,.5);border-radius:18px;width:100%;max-width:400px;padding:24px 20px;direction:rtl">
+    <div style="font-size:22px;text-align:center;margin-bottom:6px">👑</div>
+    <div id="premiumModalTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:#D4AF37;text-align:center;margin-bottom:12px"></div>
+    <input type="hidden" id="premiumModalGameId">
+    <div style="font-size:13px;color:#aaa;margin-bottom:16px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. השאר/י מספר טלפון של הורה ואנחנו ניצור קשר לתיאום ותשלום.</div>
+    <div style="font-size:13px;color:#888;margin-bottom:6px;font-weight:700">📱 טלפון הורה ליצירת קשר</div>
+    <input type="tel" id="premiumModalPhone" placeholder="050-000-0000" style="width:100%;background:rgba(255,255,255,.08);border:2px solid rgba(212,175,55,.3);border-radius:10px;color:white;padding:10px 12px;font-family:'Heebo',sans-serif;font-size:15px;direction:rtl;outline:none;box-sizing:border-box;margin-bottom:16px">
+    <button onclick="submitPremiumInterest()" style="width:100%;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:12px;cursor:pointer;margin-bottom:8px">שלח בקשה 👑</button>
+    <button onclick="closePremiumModal()" style="width:100%;background:transparent;border:none;color:#666;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer">ביטול</button>
+  </div>
+</div>
+
+<!-- ══ GAME INFO MODAL ══ -->
+<div id="gameInfoModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#1e3060;border:2px solid rgba(168,85,247,.4);border-radius:18px;width:100%;max-width:400px;padding:24px 20px;position:relative;direction:rtl">
+    <div id="gameInfoTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:white;margin-bottom:14px;text-align:center"></div>
+    <div id="gameInfoDesc" style="font-size:14px;line-height:1.8;color:#e0e0e0;background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;text-align:right"></div>
+    <button onclick="closeGameInfo()" style="margin-top:16px;width:100%;background:rgba(168,85,247,.2);border:2px solid rgba(168,85,247,.4);border-radius:12px;color:#c084fc;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:11px;cursor:pointer">הבנתי ✓</button>
+  </div>
+</div>
+
+<!-- ══ DJ MESSAGES MODAL ══ -->
+<div id="djMessagesModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#1a1a2e;border:2px solid rgba(168,85,247,.3);border-radius:18px;width:100%;max-width:480px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <span id="djMsgModalTitle" style="font-weight:700;font-size:15px;color:#a78bfa;direction:rtl">📬 הודעות מחוגג/ת</span>
+      <button onclick="closeDjMessages()" style="background:rgba(255,255,255,.08);border:none;border-radius:8px;color:white;padding:4px 10px;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div id="djMsgModalList" style="flex:1;overflow-y:auto;padding:16px;direction:rtl"></div>
+  </div>
+</div>
+
+<!-- ══ WEDDING GUEST VIEW ══ -->
+<div id="sWedding" class="scr">
+<style>
+  /* CSS מקומי למסך החתונה — לא משפיע על שאר האפליקציה */
+  #sWedding {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    direction: ltr;
+    min-height: 100vh;
+    padding: 0 !important;
+  }
+  #sWedding * { box-sizing: border-box; }
+  .wf-frame {
+    max-width: 480px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1a1a1a;
+  }
+  .wf-script { font-family: 'Allura', 'Brush Script MT', cursive; font-weight: 400; }
+  .wf-topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 20px 10px;
+  }
+  .wf-lang-btn {
+    background: none; border: 0.5px solid #1a1a1a; padding: 4px 10px;
+    border-radius: 3px; font-size: 12px; letter-spacing: 2px;
+    color: #1a1a1a; cursor: pointer; font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-mono {
+    font-family: 'Times New Roman', Times, serif; font-size: 15px;
+    letter-spacing: 2px; color: #1a1a1a;
+  }
+  .wf-hero {
+    width: 100%; aspect-ratio: 4/5;
+    background-size: cover; background-position: center 30%;
+    background-color: #f5f5f0;
+  }
+  .wf-body { padding: 28px 28px 24px; text-align: center; }
+  .wf-the, .wf-of { font-size: 13px; letter-spacing: 6px; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-the { font-size: 14px; }
+  .wf-of { margin-bottom: 22px; }
+  .wf-wedding-word { font-size: 64px; line-height: 1; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-names { font-size: 19px; letter-spacing: 2px; margin: 0 0 20px; color: #1a1a1a; font-weight: 400; }
+  .wf-meta, .wf-countdown { font-size: 11px; letter-spacing: 2px; margin: 0 0 8px; color: #1a1a1a; }
+  .wf-countdown { margin-bottom: 24px; }
+  .wf-divider { width: 60px; height: 0.5px; background: #1a1a1a; margin: 0 auto 14px; }
+  .wf-date-line { font-size: 13px; letter-spacing: 3px; margin: 0 0 18px; color: #1a1a1a; }
+  .wf-location-line { font-size: 12px; letter-spacing: 4px; margin: 0; color: #1a1a1a; }
+
+  html[dir="rtl"] #sWedding .wf-the,
+  html[dir="rtl"] #sWedding .wf-of,
+  html[dir="rtl"] #sWedding .wf-names,
+  html[dir="rtl"] #sWedding .wf-meta,
+  html[dir="rtl"] #sWedding .wf-countdown,
+  html[dir="rtl"] #sWedding .wf-date-line,
+  html[dir="rtl"] #sWedding .wf-location-line { letter-spacing: 1px; }
+
+  .wf-songs-section { border-top: 0.5px solid #1a1a1a; padding: 30px 22px 28px; text-align: center; }
+  .wf-songs-heading { font-size: 44px; margin: 0 0 6px; line-height: 1; color: #1a1a1a; }
+  .wf-songs-sub { font-size: 11px; letter-spacing: 3px; margin: 0 0 24px; color: #666; }
+
+  .wf-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  .wf-tab {
+    border: 0.5px solid #1a1a1a; padding: 12px 6px; border-radius: 4px;
+    background: #fff; color: #1a1a1a; text-align: center; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-tab.active { background: #1a1a1a; color: #fff; }
+  .wf-tab-label { font-size: 10px; letter-spacing: 2px; margin: 0 0 2px; text-transform: uppercase; }
+  .wf-tab-name { font-size: 13px; margin: 0; font-weight: 500; }
+
+  .wf-search-box { position: relative; margin-bottom: 14px; }
+  .wf-search-input {
+    width: 100%; padding: 11px 38px 11px 12px;
+    border: 0.5px solid #1a1a1a; border-radius: 4px;
+    font-size: 14px; background: #fff; color: #1a1a1a;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  html[dir="rtl"] #sWedding .wf-search-input { padding: 11px 12px 11px 38px; }
+  .wf-search-input:focus { outline: none; border-width: 1px; }
+  .wf-search-icon {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    right: 12px; font-size: 14px; opacity: 0.5; pointer-events: none;
+  }
+  html[dir="rtl"] #sWedding .wf-search-icon { right: auto; left: 12px; }
+
+  .wf-search-results { background: #f7f7f5; border-radius: 4px; margin-bottom: 14px; max-height: 320px; overflow-y: auto; }
+  .wf-search-results:empty { display: none; }
+  .wf-search-result {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-bottom: 0.5px solid rgba(0,0,0,0.08);
+    text-align: start;
+  }
+  .wf-search-result:last-child { border-bottom: none; }
+  .wf-search-result-cover {
+    width: 38px; height: 38px; border-radius: 4px;
+    background: #ddd; background-size: cover; background-position: center;
+    flex-shrink: 0;
+  }
+  .wf-search-result-info { flex: 1; min-width: 0; }
+  .wf-search-result-title { font-size: 13px; margin: 0 0 2px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
+  .wf-search-result-artist { font-size: 11px; color: #666; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wf-search-result-actions { display: flex; gap: 6px; align-items: center; }
+  .wf-icon-btn {
+    background: none; border: 0.5px solid #1a1a1a; border-radius: 4px;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: #1a1a1a; padding: 0; cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-icon-btn.add { font-size: 16px; }
+  .wf-icon-btn.preview { font-size: 11px; }
+
+  .wf-must-hint {
+    display: flex; align-items: center; gap: 8px;
+    background: #faf6e8; border: 0.5px solid rgba(224,169,0,0.4);
+    border-radius: 4px; padding: 9px 12px; margin-bottom: 14px;
+    text-align: start;
+  }
+  .wf-must-hint-star { color: #e0a900; font-size: 15px; line-height: 1; flex-shrink: 0; }
+  .wf-must-hint-text { font-size: 11px; line-height: 1.4; color: #6b5400; }
+
+  .wf-song-list { text-align: start; }
+  .wf-song-list-empty { text-align: center; font-size: 12px; color: #666; padding: 20px 0; }
+  .wf-song-row { display: flex; align-items: center; gap: 10px; padding: 12px 4px; border-bottom: 0.5px solid rgba(0,0,0,0.08); }
+  .wf-song-row:last-child { border-bottom: none; }
+  .wf-song-cover { width: 40px; height: 40px; border-radius: 4px; background: #ddd; background-size: cover; background-position: center; flex-shrink: 0; }
+  .wf-song-info { flex: 1; min-width: 0; }
+  .wf-song-title { font-size: 13px; margin: 0 0 2px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #1a1a1a; }
+  .wf-song-artist { font-size: 11px; color: #666; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wf-song-actions { display: flex; gap: 6px; }
+  .wf-star-btn, .wf-remove-btn { background: none; border: none; font-size: 18px; line-height: 1; padding: 4px 6px; color: #bbb; cursor: pointer; font-family: Arial, Helvetica, sans-serif; }
+  .wf-star-btn.starred { color: #e0a900; }
+  .wf-remove-btn { font-size: 20px; color: #aaa; }
+
+  .wf-count-line { font-size: 10px; letter-spacing: 2px; color: #666; margin: 18px 0 0; text-align: center; }
+  .wf-toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: #1a1a1a; color: #fff; padding: 10px 18px; border-radius: 4px;
+    font-size: 12px; letter-spacing: 1px; z-index: 100; opacity: 0;
+    transition: opacity 0.2s; pointer-events: none;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  .wf-toast.show { opacity: 1; }
+
+  /* ── תמונת קאבר עם כפתור עריכה ── */
+  .wf-hero-wrap {
+    position: relative;
+  }
+  .wf-hero-edit-btn {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  html[dir="rtl"] #sWedding .wf-hero-edit-btn {
+    right: auto;
+    left: 12px;
+  }
+  .wf-hero-edit-btn:hover {
+    background: rgba(0,0,0,0.9);
+  }
+  .wf-hero-edit-btn:disabled {
+    opacity: 0.5;
+    cursor: wait;
+  }
+
+  /* ── קרדיט "Music by MARGA" — יושב בין פרטי החתונה לסקציית הפסקול ── */
+  .wf-credit {
+    text-align: center;
+    padding: 16px 20px 36px;
+    background: transparent;
+  }
+  .wf-credit-by {
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: #888;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .wf-credit-logo {
+    height: 54px;
+    width: auto;
+    opacity: 1;
+  }
+</style>
+
+<div class="wf-frame" id="weddingFrame">
+  <div class="wf-topbar">
+    <span style="width:34px;display:inline-block;"></span>
+    <span class="wf-mono" id="wfMonogram"></span>
+    <button class="wf-lang-btn" id="wfLangToggle">EN</button>
+  </div>
+  <div class="wf-hero-wrap">
+    <div class="wf-hero" id="wfHero"></div>
+    <button class="wf-hero-edit-btn" id="wfHeroEditBtn" title="החלף תמונה">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+        <circle cx="12" cy="13" r="4"/>
+      </svg>
+    </button>
+    <input type="file" id="wfHeroFileInput" accept="image/*" style="display:none">
+  </div>
+  <div class="wf-body">
+    <p class="wf-the" id="wfWordThe"></p>
+    <p class="wf-wedding-word wf-script" id="wfWordWedding"></p>
+    <p class="wf-of" id="wfWordOf"></p>
+    <p class="wf-names" id="wfCoupleNames"></p>
+    <p class="wf-meta" id="wfMetaLine"></p>
+    <p class="wf-countdown" id="wfCountdown"></p>
+    <div class="wf-divider"></div>
+    <p class="wf-date-line" id="wfDateLine"></p>
+    <div class="wf-divider"></div>
+    <p class="wf-location-line" id="wfLocationLine"></p>
+  </div>
+  <div class="wf-credit">
+    <div class="wf-credit-by" id="wfCreditBy">Music by</div>
+    <img class="wf-credit-logo" id="wfCreditLogo" alt="MARGA">
+  </div>
+  <section class="wf-songs-section">
+    <p class="wf-songs-heading wf-script" id="wfSongsHeading"></p>
+    <p class="wf-songs-sub" id="wfSongsSub"></p>
+    <div class="wf-tabs">
+      <button class="wf-tab active" data-list="reception" onclick="wfSwitchTab('reception')">
+        <p class="wf-tab-label" id="wfTabReceptionLabel"></p>
+        <p class="wf-tab-name" id="wfTabReceptionName"></p>
+      </button>
+      <button class="wf-tab" data-list="party" onclick="wfSwitchTab('party')">
+        <p class="wf-tab-label" id="wfTabPartyLabel"></p>
+        <p class="wf-tab-name" id="wfTabPartyName"></p>
+      </button>
+    </div>
+    <div class="wf-search-box">
+      <input type="text" class="wf-search-input" id="wfSearchInput">
+      <span class="wf-search-icon">🔍</span>
+    </div>
+    <div class="wf-search-results" id="wfSearchResults"></div>
+    <div class="wf-must-hint">
+      <span class="wf-must-hint-star">★</span>
+      <span class="wf-must-hint-text" id="wfMustHintText"></span>
+    </div>
+    <div class="wf-song-list" id="wfSongList"></div>
+    <p class="wf-count-line" id="wfCountLine"></p>
+  </section>
+</div>
+<div class="wf-toast" id="wfToast"></div>
 </div>
 
 <!-- ══ ABOUT ══ -->
@@ -638,8 +1019,20 @@ document.addEventListener('fb-ready',()=>{
     loadWaMsgTemplate();
     handleSpotifyCB();
     // Auto-finish pending Spotify export after page reload
-    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs') && localStorage.getItem('b_spt')){
-      setTimeout(()=>exportSpotify(),1500);
+    if(!new URLSearchParams(location.search).get('code') && localStorage.getItem('b_spt')){
+      if(localStorage.getItem('b_sp_pl') && localStorage.getItem('b_sp_songs')){
+        setTimeout(()=>exportSpotify(),1500);
+      } else if(localStorage.getItem('b_sp_wedding')){
+        // השלמת ייצוא חתונה — נטפל אחרי שהאירועים נטענים ופותחים את ה-EQ
+        const savedRoom=localStorage.getItem('b_sp_room');
+        setTimeout(()=>{
+          if(savedRoom&&allEvents[savedRoom]){
+            const ev=allEvents[savedRoom];
+            openEQ(savedRoom,ev.name,ev.type||'','');
+            setTimeout(()=>exportSpotifyWedding(),800);
+          }
+        },1500);
+      }
     }
     onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
     onValue(fbRef(db,'rooms'),snap=>{
@@ -660,16 +1053,30 @@ document.addEventListener('fb-ready',()=>{
 
 function initScreen(){
   if(urlRoom){
-    // Guest event page – show name entry with event details
-    show('sName');
-    loadEntryEventDetails(urlRoom);
+    // בדיקה מקדימה: אם האירוע מסוג חתונה — דילוג על מסך השם
+    get(fbRef(db,'events/'+urlRoom)).then(snap=>{
+      const ev=snap.val();
+      if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
+        // אורח אנונימי בחתונה — guestName ריק, המזהה הקיים של הדפדפן (guestId) מספיק
+        guestName='';
+        isCelebrant=false;
+        wfInit(ev);
+      } else {
+        // אירוע רגיל — זרימת הג'וקבוקס הקיימת
+        show('sName');
+        loadEntryEventDetails(urlRoom);
+      }
+    }).catch(()=>{
+      // אם נכשלה הבדיקה, נופלים לזרימה הרגילה
+      show('sName');
+      loadEntryEventDetails(urlRoom);
+    });
   } else {
     // Admin area – require login
     if(currentUserType){
-      // Set name from Firebase-loaded _djNames (fixes wrong name bug)
       currentUserName=(_djNames&&_djNames[currentUserType])||currentUserType;
       updateDJHeader();
-      djTab('events'); // always start on events, never manage
+      djTab('events');
       show('sDJ');
     } else {
       show('sDJPass');
@@ -732,6 +1139,17 @@ async function enterGuest(){
   }
 
   isCelebrant=false; // normal guest
+
+  // ── אם זו חתונה, מפנים למסך החתונה הייעודי ──
+  if(urlRoom){
+    const evSnap=await get(fbRef(db,'events/'+urlRoom));
+    const ev=evSnap.val();
+    if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
+      wfInit(ev);
+      return;
+    }
+  }
+
   show('sGuest');
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 👋';
   loadGuestEvent();
@@ -763,6 +1181,486 @@ function loadGuestEvent(){
   });
   renderGuestQ();
 }
+
+// ════════════════════════════════════════════════════════════════
+// WEDDING GUEST PAGE — לוגיקה עצמאית למסך החתונה
+// ════════════════════════════════════════════════════════════════
+const WF_I18N={
+  he:{
+    "the":"ה","wedding":"חתונה","of":"של",
+    "songs-heading":"הפסקול שלנו","songs-sub":"עזרו לנו לבנות את הפלייליסט",
+    "tab-reception-label":"RECEPTION","tab-reception-name":"קבלת פנים",
+    "tab-party-label":"PARTY","tab-party-name":"מסיבה",
+    "search-placeholder":"חפשו שיר או אמן…",
+    "must-hint":"סמנו עד ${n} שירים בכוכב — אלה השירים שחייבים להתנגן באירוע.",
+    "empty-reception":"עדיין לא נוספו שירים לקבלת פנים",
+    "empty-party":"עדיין לא נוספו שירים למסיבה",
+    "count-line":"${added}/${max} שירים · ${stars}/${maxStars} סומנו ב-★",
+    "added":"השיר נוסף","removed":"השיר הוסר",
+    "starred":"סומן כ-Must","unstarred":"הסימון הוסר",
+    "limit-reached":"הגעת למקסימום השירים ברשימה",
+    "stars-limit":"הגעת למקסימום סימוני Must",
+    "days-to-go":"נשארו ${n} ימים!",
+    "preview-error":"לא ניתן להשמיע preview לשיר זה"
+  },
+  en:{
+    "the":"THE","wedding":"Wedding","of":"OF",
+    "songs-heading":"Our Soundtrack","songs-sub":"HELP US BUILD THE PLAYLIST",
+    "tab-reception-label":"RECEPTION","tab-reception-name":"Cocktail Hour",
+    "tab-party-label":"PARTY","tab-party-name":"Dance Floor",
+    "search-placeholder":"Search song or artist…",
+    "must-hint":"Star up to ${n} songs as Must — these are the tracks the couple wants played for sure.",
+    "empty-reception":"No songs added to reception yet",
+    "empty-party":"No songs added to party yet",
+    "count-line":"${added}/${max} songs · ${stars}/${maxStars} marked ★",
+    "added":"Song added","removed":"Song removed",
+    "starred":"Marked as Must","unstarred":"Mark removed",
+    "limit-reached":"You reached the song limit",
+    "stars-limit":"You reached the Must limit",
+    "days-to-go":"${n} DAYS TO GO!",
+    "preview-error":"Preview not available for this song"
+  }
+};
+
+const MARGA_LOGO_B64='data:image/png;base64,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';
+const wfState={
+  lang:"he",
+  activeList:"reception",
+  guestId:null,
+  guestName:null,
+  songs:{reception:[],party:[]},
+  searchTimeout:null,
+  audio:null,
+  currentPreviewId:null,
+  event:null,
+  unsubs:[]
+};
+
+function wfT(key,vars){
+  let s=WF_I18N[wfState.lang][key]||"";
+  if(vars){Object.keys(vars).forEach(k=>{s=s.split('${'+k+'}').join(vars[k]);});}
+  return s;
+}
+
+function wfDetectInitialLang(){
+  const cfg=wfState.event&&wfState.event.weddingConfig;
+  if(cfg){
+    if(cfg.defaultLanguage==='he')return 'he';
+    if(cfg.defaultLanguage==='en')return 'en';
+  }
+  const bl=(navigator.language||'en').toLowerCase();
+  return bl.startsWith('he')?'he':'en';
+}
+
+function wfSetLang(lang){
+  wfState.lang=lang;
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='he'?'rtl':'ltr';
+  const btn=document.getElementById('wfLangToggle');
+  if(btn)btn.textContent=lang==='he'?'EN':'עב';
+  wfRenderStatic();
+  wfRenderSongList();
+  wfUpdateCountLine();
+}
+
+function wfRenderStatic(){
+  const ev=wfState.event;if(!ev)return;
+  const cfg=ev.weddingConfig||{};
+  const lang=wfState.lang;
+  // לוגו MARGA — קרדיט באמצע הדף
+  const creditLogo=document.getElementById('wfCreditLogo');
+  if(creditLogo)creditLogo.src=MARGA_LOGO_B64;
+  const creditBy=document.getElementById('wfCreditBy');
+  if(creditBy)creditBy.textContent='Music by';
+  // מונוגרמה + הירו
+  document.getElementById('wfMonogram').textContent=cfg.monogram||'';
+  const heroEl=document.getElementById('wfHero');
+  if(cfg.heroImage)heroEl.style.backgroundImage="url('"+cfg.heroImage+"')";
+  else heroEl.style.backgroundImage="url('https://images.unsplash.com/photo-1519741497674-611481863552?w=1200&q=80')";
+  // טקסט בכותרת
+  document.getElementById('wfWordThe').textContent=wfT('the');
+  document.getElementById('wfWordWedding').textContent=wfT('wedding');
+  document.getElementById('wfWordOf').textContent=wfT('of');
+  const couple=cfg.coupleNames||{he:'',en:''};
+  document.getElementById('wfCoupleNames').textContent=couple[lang]||couple.he||couple.en||'';
+  // תאריך + מיקום
+  let dateDisplay='';
+  if(ev.date){
+    const d=new Date(ev.date+'T00:00:00');
+    if(lang==='he')dateDisplay=d.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
+    else dateDisplay=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+  }
+  document.getElementById('wfDateLine').textContent=dateDisplay;
+  document.getElementById('wfLocationLine').textContent=(ev.location||'').toUpperCase();
+  document.getElementById('wfMetaLine').textContent=dateDisplay+(ev.location?' · '+ev.location:'');
+  // ספירה לאחור
+  if(ev.date){
+    const today=new Date();
+    const eventDate=new Date(ev.date+'T00:00:00');
+    const days=Math.max(0,Math.ceil((eventDate-today)/(1000*60*60*24)));
+    document.getElementById('wfCountdown').textContent=wfT('days-to-go',{n:days});
+  }
+  // סקציית שירים
+  document.getElementById('wfSongsHeading').textContent=wfT('songs-heading');
+  document.getElementById('wfSongsSub').textContent=wfT('songs-sub');
+  document.getElementById('wfTabReceptionLabel').textContent=wfT('tab-reception-label');
+  document.getElementById('wfTabReceptionName').textContent=wfT('tab-reception-name');
+  document.getElementById('wfTabPartyLabel').textContent=wfT('tab-party-label');
+  document.getElementById('wfTabPartyName').textContent=wfT('tab-party-name');
+  document.getElementById('wfSearchInput').placeholder=wfT('search-placeholder');
+  const maxStars=cfg.maxStarsPerGuest||10;
+  document.getElementById('wfMustHintText').textContent=wfT('must-hint',{n:maxStars});
+}
+
+function wfSwitchTab(listName){
+  wfState.activeList=listName;
+  document.querySelectorAll('#sWedding .wf-tab').forEach(t=>{
+    t.classList.toggle('active',t.dataset.list===listName);
+  });
+  document.getElementById('wfSearchInput').value='';
+  document.getElementById('wfSearchResults').innerHTML='';
+  wfRenderSongList();
+  wfUpdateCountLine();
+}
+
+function wfInit(ev){
+  // ניקוי מאזיני Firebase קודמים אם יש
+  wfState.unsubs.forEach(unsub=>{try{unsub();}catch(e){}});
+  wfState.unsubs=[];
+  wfState.event=ev;
+  wfState.guestId=guestId; // מזהה דפדפן יציב
+  wfState.guestName=guestName||'Guest'; // אורח אנונימי בחתונה
+  wfState.songs={reception:[],party:[]};
+  wfState.activeList='reception';
+  // קביעת שפה
+  wfSetLang(wfDetectInitialLang());
+  // טוגל שפה
+  const btn=document.getElementById('wfLangToggle');
+  if(btn){btn.onclick=()=>wfSetLang(wfState.lang==='he'?'en':'he');}
+  // העלאת תמונת קאבר
+  wfSetupHeroUpload();
+  // הצגת המסך
+  show('sWedding');
+  // התחלת חיפוש
+  wfSetupSearch();
+  // האזנה ל-Firebase (כולל heroImage)
+  wfStartSongListeners();
+  wfStartHeroListener();
+}
+
+// ── העלאה והחלפת תמונת קאבר ──
+function wfSetupHeroUpload(){
+  const btn=document.getElementById('wfHeroEditBtn');
+  const input=document.getElementById('wfHeroFileInput');
+  if(!btn||!input)return;
+  btn.onclick=()=>input.click();
+  input.onchange=async (e)=>{
+    const file=e.target.files&&e.target.files[0];
+    if(!file)return;
+    if(!file.type.startsWith('image/')){
+      wfShowToast(wfState.lang==='he'?'נא לבחור קובץ תמונה':'Please select an image');
+      input.value='';
+      return;
+    }
+    btn.disabled=true;
+    btn.style.cursor='wait';
+    try{
+      wfShowToast(wfState.lang==='he'?'מעלה תמונה…':'Uploading…');
+      const compressed=await wfCompressImage(file);
+      const rid=wfState.event.roomId||urlRoom;
+      await set(fbRef(db,'events/'+rid+'/weddingConfig/heroImage'),compressed);
+      // התמונה תתעדכן אוטומטית דרך ה-listener
+      wfShowToast(wfState.lang==='he'?'✅ התמונה הוחלפה':'✅ Photo updated');
+    }catch(err){
+      console.error(err);
+      let msg=wfState.lang==='he'?'שגיאה בהעלאה':'Upload failed';
+      // טיפול בשגיאות גודל ספציפיות מ-Firebase
+      if(err&&err.message&&err.message.includes('too large')){
+        msg=wfState.lang==='he'?'התמונה גדולה מדי, נסה תמונה קטנה יותר':'Image too large, try a smaller one';
+      }
+      wfShowToast(msg);
+    }finally{
+      btn.disabled=false;
+      btn.style.cursor='pointer';
+      input.value='';
+    }
+  };
+}
+
+// כיווץ תמונה לרזולוציה וגודל קובץ מנוהלים
+function wfCompressImage(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('Cannot read file'));
+    reader.onload=()=>{
+      const img=new Image();
+      img.onerror=()=>reject(new Error('Cannot load image'));
+      img.onload=()=>{
+        // יעד: רוחב מקסימלי 1200px, יחס נשמר
+        const MAX_W=1200;
+        const MAX_H=1500;
+        let{width,height}=img;
+        if(width>MAX_W){height=Math.round(height*MAX_W/width);width=MAX_W;}
+        if(height>MAX_H){width=Math.round(width*MAX_H/height);height=MAX_H;}
+        const canvas=document.createElement('canvas');
+        canvas.width=width;canvas.height=height;
+        const ctx=canvas.getContext('2d');
+        ctx.drawImage(img,0,0,width,height);
+        // ניסיון איכויות יורדות עד גודל סביר (<400KB ב-base64)
+        const tryQuality=(q)=>{
+          const dataUrl=canvas.toDataURL('image/jpeg',q);
+          // 400KB base64 = ~300KB binary
+          if(dataUrl.length<400000||q<=0.5){return dataUrl;}
+          return tryQuality(q-0.1);
+        };
+        try{
+          resolve(tryQuality(0.85));
+        }catch(e){reject(e);}
+      };
+      img.src=reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// האזנה לשינויי תמונת קאבר ב-Firebase — אחרי שמישהו אחר מחליף אותה, התמונה מתעדכנת אצל כולם
+function wfStartHeroListener(){
+  const rid=wfState.event.roomId||urlRoom;
+  if(!rid)return;
+  const heroRef=fbRef(db,'events/'+rid+'/weddingConfig/heroImage');
+  const unsub=onValue(heroRef,snap=>{
+    const val=snap.val();
+    if(val&&wfState.event&&wfState.event.weddingConfig){
+      wfState.event.weddingConfig.heroImage=val;
+      const heroEl=document.getElementById('wfHero');
+      if(heroEl)heroEl.style.backgroundImage="url('"+val+"')";
+    }
+  });
+  wfState.unsubs.push(unsub);
+}
+
+function wfStartSongListeners(){
+  const rid=wfState.event.roomId||urlRoom;
+  if(!rid)return;
+  ['reception','party'].forEach(listName=>{
+    const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+listName+'/songs');
+    const unsub=onValue(listRef,snap=>{
+      const all=[];const mine=[];
+      snap.forEach(child=>{
+        const song={_id:child.key,...child.val()};
+        all.push(song);
+        if(song.addedBy===wfState.guestId)mine.push(song);
+      });
+      mine.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      wfState.songs[listName]=mine;
+      if(listName===wfState.activeList){wfRenderSongList();}
+      wfUpdateCountLine();
+    });
+    wfState.unsubs.push(unsub);
+  });
+}
+
+function wfSetupSearch(){
+  const input=document.getElementById('wfSearchInput');
+  const results=document.getElementById('wfSearchResults');
+  input.oninput=()=>{
+    const q=input.value.trim();
+    clearTimeout(wfState.searchTimeout);
+    if(q.length<2){results.innerHTML='';return;}
+    results.innerHTML='<div style="text-align:center;padding:14px;font-size:11px;color:#999;letter-spacing:2px">…</div>';
+    wfState.searchTimeout=setTimeout(()=>wfDoSearch(q),350);
+  };
+}
+
+async function wfDoSearch(query){
+  const results=document.getElementById('wfSearchResults');
+  try{
+    const res=await fetch('/api/itunes-search?term='+encodeURIComponent(query)+'&limit=8');
+    const data=await res.json();
+    wfRenderSearchResults(data.results||[]);
+  }catch(err){
+    console.error(err);
+    // fallback ישיר ל-iTunes אם ה-proxy לא עובד
+    try{
+      const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(query)+'&entity=song&limit=8');
+      const d2=await r2.json();
+      wfRenderSearchResults(d2.results||[]);
+    }catch(e2){results.innerHTML='';}
+  }
+}
+
+function wfEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
+
+function wfRenderSearchResults(items){
+  const results=document.getElementById('wfSearchResults');
+  if(!items.length){results.innerHTML='';return;}
+  results.innerHTML=items.map((item,idx)=>{
+    const cover=(item.artworkUrl100||'').replace('100x100','200x200');
+    return `<div class="wf-search-result" data-idx="${idx}">
+      <div class="wf-search-result-cover" style="background-image:url('${wfEsc(cover)}')"></div>
+      <div class="wf-search-result-info">
+        <p class="wf-search-result-title">${wfEsc(item.trackName)}</p>
+        <p class="wf-search-result-artist">${wfEsc(item.artistName)}</p>
+      </div>
+      <div class="wf-search-result-actions">
+        <button class="wf-icon-btn preview" data-preview="${wfEsc(item.previewUrl||'')}">▶</button>
+        <button class="wf-icon-btn add" data-add="${idx}">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  // wire buttons
+  results.querySelectorAll('.wf-icon-btn.add').forEach(btn=>{
+    btn.onclick=()=>{
+      const idx=parseInt(btn.dataset.add);
+      const item=items[idx];
+      wfAddSong({
+        trackId:item.trackId,
+        title:item.trackName,
+        artist:item.artistName,
+        album:item.collectionName||'',
+        cover:(item.artworkUrl100||'').replace('100x100','200x200'),
+        previewUrl:item.previewUrl||'',
+        spotifyQuery:item.trackName+' '+item.artistName
+      });
+    };
+  });
+  results.querySelectorAll('.wf-icon-btn.preview').forEach(btn=>{
+    btn.onclick=()=>{
+      const url=btn.dataset.preview;
+      if(!url){wfShowToast(wfT('preview-error'));return;}
+      wfTogglePreview(url,btn);
+    };
+  });
+}
+
+function wfTogglePreview(url,btn){
+  // אם זה אותו שיר שכבר מתנגן — עוצרים
+  if(wfState.audio&&wfState.currentPreviewId===url){
+    wfState.audio.pause();
+    wfState.audio=null;wfState.currentPreviewId=null;
+    document.querySelectorAll('#sWedding .wf-icon-btn.preview').forEach(b=>b.textContent='▶');
+    return;
+  }
+  // עצירת כל preview קודם
+  if(wfState.audio)wfState.audio.pause();
+  document.querySelectorAll('#sWedding .wf-icon-btn.preview').forEach(b=>b.textContent='▶');
+  // ניגון השיר החדש
+  wfState.audio=new Audio(url);
+  wfState.currentPreviewId=url;
+  wfState.audio.play().catch(()=>wfShowToast(wfT('preview-error')));
+  btn.textContent='⏸';
+  wfState.audio.addEventListener('ended',()=>{btn.textContent='▶';wfState.currentPreviewId=null;});
+}
+
+async function wfAddSong(songData){
+  const cfg=wfState.event.weddingConfig||{};
+  const maxSongs=cfg.maxSongsPerGuestPerList||5;
+  const list=wfState.songs[wfState.activeList];
+  if(list.length>=maxSongs){wfShowToast(wfT('limit-reached'));return;}
+  if(list.some(s=>s.trackId===songData.trackId))return;
+  const rid=wfState.event.roomId||urlRoom;
+  const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs');
+  const newRef=push(listRef);
+  await set(newRef,{
+    trackId:songData.trackId,title:songData.title,artist:songData.artist,
+    album:songData.album,cover:songData.cover,previewUrl:songData.previewUrl,
+    spotifyQuery:songData.spotifyQuery,
+    addedBy:wfState.guestId,addedByName:wfState.guestName,
+    starred:false,createdAt:Date.now()
+  });
+  wfShowToast(wfT('added'));
+  document.getElementById('wfSearchInput').value='';
+  document.getElementById('wfSearchResults').innerHTML='';
+}
+
+async function wfRemoveSong(songId){
+  const rid=wfState.event.roomId||urlRoom;
+  await set(fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs/'+songId),null);
+  wfShowToast(wfT('removed'));
+}
+
+async function wfToggleStar(songId){
+  const list=wfState.songs[wfState.activeList];
+  const song=list.find(s=>s._id===songId);
+  if(!song)return;
+  const cfg=wfState.event.weddingConfig||{};
+  const maxStars=cfg.maxStarsPerGuest||10;
+  if(!song.starred){
+    const totalStars=wfCountStars();
+    if(totalStars>=maxStars){wfShowToast(wfT('stars-limit'));return;}
+  }
+  const rid=wfState.event.roomId||urlRoom;
+  const newStarred=!song.starred;
+  await set(fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs/'+songId+'/starred'),newStarred);
+  wfShowToast(newStarred?wfT('starred'):wfT('unstarred'));
+}
+
+function wfCountStars(){
+  return wfState.songs.reception.filter(s=>s.starred).length+
+         wfState.songs.party.filter(s=>s.starred).length;
+}
+
+function wfRenderSongList(){
+  const list=wfState.songs[wfState.activeList];
+  const container=document.getElementById('wfSongList');
+  if(!list.length){
+    const emptyKey=wfState.activeList==='reception'?'empty-reception':'empty-party';
+    container.innerHTML='<p class="wf-song-list-empty">'+wfT(emptyKey)+'</p>';
+    return;
+  }
+  container.innerHTML=list.map(song=>{
+    const previewBtn=song.previewUrl?`<button class="wf-icon-btn preview list-preview" data-preview="${wfEsc(song.previewUrl)}" style="width:28px;height:28px;font-size:10px">▶</button>`:'';
+    return `
+    <div class="wf-song-row">
+      <div class="wf-song-cover" style="background-image:url('${wfEsc(song.cover)}')"></div>
+      <div class="wf-song-info">
+        <p class="wf-song-title">${wfEsc(song.title)}</p>
+        <p class="wf-song-artist">${wfEsc(song.artist)}</p>
+      </div>
+      <div class="wf-song-actions">
+        ${previewBtn}
+        <button class="wf-star-btn ${song.starred?'starred':''}" data-star="${wfEsc(song._id)}">${song.starred?'★':'☆'}</button>
+        <button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>
+      </div>
+    </div>`;
+  }).join('');
+  container.querySelectorAll('[data-star]').forEach(btn=>{
+    btn.onclick=()=>wfToggleStar(btn.dataset.star);
+  });
+  container.querySelectorAll('[data-remove]').forEach(btn=>{
+    btn.onclick=()=>wfRemoveSong(btn.dataset.remove);
+  });
+  container.querySelectorAll('.list-preview').forEach(btn=>{
+    btn.onclick=(e)=>{
+      e.stopPropagation();
+      const url=btn.dataset.preview;
+      if(!url){wfShowToast(wfT('preview-error'));return;}
+      wfTogglePreview(url,btn);
+    };
+  });
+}
+
+function wfUpdateCountLine(){
+  const cfg=(wfState.event&&wfState.event.weddingConfig)||{};
+  const list=wfState.songs[wfState.activeList];
+  const stars=wfCountStars();
+  document.getElementById('wfCountLine').textContent=wfT('count-line',{
+    added:list.length,
+    max:cfg.maxSongsPerGuestPerList||5,
+    stars:stars,
+    maxStars:cfg.maxStarsPerGuest||10
+  });
+}
+
+function wfShowToast(msg){
+  const t=document.getElementById('wfToast');
+  if(!t)return;
+  t.textContent=msg;
+  t.classList.add('show');
+  clearTimeout(wfShowToast._t);
+  wfShowToast._t=setTimeout(()=>t.classList.remove('show'),1800);
+}
+// ════════════════════════════════════════════════════════════════
 
 function getTypeEmoji(t){return({'חתונה 💍':'💍','בר מצווה ✡️':'✡️','בת מצווה ✨':'✨','יום הולדת 🎂':'🎂','מסיבה פרטית 🎉':'🎉','אירוע חברה 🏢':'🏢','אחר 🎵':'🎵'}[t])||'🎵';}
 
@@ -911,8 +1809,10 @@ async function promptCelebrantCode(){
   // Hide rules row and celebrant button, update header
   const r=document.getElementById('hRulesRow');if(r)r.style.display='none';
   const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='none';
+  const ab=document.getElementById('hCelebrantActBtn');if(ab)ab.style.display='block';
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 🎂 (חוגג/ת)';
-  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success',5000);
+  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success',3000);
+  setTimeout(()=>openCelebrantActivities(),400);
   const existingUploadBtn=document.getElementById('celebrantUploadBtn');
   if(!existingUploadBtn){
     const hero=document.getElementById('eventHero');
@@ -1079,6 +1979,260 @@ async function editDJNote(rid,currentNote){
   toast(newNote.trim()?'✅ הערה נשמרה!':'הערה נמחקה','info');
 }
 
+// ══ CELEBRANT ACTIVITIES ══
+const CELEBRANT_GAMES = [
+  {id:'kiss_slap',   name:'נשיקה סטירה',          emoji:'💋',  premium:false},
+  {id:'objects',     name:'משחק החפצים',           emoji:'🎒',  premium:false},
+  {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:false},
+  {id:'dance',       name:'תחרות ריקודים "הכל הולך"', emoji:'🕺', premium:false},
+  {id:'vault',       name:'משחק הכספות',            emoji:'🔐',  premium:true},
+  {id:'goldcage',    name:'כלוב הזהב',              emoji:'🏅',  premium:true},
+];
+const GAME_DESC_DEFAULTS = {
+  kiss_slap: 'משחק כיפי שבו האורחים מצביעים — נשיקה או סטירה? הדיג\'יי מנחה את ההצבעות ומוסיף אנרגיה לאירוע!',
+  objects:   'כל אורח מניח חפץ אישי — והחוגג/ת צריך לנחש למי הוא שייך. משחק מצחיק שמחמם אווירה!',
+  songs:     'האורחים מבקשים שירים מיוחדים לחוגג/ת — הדיג\'יי מנגן ומפתיע!',
+  dance:     'תחרות ריקודים פתוחה — כולם על הרחבה, הקהל בוחר את המנצח/ת!',
+  vault:     'משחק כספות מיוחד — פרסים, הפתעות וריגושים לחוגג/ת ולמשפחה. שדרוג פרימיום.',
+  goldcage:  'החוגג/ת בתוך כלוב הזהב — הקהל מרים אותו/ה ומעניק מחמאות ואהבה. חוויה שלא תישכח! שדרוג פרימיום.',
+};
+let _gameDescriptions = {...GAME_DESC_DEFAULTS};
+let celebrantChoicesSelected = new Set();
+
+async function openCelebrantActivities(){
+  try{
+    const logoEl=document.getElementById('lCelebrantAct');
+    const mainLogo=document.getElementById('lGuest');
+    if(logoEl&&mainLogo)logoEl.src=mainLogo.src;
+    document.getElementById('celebActInfo').style.display='block';
+    document.getElementById('celebActChoose').style.display='none';
+    document.getElementById('celebActDjQ').style.display='none';
+    // הצג שם חוגג/ת
+    if(currentRoom){
+      get(fbRef(db,'events/'+currentRoom+'/celebrantName')).then(snap=>{
+        const nameTag=document.getElementById('celebActNameTag');
+        if(nameTag){
+          const cname=snap.val()||guestName||'';
+          if(cname){nameTag.textContent='🎂 '+cname;nameTag.style.display='block';}
+          else nameTag.style.display='none';
+        }
+      }).catch(()=>{});
+    }
+    show('sCelebrantActivities');
+    try{
+      const snap=await get(fbRef(db,'about'));
+      const d=snap.val()||{};
+      const welcomeEl=document.getElementById('celebActWelcomeText');
+      if(welcomeEl&&d.celebrantWelcome)welcomeEl.textContent=d.celebrantWelcome;
+      if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
+    }catch(e){}
+    if(currentRoom){
+      try{
+        const choiceSnap=await get(fbRef(db,'events/'+currentRoom+'/celebrantChoices'));
+        const saved=choiceSnap.val()||{};
+        celebrantChoicesSelected=new Set(Object.keys(saved).filter(k=>saved[k]));
+      }catch(e){}
+    }
+    renderCelebrantGameList();
+    updateCelebChoiceSummary();
+    if(currentRoom) loadCelebrantDjMessages();
+  }catch(e){console.error('openCelebrantActivities error:',e);}
+}
+
+function renderCelebrantGameList(){
+  const list=document.getElementById('celebActGameList');
+  if(!list)return;
+  const freeGames=CELEBRANT_GAMES.filter(g=>!g.premium);
+  const premiumGames=CELEBRANT_GAMES.filter(g=>g.premium);
+  function renderGame(g){
+    const sel=celebrantChoicesSelected.has(g.id);
+    const bg=sel?'rgba(168,85,247,.15)':'rgba(255,255,255,.04)';
+    const border=sel?'rgba(168,85,247,.6)':'rgba(255,255,255,.1)';
+    const chkBg=sel?'#a855f7':'transparent';
+    const chkBorder=sel?'#a855f7':'rgba(255,255,255,.2)';
+    const freeBadge=(g.id==='songs')?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">&#x1F7E2; ללא עלות זמנית</span>':'';
+    const premiumSub=g.premium?'<div style="font-size:11px;color:#aaa;margin-top:2px">שדרוג בתשלום — המשרד ייצור קשר</div>':'';
+    const id=g.id;
+    const infoBtn='<button onclick="event.stopPropagation();showGameInfo(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
+    const chk=g.premium?'':'<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+chkBorder+';background:'+chkBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px">'+(sel?'&#x2713;':'')+'</div>';
+    const cursor=g.premium?'default':'pointer';
+    const clickHandler='toggleCelebrantGame(&quot;'+id+'&quot;)';
+    return '<div style="display:flex;align-items:center;gap:10px;background:'+bg+';border:2px solid '+border+';border-radius:12px;padding:12px 14px;cursor:'+cursor+'" onclick="'+clickHandler+'">'
+      +'<span style="font-size:22px">'+g.emoji+'</span>'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+freeBadge+'</div>'+premiumSub+'</div>'
+      +infoBtn
+      +chk
+      +'</div>';
+  }
+  let html='';
+  html+='<div style="font-size:11px;font-weight:700;color:#a78bfa;letter-spacing:1px;margin-bottom:6px;padding-right:4px">פעילויות חינמיות</div>';
+  html+=freeGames.map(renderGame).join('');
+  html+='<div style="font-size:11px;font-weight:700;color:#D4AF37;letter-spacing:1px;margin-top:16px;margin-bottom:6px;padding-right:4px">👑 שדרוגי פרימיום</div>';
+  html+=premiumGames.map(renderGame).join('');
+  list.innerHTML=html;
+}
+
+function showGameInfo(id){
+  const game=CELEBRANT_GAMES.find(g=>g.id===id);
+  if(!game)return;
+  const desc=_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
+  const modal=document.getElementById('gameInfoModal');
+  document.getElementById('gameInfoTitle').textContent=game.emoji+' '+game.name;
+  document.getElementById('gameInfoDesc').textContent=desc;
+  modal.style.display='flex';
+}
+function closeGameInfo(){document.getElementById('gameInfoModal').style.display='none';}
+
+function updateCelebChoiceSummary(){
+  const summary=document.getElementById('celebChoiceSummary');
+  const list=document.getElementById('celebChoiceSummaryList');
+  if(!summary||!list)return;
+  const sel=CELEBRANT_GAMES.filter(g=>celebrantChoicesSelected.has(g.id));
+  if(sel.length){
+    list.innerHTML=sel.map(g=>'<span style="background:rgba(168,85,247,.2);border:1.5px solid rgba(168,85,247,.5);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#c084fc">'+g.emoji+' '+g.name+'</span>').join('');
+    summary.style.display='block';
+  } else {
+    summary.style.display='none';
+  }
+}
+
+function openPremiumModal(id,game){
+  document.getElementById('premiumModalTitle').textContent=game.emoji+' '+game.name;
+  document.getElementById('premiumModalGameId').value=id;
+  document.getElementById('premiumModalPhone').value='';
+  document.getElementById('premiumModal').style.display='flex';
+}
+function closePremiumModal(){document.getElementById('premiumModal').style.display='none';}
+async function submitPremiumInterest(){
+  const id=document.getElementById('premiumModalGameId').value;
+  const phone=document.getElementById('premiumModalPhone').value.trim();
+  if(!phone){toast('יש להזין מספר טלפון','error');return;}
+  if(!currentRoom){closePremiumModal();return;}
+  // בדיקת 24ש' לפני האירוע
+  try{
+    const snap=await get(fbRef(db,'events/'+currentRoom));
+    const ev=snap.val()||{};
+    if(ev.date){
+      const evTime=ev.time||'00:00';
+      const evDt=new Date(ev.date+'T'+evTime);
+      const hoursLeft=(evDt-Date.now())/3600000;
+      if(hoursLeft>=0&&hoursLeft<24){
+        toast('לא ניתן לשנות פרימיום בפחות מ-24 שעות לפני האירוע','error',4000);
+        closePremiumModal();return;
+      }
+    }
+  }catch(e){}
+  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת',phone});
+  closePremiumModal();
+  toast('💌 קיבלנו! המשרד ייצור קשר למספר '+phone,'success',5000);
+}
+
+async function notifyPremiumInterest(gameId){
+  if(!currentRoom)return;
+  try{
+    await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+gameId),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת'});
+  }catch(e){}
+}
+async function toggleCelebrantGame(id){
+  const game=CELEBRANT_GAMES.find(g=>g.id===id);
+  if(!game)return;
+  if(game.premium){
+    openPremiumModal(id,game);
+    return;
+  }
+  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!CELEBRANT_GAMES.find(x=>x.id===sid)?.premium);
+  if(celebrantChoicesSelected.has(id)){
+    celebrantChoicesSelected.delete(id);
+  } else {
+    if(freeSelected.length>=2){toast('ניתן לבחור עד 2 פעילויות','error');return;}
+    celebrantChoicesSelected.add(id);
+  }
+  renderCelebrantGameList();
+  updateCelebChoiceSummary();
+  if(!currentRoom)return;
+  try{
+    const obj={};
+    CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+    await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
+  }catch(e){toast('שגיאה בשמירה','error');}
+}
+
+async function saveCelebrantChoices(){
+  const obj={};
+  CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
+  await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
+  toast('✅ הבחירה נשמרה!','success');
+  // הצג שאלות לDJ אחרי אישור
+  document.getElementById('celebActChoose').style.display='none';
+  document.getElementById('celebActDjQ').style.display='block';
+  document.getElementById('celebActDjQ').scrollIntoView({behavior:'smooth'});
+}
+
+async function sendCelebrantDjMessage(){
+  const inp=document.getElementById('celebDjMsgInput');
+  const txt=inp.value.trim();
+  if(!txt)return;
+  await push(fbRef(db,'events/'+currentRoom+'/djMessages'),{from:'celebrant',name:guestName||'חוגג/ת',text:txt,ts:Date.now(),reply:''});
+  inp.value='';
+  toast('📬 נשלח!','success');
+}
+
+function loadCelebrantDjMessages(){
+  onValue(fbRef(db,'events/'+currentRoom+'/djMessages'),snap=>{
+    const msgs=snap.val()||{};
+    const box=document.getElementById('celebDjMessages');
+    if(!box)return;
+    const arr=Object.entries(msgs).sort((a,b)=>a[1].ts-b[1].ts);
+    if(!arr.length){box.innerHTML='<div style="font-size:12px;color:#555;text-align:center">אין הודעות עדיין</div>';return;}
+    box.innerHTML=arr.map(([k,m])=>`
+      <div style="background:rgba(74,159,255,.08);border:1px solid rgba(74,159,255,.2);border-radius:10px;padding:9px 12px">
+        <div style="font-size:12px;color:#4a9fff;font-weight:700;margin-bottom:3px">🎂 ${m.name}</div>
+        <div style="font-size:13px">${esc(m.text)}</div>
+        ${m.reply?`<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#a78bfa">🎧 DJ: ${esc(m.reply)}</div>`:''}
+      </div>`).join('');
+    box.scrollTop=box.scrollHeight;
+  });
+}
+
+// DJ Messages modal
+let _djMsgRoom='';
+let _djMsgUnsubscribe=null;
+function openDjMessages(rid,evName){
+  _djMsgRoom=rid;
+  if(_djMsgUnsubscribe)_djMsgUnsubscribe();
+  const modal=document.getElementById('djMessagesModal');
+  if(!modal)return;
+  document.getElementById('djMsgModalTitle').textContent='📬 הודעות מחוגג/ת — '+evName;
+  modal.style.display='flex';
+  _djMsgUnsubscribe=onValue(fbRef(db,'events/'+rid+'/djMessages'),snap=>{
+    const msgs=snap.val()||{};
+    const box=document.getElementById('djMsgModalList');
+    const arr=Object.entries(msgs).sort((a,b)=>a[1].ts-b[1].ts);
+    if(!arr.length){box.innerHTML='<div style="font-size:13px;color:#555;text-align:center;padding:16px">אין הודעות עדיין</div>';return;}
+    box.innerHTML=arr.map(([k,m])=>`
+      <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;margin-bottom:8px">
+        <div style="font-size:12px;color:#a78bfa;font-weight:700;margin-bottom:3px">🎂 ${esc(m.name||'חוגג/ת')}</div>
+        <div style="font-size:13px;margin-bottom:6px">${esc(m.text)}</div>
+        ${m.reply
+          ?`<div style="font-size:12px;color:#4a9fff;background:rgba(74,159,255,.08);border-radius:8px;padding:6px 10px">🎧 DJ: ${esc(m.reply)}</div>`
+          :`<div style="display:flex;gap:6px;margin-top:6px">
+              <input id="djReplyInp_${k}" placeholder="כתוב תשובה..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
+              <button onclick="sendDjReply('${k}','djReplyInp_${k}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
+            </div>`}
+      </div>`).join('');
+  });
+}
+async function sendDjReply(msgKey,inputId){
+  const inp=document.getElementById(inputId);
+  if(!inp||!inp.value.trim())return;
+  await set(fbRef(db,'events/'+_djMsgRoom+'/djMessages/'+msgKey+'/reply'),inp.value.trim());
+  toast('✅ תשובה נשלחה','success');
+}
+function closeDjMessages(){
+  if(_djMsgUnsubscribe){_djMsgUnsubscribe();_djMsgUnsubscribe=null;}
+  document.getElementById('djMessagesModal').style.display='none';
+}
+
 // ── DJ TABS ──
 function djTab(t){
   const tabs=[{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3},{k:'Manage',n:4}];
@@ -1117,8 +2271,20 @@ function updateEvNamePreview(){
   if(el)el.textContent=getEventPrefix(type,name);
 }
 
+// מציג/מסתיר שדות חתונה לפי סוג האירוע + מחליף תוויות
+function onEvTypeChange(){
+  const type=document.getElementById('evType').value;
+  const isWedding=type==='חתונה';
+  const wf=document.getElementById('weddingFields');
+  if(wf)wf.style.display=isWedding?'block':'none';
+  const nameLabel=document.getElementById('evNameLabel');
+  if(nameLabel)nameLabel.textContent=isWedding?'שם בן/בת זוג ראשון':'שם החוגג/ת';
+  const nameInput=document.getElementById('evName');
+  if(nameInput&&isWedding&&nameInput.placeholder==='דנה')nameInput.placeholder='מרגרט';
+  if(nameInput&&!isWedding&&nameInput.placeholder==='מרגרט')nameInput.placeholder='דנה';
+}
+
 async function loadConfig(){
-  // Load DJ config from Firebase: names, passwords, prefixes, WA template
   const [namesSnap,passSnap,prefixesSnap,tmplSnap]=await Promise.all([
     get(fbRef(db,'config/djNames')),
     get(fbRef(db,'config/passwords')),
@@ -1320,9 +2486,23 @@ function updateDJHeader(){
   if(d.wa)document.getElementById('aboutWA').value=d.wa;
   if(d.ig)document.getElementById('aboutIG').value=d.ig;
   if(d.fb)document.getElementById('aboutFB').value=d.fb;
+  const gd=d.gameDescriptions||{};
+  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
+    const el=document.getElementById('gameDesc_'+id);
+    if(el)el.value=gd[id]||GAME_DESC_DEFAULTS[id]||'';
+  });
+  if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
+  const welEl=document.getElementById('aboutCelebrantWelcome');
+  if(welEl)welEl.value=d.celebrantWelcome||'';
 }
 async function saveAbout(){
   if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  const gameDescriptions={};
+  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
+    const el=document.getElementById('gameDesc_'+id);
+    if(el)gameDescriptions[id]=el.value.trim()||GAME_DESC_DEFAULTS[id];
+  });
+  _gameDescriptions={...gameDescriptions};
   const d={
     brand:document.getElementById('aboutBrand').value.trim(),
     tagline:document.getElementById('aboutTagline').value.trim(),
@@ -1331,6 +2511,8 @@ async function saveAbout(){
     wa:document.getElementById('aboutWA').value.trim(),
     ig:document.getElementById('aboutIG').value.trim(),
     fb:document.getElementById('aboutFB').value.trim(),
+    gameDescriptions,
+    celebrantWelcome:(document.getElementById('aboutCelebrantWelcome')||{}).value||'',
   };
   await set(fbRef(db,'about'),d);
   applyAbout(d);
@@ -1484,6 +2666,16 @@ async function vote(key){
 }
 
 // ── DJ EVENTS ──
+let evSortMode='recent';
+function setEvSort(mode){
+  evSortMode=mode;
+  const rBtn=document.getElementById('evSortRecent');
+  const dBtn=document.getElementById('evSortDate');
+  if(rBtn){rBtn.style.background=mode==='recent'?'rgba(74,159,255,.15)':'transparent';rBtn.style.borderColor=mode==='recent'?'rgba(74,159,255,.4)':'rgba(255,255,255,.1)';rBtn.style.color=mode==='recent'?'#4a9fff':'#aaa';}
+  if(dBtn){dBtn.style.background=mode==='date'?'rgba(74,159,255,.15)':'transparent';dBtn.style.borderColor=mode==='date'?'rgba(74,159,255,.4)':'rgba(255,255,255,.1)';dBtn.style.color=mode==='date'?'#4a9fff':'#aaa';}
+  renderDJEvents();
+}
+
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
   let evArr=Object.entries(allEvents);
@@ -1491,7 +2683,18 @@ function renderDJEvents(){
   if(currentUserType&&currentUserType!=='owner'){
     evArr=evArr.filter(([rid,ev])=>ev.djId===currentUserType);
   }
-  evArr=evArr.sort((a,b)=>(b[1].createdAt||0)-(a[1].createdAt||0));
+  evArr=evArr.sort((a,b)=>{
+    if(evSortMode==='date'){
+      const today=new Date(); today.setHours(0,0,0,0);
+      const da=a[1].date?new Date(a[1].date+'T00:00:00'):null;
+      const db2=b[1].date?new Date(b[1].date+'T00:00:00'):null;
+      const aFuture=da&&da>=today; const bFuture=db2&&db2>=today;
+      if(aFuture&&bFuture)return da-db2;
+      if(aFuture)return -1; if(bFuture)return 1;
+      return (db2||0)-(da||0);
+    }
+    return (b[1].createdAt||0)-(a[1].createdAt||0);
+  });
   if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
@@ -1509,10 +2712,11 @@ function renderDJEvents(){
       <div class="ev-btns">
         <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
         <button class="ev-btn ev-btn-copy" onclick="sendWhatsAppLink('${escA(gUrl)}','${escA(ev.celebrantPass||'')}')">💬 שלח לינק בווטסאפ</button>
-        <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}')">📋 תור (${cnt})</button>
+        <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}',true)">📋 תור (${cnt})</button>
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
         <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
+        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות</button>
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
@@ -1534,12 +2738,37 @@ async function createEv(){
   const _djNameInput=document.getElementById('evDJName').value.trim();
   const djName=_djNameInput||(currentUserType==='owner'?'ברק':(_djNames[currentUserType]||currentUserType||'Balaganza DJ'));
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
+  // ── בניית האירוע ──
   const fullName=getEventPrefix(type,name);
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  await set(fbRef(db,'events/'+rid),{name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()});
-  ['evName','evDate','evTime','evLoc','evCelebrantPass'].forEach(id=>document.getElementById(id).value='');
+  const eventData={name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()};
+  // ── שדות ייחודיים לחתונה ──
+  if(type==='חתונה'){
+    const partner=document.getElementById('evPartner').value.trim();
+    if(!partner){toast('אנא הזן שם בן/בת זוג','error');return;}
+    const monogram=document.getElementById('evMonogram').value.trim()||((name[0]||'')+' & '+(partner[0]||'')).toUpperCase();
+    const heroImage=document.getElementById('evHeroImage').value.trim();
+    const weddingLang=document.getElementById('evWeddingLang').value||'auto';
+    const maxStars=parseInt(document.getElementById('evMaxStars').value)||10;
+    eventData.weddingConfig={
+      partnerName:partner,
+      coupleNames:{he:name+' ו'+partner,en:(name+' & '+partner).toUpperCase()},
+      monogram,
+      heroImage,
+      defaultLanguage:weddingLang,
+      maxSongsPerGuestPerList:maxSongs,
+      maxStarsPerGuest:maxStars
+    };
+    // ב-חתונה השם המוצג הוא של שני הזוג, לא רק החוגג/ת
+    eventData.name=getEventPrefix(type,name+' ו'+partner);
+  }
+  await set(fbRef(db,'events/'+rid),eventData);
+  ['evName','evDate','evTime','evLoc','evCelebrantPass','evPartner','evMonogram','evHeroImage'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('evType').value='בת מצווה';
   document.getElementById('evMaxSongs').value='20';
+  const _mst=document.getElementById('evMaxStars');if(_mst)_mst.value='10';
+  const _wl=document.getElementById('evWeddingLang');if(_wl)_wl.value='auto';
+  onEvTypeChange();
   updateEvNamePreview();
   toast('✅ האירוע נוצר!','success');
   djTab('events');
@@ -1552,11 +2781,32 @@ async function deleteEv(rid){
   toast('האירוע נמחק','info');
 }
 
-function openEQ(rid,name,type,date){
+function openEQ(rid,name,type,date,fromOwner){
   currentEQRoom=rid;
   document.getElementById('eqTitle').textContent=name;
   document.getElementById('eqMeta').textContent=(type?type+' • ':'')+date;
   document.getElementById('spMsg').className='sp-msg';
+  // Back buttons — all DJs see regular back, but admin sees golden back button
+  const backBtn=document.getElementById('eqBackBtn');
+  const backOwnerBtn=document.getElementById('eqBackOwnerBtn');
+  if(backBtn)backBtn.style.display='';
+  if(backOwnerBtn)backOwnerBtn.style.display='none';
+  // ── זיהוי אירוע חתונה והפעלת מצב חתונה ──
+  const isWedding=type==='חתונה';
+  const wTabs=document.getElementById('eqWeddingTabs');
+  const stdFilter=document.querySelector('#sEQ .qsec > div[style*="display:flex;gap:6px"]');
+  if(wTabs)wTabs.style.display=isWedding?'flex':'none';
+  if(stdFilter)stdFilter.style.display=isWedding?'none':'';
+  // ניקוי מאזיני חתונה קודמים
+  eqWeddingState.unsubs.forEach(u=>{try{u();}catch(e){}});
+  eqWeddingState.unsubs=[];
+  eqWeddingState.isWedding=isWedding;
+  eqWeddingState.activeList='reception';
+  eqWeddingState.songs={reception:[],party:[]};
+  if(isWedding){
+    setEqWeddingList('reception',true);
+    startEqWeddingListeners(rid);
+  }
   // Load DJ notes for this event
   const notesArea=document.getElementById('djNotesArea');
   if(notesArea){
@@ -1565,7 +2815,39 @@ function openEQ(rid,name,type,date){
       notesArea.value=snap.val()||'';
     });
   }
-  show('sEQ');renderEQ();
+  // Load celebrant choices + premium interest for this event
+  get(fbRef(db,'events/'+rid+'/celebrantChoices')).then(snap=>{
+    const choices=snap.val()||{};
+    const selected=CELEBRANT_GAMES.filter(g=>choices[g.id]);
+    const display=document.getElementById('celebrantChoicesDisplay');
+    const list=document.getElementById('celebrantChoicesList');
+    if(display&&list){
+      if(selected.length&&!isWedding){
+        list.innerHTML=selected.map(g=>`<span style="background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.5);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:#c084fc">${g.emoji} ${g.name}</span>`).join('');
+        display.style.display='block';
+      } else {
+        display.style.display='none';
+      }
+    }
+  });
+  // Load premium interest
+  get(fbRef(db,'events/'+rid+'/premiumInterest')).then(snap=>{
+    const interest=snap.val()||{};
+    const keys=Object.keys(interest);
+    const premiumEl=document.getElementById('premiumInterestDisplay');
+    if(!premiumEl)return;
+    if(keys.length&&!isWedding){
+      const games=CELEBRANT_GAMES.filter(g=>keys.includes(g.id));
+      premiumEl.innerHTML='<div style="font-size:12px;font-weight:700;color:#D4AF37;margin-bottom:6px">👑 החוגג/ת מתעניין/ת בפרימיום:</div>'
+        +games.map(g=>`<span style="background:rgba(212,175,55,.15);border:1.5px solid rgba(212,175,55,.5);border-radius:8px;padding:4px 10px;font-size:12px;font-weight:700;color:#D4AF37">${g.emoji} ${g.name}</span>`).join(' ');
+      premiumEl.style.display='block';
+    } else {
+      premiumEl.style.display='none';
+    }
+  });
+  // Reset filter
+  if(typeof setEqFilter==='function') setEqFilter('all');
+  show('sEQ');renderEQ(true);
 }
 
 async function saveDJNotes(){
@@ -1576,29 +2858,152 @@ async function saveDJNotes(){
   toast('✅ הערות נשמרו!','success');
 }
 
+let eqFilter='all';
+function setEqFilter(f){
+  eqFilter=f;
+  ['All','Celebrant','Guests'].forEach(function(n){
+    const btn=document.getElementById('eqF'+n);
+    if(!btn)return;
+    const active=(f==='all'&&n==='All')||(f==='celebrant'&&n==='Celebrant')||(f==='guests'&&n==='Guests');
+    btn.style.background=active?'rgba(74,159,255,.15)':'transparent';
+    btn.style.borderColor=active?'rgba(74,159,255,.4)':'rgba(255,255,255,.1)';
+    btn.style.color=active?'#4a9fff':'#aaa';
+  });
+  renderEQ();
+}
+
 function renderEQ(force){
   const list=document.getElementById('eqList');const cnt=document.getElementById('eqCount');
   if(!list||!currentEQRoom)return;
-  // Only render if sEQ is actually visible — unless forced (e.g. after export)
   if(!force){
     const sEQ=document.getElementById('sEQ');
     if(!sEQ||!sEQ.classList.contains('on'))return;
   }
-  const songs=Object.entries(allQueues[currentEQRoom]||{}).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.votes||0)-(a.votes||0));
+  // ── מצב חתונה: רנדור נפרד ──
+  if(eqWeddingState.isWedding){
+    renderEqWedding();
+    return;
+  }
+  let songs=Object.entries(allQueues[currentEQRoom]||{}).map(function([k,v]){return {key:k,...v};}).sort(function(a,b){return (b.votes||0)-(a.votes||0);});
+  if(eqFilter==='celebrant') songs=songs.filter(function(s){return (s.requestedBy||'').startsWith('🎂');});
+  else if(eqFilter==='guests') songs=songs.filter(function(s){return !(s.requestedBy||'').startsWith('🎂');});
   cnt.textContent=songs.length+(songs.length>=60?' (מקס)':'');
   cnt.style.background=songs.length>=60?'#FF8C00':'';
   if(!songs.length){list.innerHTML='<div class="empty"><span class="ico">🎵</span><p>התור ריק</p></div>';return;}
-  const rank=i=>i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}.`;
-  list.innerHTML=songs.map((s,i)=>`
-    <div class="qi ${i===0?'top1':''}">
-      ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
-      <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
-      ${s.preview?`<button class="preview-btn" data-preview="${s.preview}" onclick="event.stopPropagation();togglePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>`:''}
-      <div class="vote-btn voted"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${voteColor(s.votes||0,Math.max(1,...Object.values(allQueues[currentEQRoom]||{}).map(x=>x.votes||0)))}">${s.votes||0}</span></div>
-      <button class="del-btn" onclick="delSong('${s.key}')">🗑️</button>
-    </div>`).join('');
+  const maxV=Math.max(1,...Object.values(allQueues[currentEQRoom]||{}).map(function(x){return x.votes||0;}));
+  const rank=function(i){return i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';};
+  list.innerHTML=songs.map(function(s,i){
+    const isCeleb=(s.requestedBy||'').startsWith('🎂');
+    const celebBorder=isCeleb?'border:2px solid rgba(212,175,55,.6);background:rgba(212,175,55,.07);':'';
+    const celebBadge=isCeleb?' <span style="font-size:10px;background:rgba(212,175,55,.25);color:#D4AF37;border-radius:5px;padding:1px 5px;font-weight:700;margin-right:4px">&#x1F451; חוגג/ת</span>':'';
+    const celebByColor=isCeleb?' style="color:rgba(212,175,55,.7)"':'';
+    const artImg=s.art?'<img src="'+s.art+'" alt="" onerror="this.style.display=\'none\'">'
+                      :'<div class="qi-art">🎵</div>';
+    const previewBtn=s.preview?'<button class="preview-btn" data-preview="'+s.preview+'" onclick="event.stopPropagation();togglePreview(this,\''+escA(s.name)+'\',\''+escA(s.artist)+'\',\''+escA(s.art||'')+'\')">\u25b6</button>':'';
+    const voteClr=voteColor(s.votes||0,maxV);
+    return '<div class="qi'+(i===0?' top1':'')+'" style="'+celebBorder+'">'
+      +artImg
+      +'<div class="qi-info">'
+        +'<div class="qi-name">'+rank(i)+' '+esc(s.name)+celebBadge+'</div>'
+        +'<div class="qi-artist">'+esc(s.artist||'')+'</div>'
+        +'<div class="qi-by"'+celebByColor+'>בקשה של '+esc(s.requestedBy||'אנונימי')+'</div>'
+      +'</div>'
+      +previewBtn
+      +'<div class="vote-btn voted"><span class="vote-arr">\u25b2</span><span class="vote-cnt" style="color:'+voteClr+'">'+(s.votes||0)+'</span></div>'
+      +'<button class="del-btn" onclick="delSong(\''+s.key+'\')">&#x1F5D1;&#xFE0F;</button>'
+      +'</div>';
+  }).join('');
 }
 
+// ════════════════════════════════════════════════════════════════
+// WEDDING ADMIN — ניהול שתי רשימות חתונה באדמין
+// ════════════════════════════════════════════════════════════════
+const eqWeddingState={
+  isWedding:false,
+  activeList:'reception',
+  songs:{reception:[],party:[]},
+  unsubs:[]
+};
+
+function startEqWeddingListeners(rid){
+  ['reception','party'].forEach(listName=>{
+    const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+listName+'/songs');
+    const unsub=onValue(listRef,snap=>{
+      const all=[];
+      snap.forEach(child=>{all.push({_id:child.key,...child.val()});});
+      all.sort((a,b)=>{
+        // ממוין: כוכבי Must בראש, אחר כך לפי זמן הוספה
+        if(a.starred&&!b.starred)return -1;
+        if(!a.starred&&b.starred)return 1;
+        return (a.createdAt||0)-(b.createdAt||0);
+      });
+      eqWeddingState.songs[listName]=all;
+      updateEqWeddingCounts();
+      if(listName===eqWeddingState.activeList){renderEqWedding();}
+    });
+    eqWeddingState.unsubs.push(unsub);
+  });
+}
+
+function setEqWeddingList(listName,skipRender){
+  eqWeddingState.activeList=listName;
+  // עדכון מראה הטאבים
+  const tR=document.getElementById('eqWTReception');
+  const tP=document.getElementById('eqWTParty');
+  if(tR&&tP){
+    const active='border:2px solid rgba(255,215,0,.5);background:rgba(255,215,0,.15);color:#FFD700;';
+    const inactive='border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;';
+    const style=(s,isActive)=>{
+      const base='flex:1;padding:10px 0;border-radius:10px;font-family:\'Heebo\',sans-serif;font-size:13px;font-weight:900;cursor:pointer;';
+      s.style.cssText=base+(isActive?active:inactive);
+    };
+    style(tR,listName==='reception');
+    style(tP,listName==='party');
+  }
+  if(!skipRender)renderEqWedding();
+}
+
+function updateEqWeddingCounts(){
+  const rc=document.getElementById('eqWTReceptionCount');
+  const pc=document.getElementById('eqWTPartyCount');
+  if(rc)rc.textContent='('+eqWeddingState.songs.reception.length+')';
+  if(pc)pc.textContent='('+eqWeddingState.songs.party.length+')';
+}
+
+function renderEqWedding(){
+  const list=document.getElementById('eqList');
+  const cnt=document.getElementById('eqCount');
+  const songs=eqWeddingState.songs[eqWeddingState.activeList]||[];
+  cnt.textContent=songs.length;
+  cnt.style.background='';
+  if(!songs.length){
+    const emptyMsg=eqWeddingState.activeList==='reception'?'עדיין לא נוספו שירים לקבלת פנים':'עדיין לא נוספו שירים למסיבה';
+    list.innerHTML='<div class="empty"><span class="ico">🎵</span><p>'+emptyMsg+'</p></div>';
+    return;
+  }
+  list.innerHTML=songs.map((s,i)=>{
+    const starBadge=s.starred?' <span style="font-size:11px;background:rgba(224,169,0,.25);color:#FFD700;border-radius:5px;padding:1px 6px;font-weight:700;margin-right:4px">★ MUST</span>':'';
+    const starBorder=s.starred?'border:2px solid rgba(224,169,0,.6);background:rgba(224,169,0,.07);':'';
+    const artImg=s.cover?'<img src="'+s.cover+'" alt="" onerror="this.style.display=\'none\'">':'<div class="qi-art">🎵</div>';
+    const previewBtn=s.previewUrl?'<button class="preview-btn" data-preview="'+s.previewUrl+'" onclick="event.stopPropagation();togglePreview(this,\''+escA(s.title)+'\',\''+escA(s.artist)+'\',\''+escA(s.cover||'')+'\')">\u25b6</button>':'';
+    return '<div class="qi" style="'+starBorder+'">'
+      +artImg
+      +'<div class="qi-info">'
+        +'<div class="qi-name">'+(i+1)+'. '+esc(s.title)+starBadge+'</div>'
+        +'<div class="qi-artist">'+esc(s.artist||'')+'</div>'
+        +'<div class="qi-by">בקשה של '+esc(s.addedByName||'אורח')+'</div>'
+      +'</div>'
+      +previewBtn
+      +'<button class="del-btn" onclick="delWeddingSong(\''+escA(s._id)+'\')">&#x1F5D1;&#xFE0F;</button>'
+      +'</div>';
+  }).join('');
+}
+
+async function delWeddingSong(songId){
+  if(!currentEQRoom)return;
+  await set(fbRef(db,'events/'+currentEQRoom+'/weddingLists/'+eqWeddingState.activeList+'/songs/'+songId),null);
+}
+// ════════════════════════════════════════════════════════════════
 async function editEvName(){
   const newName=prompt('שם חדש לאירוע:',document.getElementById('eqTitle').textContent.replace(' ✏️',''));
   if(!newName||!newName.trim()||!currentEQRoom)return;
@@ -1689,6 +3094,9 @@ async function handleSpotifyCB(){
       if(localStorage.getItem('b_sp_pl')&&localStorage.getItem('b_sp_songs')){
         // Force clean URL reload so exportSpotify runs on a fresh page with clean token
         window.location.href='/';
+      } else if(localStorage.getItem('b_sp_wedding')){
+        // Wedding multi-playlist export — reload to clean state, will auto-resume
+        window.location.href='/';
       } else {
         // Wait for events to load before opening EQ
         setTimeout(()=>{
@@ -1705,6 +3113,11 @@ async function handleSpotifyCB(){
 
 async function exportSpotify(){
   if(!spToken){spLogin();return;}
+
+  // ── אם זו חתונה, מפנים לזרימה ייעודית של שני פלייליסטים ──
+  if(eqWeddingState.isWedding){
+    return exportSpotifyWedding();
+  }
 
   // After re-login, finish adding tracks to existing playlist
   const pendingPl=localStorage.getItem('b_sp_pl');
@@ -1807,6 +3220,155 @@ async function exportSpotify(){
   setTimeout(()=>renderEQ(true),100);
 }
 function spFetch(url,opts={}){return fetch(url,{...opts,headers:{'Authorization':'Bearer '+spToken,'Content-Type':'application/json',...(opts.headers||{})}});}
+
+// ════════════════════════════════════════════════════════════════
+// WEDDING SPOTIFY EXPORT — ייצוא שני פלייליסטים נפרדים לחתונה
+// ════════════════════════════════════════════════════════════════
+async function exportSpotifyWedding(){
+  if(!spToken){spLogin();return;}
+  const ev=allEvents[currentEQRoom]||{};
+  const cfg=ev.weddingConfig||{};
+  const couple=cfg.coupleNames?(cfg.coupleNames.he||cfg.coupleNames.en||ev.celebrantName):(ev.celebrantName||'החתונה');
+  const djName=ev.djName||'Balaganza DJ';
+
+  // אחרי re-login: שמירת state לשני שלבים
+  const pendingMulti=localStorage.getItem('b_sp_wedding');
+  if(pendingMulti){
+    localStorage.removeItem('b_sp_wedding');
+    try{
+      const data=JSON.parse(pendingMulti);
+      document.getElementById('btnSP').disabled=true;
+      setSpMsg('משלים ייצוא אחרי התחברות...','loading');
+      for(const item of data.queue){
+        for(let i=0;i<item.uris.length;i+=100){
+          await spFetch(`https://api.spotify.com/v1/playlists/${item.plId}/items`,{method:'POST',body:JSON.stringify({uris:item.uris.slice(i,i+100)})});
+        }
+      }
+      setSpMsg('✅ הייצוא הושלם!','ok');
+      document.getElementById('btnSP').disabled=false;
+      return;
+    }catch(e){
+      setSpMsg('שגיאה בהשלמה: '+e.message,'err');
+      document.getElementById('btnSP').disabled=false;
+      return;
+    }
+  }
+
+  const lists=eqWeddingState.songs;
+  const totalSongs=lists.reception.length+lists.party.length;
+  if(!totalSongs){toast('שתי הרשימות ריקות','error');return;}
+
+  document.getElementById('btnSP').disabled=true;
+  try{
+    setSpMsg('מאמת...','loading');
+    const meRes=await spFetch('https://api.spotify.com/v1/me');
+    if(!meRes.ok){spToken=null;localStorage.removeItem('b_spt');spLogin();return;}
+    await meRes.json();
+
+    const results=[];
+    const pendingState=[]; // ייווצר רק אם 403
+
+    for(const listName of ['reception','party']){
+      const listSongs=lists[listName];
+      if(!listSongs.length){
+        results.push({listName,plId:null,uris:[],notFound:[],skipped:true});
+        continue;
+      }
+      const niceList=listName==='reception'?'קבלת פנים':'מסיבה';
+      const plName=`💍 ${couple} – ${niceList}`;
+      const plDesc=`${niceList} | פלייליסט שנוצר ע"י ${djName} | בלאגנזה`;
+
+      setSpMsg(`יוצר פלייליסט: ${niceList}...`,'loading');
+      const plRes=await spFetch('https://api.spotify.com/v1/me/playlists',{method:'POST',body:JSON.stringify({name:plName,description:plDesc,public:false})});
+      const pl=await plRes.json();
+      if(!pl.id){throw new Error('יצירת פלייליסט נכשלה ל-'+niceList);}
+
+      // חיפוש כל שיר בספוטיפיי — קודם השירים המסומנים ב-Must (חשוב לדיג'יי שיהיו בראש)
+      const sortedSongs=[...listSongs].sort((a,b)=>{
+        if(a.starred&&!b.starred)return -1;
+        if(!a.starred&&b.starred)return 1;
+        return (a.createdAt||0)-(b.createdAt||0);
+      });
+      const uris=[];const notFound=[];
+      for(const s of sortedSongs){
+        setSpMsg(`${niceList}: מחפש ${s.title}...`,'loading');
+        const q=encodeURIComponent((s.spotifyQuery||(s.title+' '+s.artist)));
+        try{
+          const sr=await spFetch(`https://api.spotify.com/v1/search?q=${q}&type=track&limit=3`);
+          const sd=await sr.json();
+          if(sd?.tracks?.items?.[0]){
+            uris.push(sd.tracks.items[0].uri);
+          } else {
+            notFound.push({name:s.title,artist:s.artist||'',reason:'לא נמצא בספוטיפיי'});
+          }
+        }catch(searchErr){
+          notFound.push({name:s.title,artist:s.artist||'',reason:'שגיאת חיפוש'});
+        }
+      }
+
+      // הוספת השירים לפלייליסט
+      if(uris.length){
+        setSpMsg(`${niceList}: מוסיף ${uris.length} שירים...`,'loading');
+        for(let i=0;i<uris.length;i+=100){
+          const addRes=await spFetch(`https://api.spotify.com/v1/playlists/${pl.id}/items`,{method:'POST',body:JSON.stringify({uris:uris.slice(i,i+100)})});
+          if(!addRes.ok){
+            const err=await addRes.json();
+            console.error('Add tracks error ('+niceList+'):',addRes.status,err);
+            if(addRes.status===403){
+              // צריך login מחדש — שומרים את המצב כדי להשלים אחרי החזרה
+              pendingState.push({plId:pl.id,uris,listName});
+              continue;
+            }
+          }
+        }
+      }
+
+      results.push({listName,plId:pl.id,uris,notFound,skipped:false});
+    }
+
+    // אם היו 403 — שומרים state ושולחים ל-login
+    if(pendingState.length){
+      localStorage.setItem('b_sp_wedding',JSON.stringify({queue:pendingState}));
+      spToken=null;localStorage.removeItem('b_spt');
+      setSpMsg('מתחבר מחדש לספוטיפיי...','loading');
+      setTimeout(()=>spLogin(),1000);
+      return;
+    }
+
+    // שמירת ה-URLs ב-Firebase
+    const urlMap={};
+    results.forEach(r=>{if(r.plId){urlMap[r.listName]=`https://open.spotify.com/playlist/${r.plId}`;}});
+    if(currentEQRoom)await set(fbRef(db,'events/'+currentEQRoom+'/spotifyWeddingUrls'),urlMap);
+
+    // הצגת תוצאות
+    const el=document.getElementById('spMsg');
+    if(el){
+      let html='';
+      results.forEach(r=>{
+        if(r.skipped){return;}
+        const niceList=r.listName==='reception'?'💐 קבלת פנים':'🪩 מסיבה';
+        html+=`<div style="margin-bottom:10px;padding:8px;background:rgba(29,185,84,.1);border-radius:8px"><strong>${niceList}:</strong> ${r.uris.length}/${r.uris.length+r.notFound.length} שירים נוספו`;
+        if(r.notFound.length){
+          html+=`<div style="margin-top:4px;color:#FF8C00;font-size:12px"><strong>❌ לא נמצאו (${r.notFound.length}):</strong><div style="margin-top:2px">${r.notFound.map(x=>`• ${esc(x.name)}${x.artist?' – '+esc(x.artist):''}`).join('<br>')}</div></div>`;
+        }
+        html+=`<div style="margin-top:6px"><a href="https://open.spotify.com/playlist/${r.plId}" target="_blank" style="color:#1DB954;font-size:12px;font-weight:700">🔗 פתח ב-Spotify</a></div></div>`;
+      });
+      el.innerHTML=html;
+      el.className='sp-msg show ok';
+    }
+    toast('🎵 שני הפלייליסטים נוצרו!','success');
+    // פותח את שניהם בלשוניות חדשות
+    setTimeout(()=>{
+      results.forEach(r=>{if(r.plId)window.open(`https://open.spotify.com/playlist/${r.plId}`,'_blank');});
+    },800);
+  }catch(e){
+    setSpMsg('שגיאה: '+e.message,'err');
+    console.error(e);
+  }
+  document.getElementById('btnSP').disabled=false;
+  setTimeout(()=>renderEQ(true),100);
+}
+// ════════════════════════════════════════════════════════════════
 function copyLink(url){navigator.clipboard.writeText(url).then(()=>toast('🔗 הלינק הועתק!','success'));}
 
 // WhatsApp message template (loaded from Firebase)
