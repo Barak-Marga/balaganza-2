@@ -391,7 +391,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
             <div class="fld"><label>סוג אירוע</label>
               <select id="evType" onchange="updateEvNamePreview();onEvTypeChange()">
                 <option value="">בחר...</option>
-                <option>חתונה</option><option>בר מצווה</option><option selected>בת מצווה</option>
+                <option id="evTypeWeddingOpt" value="חתונה">חתונה</option><option>בר מצווה</option><option selected>בת מצווה</option>
                 <option>יום הולדת</option><option>מסיבה פרטית</option>
                 <option>אירוע חברה</option><option>אחר</option>
               </select>
@@ -424,7 +424,10 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
           </div>
           <div class="fld-row">
             <div class="fld"><label>מיקום</label><input type="text" id="evLoc" placeholder="אולם X, תל אביב"></div>
-            <div class="fld"><label>שם הDJ</label><input type="text" id="evDJName" placeholder="Balaganza DJ"></div>
+            <div class="fld"><label>שם הDJ</label>
+              <select id="evDJSelect" style="display:none"></select>
+              <input type="text" id="evDJName" placeholder="Balaganza DJ">
+            </div>
           </div>
           <div class="fld-row">
             <div class="fld"><label>שפת פלייליסט</label>
@@ -642,6 +645,19 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   .wf-date-line { font-size: 13px; letter-spacing: 3px; margin: 0 0 18px; color: #1a1a1a; }
   .wf-location-line { font-size: 12px; letter-spacing: 4px; margin: 0; color: #1a1a1a; }
 
+  /* ── סידור כותרת חתונה לפי שפה (16/5) ── */
+  .wf-titles { display: flex; flex-direction: column; }
+  /* סדר ברירת מחדל (אנגלית): THE → Wedding → OF → Names */
+  .wf-the { order: 1; }
+  .wf-wedding-word { order: 2; }
+  .wf-of { order: 3; }
+  .wf-names { order: 4; }
+  /* בעברית: רק שמות הזוג למעלה ו"חתונה" קטן מתחת */
+  html[dir="rtl"] #sWedding .wf-the { display: none; }
+  html[dir="rtl"] #sWedding .wf-of { display: none; }
+  html[dir="rtl"] #sWedding .wf-names { order: 1; margin-bottom: 8px; }
+  html[dir="rtl"] #sWedding .wf-wedding-word { order: 2; font-size: 38px; margin-bottom: 16px; }
+
   html[dir="rtl"] #sWedding .wf-the,
   html[dir="rtl"] #sWedding .wf-of,
   html[dir="rtl"] #sWedding .wf-names,
@@ -653,6 +669,7 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
   .wf-songs-section { border-top: 0.5px solid #1a1a1a; padding: 30px 22px 28px; text-align: center; }
   .wf-songs-heading { font-size: 44px; margin: 0 0 6px; line-height: 1; color: #1a1a1a; }
   .wf-songs-sub { font-size: 11px; letter-spacing: 3px; margin: 0 0 24px; color: #666; }
+  .wf-songs-sub:empty { margin: 0 0 4px; }
 
   .wf-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
   .wf-tab {
@@ -809,11 +826,12 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
     <input type="file" id="wfHeroFileInput" accept="image/*" style="display:none">
   </div>
   <div class="wf-body">
-    <p class="wf-the" id="wfWordThe"></p>
-    <p class="wf-wedding-word wf-script" id="wfWordWedding"></p>
-    <p class="wf-of" id="wfWordOf"></p>
-    <p class="wf-names" id="wfCoupleNames"></p>
-    <p class="wf-meta" id="wfMetaLine"></p>
+    <div class="wf-titles">
+      <p class="wf-the" id="wfWordThe"></p>
+      <p class="wf-wedding-word wf-script" id="wfWordWedding"></p>
+      <p class="wf-of" id="wfWordOf"></p>
+      <p class="wf-names" id="wfCoupleNames"></p>
+    </div>
     <p class="wf-countdown" id="wfCountdown"></p>
     <div class="wf-divider"></div>
     <p class="wf-date-line" id="wfDateLine"></p>
@@ -1188,7 +1206,7 @@ function loadGuestEvent(){
 const WF_I18N={
   he:{
     "the":"ה","wedding":"חתונה","of":"של",
-    "songs-heading":"הפסקול שלנו","songs-sub":"עזרו לנו לבנות את הפלייליסט",
+    "songs-heading":"הפסקול שלנו","songs-sub":"",
     "tab-reception-label":"RECEPTION","tab-reception-name":"קבלת פנים",
     "tab-party-label":"PARTY","tab-party-name":"מסיבה",
     "search-placeholder":"חפשו שיר או אמן…",
@@ -1287,12 +1305,18 @@ function wfRenderStatic(){
   let dateDisplay='';
   if(ev.date){
     const d=new Date(ev.date+'T00:00:00');
-    if(lang==='he')dateDisplay=d.toLocaleDateString('he-IL',{day:'numeric',month:'long',year:'numeric'});
-    else dateDisplay=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+    if(lang==='he'){
+      // פורמט dd/mm/yy לעברית
+      const dd=String(d.getDate()).padStart(2,'0');
+      const mm=String(d.getMonth()+1).padStart(2,'0');
+      const yy=String(d.getFullYear()).slice(-2);
+      dateDisplay=`${dd}/${mm}/${yy}`;
+    } else {
+      dateDisplay=d.toLocaleDateString('en-US',{day:'numeric',month:'long',year:'numeric'}).toUpperCase();
+    }
   }
   document.getElementById('wfDateLine').textContent=dateDisplay;
   document.getElementById('wfLocationLine').textContent=(ev.location||'').toUpperCase();
-  document.getElementById('wfMetaLine').textContent=dateDisplay+(ev.location?' · '+ev.location:'');
   // ספירה לאחור
   if(ev.date){
     const today=new Date();
@@ -2244,8 +2268,36 @@ function djTab(t){
   if(t==='events')renderDJEvents();
   if(t==='manage')renderDJManage();
   if(t==='create'){
-    const djEl=document.getElementById('evDJName');
-    if(djEl&&!djEl.value){djEl.value=currentUserType==='owner'?'ברק':(_djNames[currentUserType]||currentUserType||'');}
+    const isOwner=currentUserType==='owner';
+    // ── הסתרת אופציית "חתונה" מ-non-owner ──
+    const wOpt=document.getElementById('evTypeWeddingOpt');
+    if(wOpt)wOpt.style.display=isOwner?'':'none';
+    // אם non-owner ובחירת ה-select היא "חתונה" — לאפס לבת מצווה
+    const evTypeEl=document.getElementById('evType');
+    if(!isOwner&&evTypeEl&&evTypeEl.value==='חתונה'){evTypeEl.value='בת מצווה';updateEvNamePreview();onEvTypeChange();}
+    // ── שדה הDJ: בעלים מקבל dropdown סגור, דיג'יי רגיל ממשיך עם input ──
+    const djInput=document.getElementById('evDJName');
+    const djSelect=document.getElementById('evDJSelect');
+    if(isOwner&&djSelect&&djInput){
+      // בניית רשימת דיג'יים: ברק (owner) + כל הדיג'יים הרשומים
+      const djKeys=Object.keys(_djNames).filter(k=>k!=='owner');
+      let opts='<option value="ברק">ברק</option>';
+      djKeys.forEach(k=>{
+        const nm=_djNames[k]||k;
+        opts+=`<option value="${esc(nm)}">${esc(nm)}</option>`;
+      });
+      djSelect.innerHTML=opts;
+      djSelect.value='ברק';
+      djSelect.style.display='';
+      djInput.style.display='none';
+      djInput.value='ברק';
+      // סנכרון: כשהבעלים בוחר מה-select, ה-input (שממנו createEv קורא) מתעדכן
+      djSelect.onchange=function(){djInput.value=djSelect.value;};
+    } else if(djInput&&djSelect){
+      djSelect.style.display='none';
+      djInput.style.display='';
+      if(!djInput.value)djInput.value=(_djNames[currentUserType]||currentUserType||'');
+    }
   }
 }
 // ── OWNER MANAGEMENT ──
@@ -2738,10 +2790,21 @@ async function createEv(){
   const _djNameInput=document.getElementById('evDJName').value.trim();
   const djName=_djNameInput||(currentUserType==='owner'?'ברק':(_djNames[currentUserType]||currentUserType||'Balaganza DJ'));
   if(!name||!type||!date){toast('אנא מלא שם, סוג ותאריך','error');return;}
+  // ── הגנה: אירוע חתונה רק לבעלים ──
+  if(type==='חתונה'&&currentUserType!=='owner'){toast('יצירת אירוע חתונה זמינה רק לבעלים','error');return;}
+  // ── פריט 9: שיוך אירוע שנוצר ע"י הבעלים לדיג'יי הנבחר ──
+  // אם הבעלים בחר דיג'יי קיים ב-Dropdown — נמצא את ה-djId שלו ב-_djNames
+  // כך שהדיג'יי הזה יראה את האירוע גם בחשבון שלו (וגם הבעלים יראה כי owner רואה הכל).
+  // אם השם לא תואם דיג'יי רשום — נשאיר djId='owner' (fallback בטוח).
+  let resolvedDjId=currentUserType||'owner';
+  if(currentUserType==='owner'&&djName){
+    const matched=Object.keys(_djNames).find(k=>k!=='owner'&&_djNames[k]===djName);
+    if(matched)resolvedDjId=matched;
+  }
   // ── בניית האירוע ──
   const fullName=getEventPrefix(type,name);
   const rid=name.replace(/[^a-zA-Z0-9\u0590-\u05FF]/g,'_').slice(0,20)+'_'+Date.now().toString(36);
-  const eventData={name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:currentUserType||'owner',roomId:rid,createdAt:Date.now()};
+  const eventData={name:fullName,celebrantName:name,type,date,time,location:loc,lang,maxSongs,celebrantPass:celebrantPass||'',djName,djId:resolvedDjId,roomId:rid,createdAt:Date.now()};
   // ── שדות ייחודיים לחתונה ──
   if(type==='חתונה'){
     const partner=document.getElementById('evPartner').value.trim();
@@ -3037,12 +3100,18 @@ async function saveEvDetails(){
   const type=document.getElementById('editEvType').value;
   if(!name||!type){toast('שם וסוג אירוע חובה','error');return;}
   const fullName=getEventPrefix(type,name);
+  const newDjName=document.getElementById('editEvDJName').value.trim();
   const updates={name:fullName,celebrantName:name,type,
     date:document.getElementById('editEvDate').value,
     time:document.getElementById('editEvTime').value,
     location:document.getElementById('editEvLoc').value.trim(),
-    djName:document.getElementById('editEvDJName').value.trim(),
+    djName:newDjName,
     maxSongs:parseInt(document.getElementById('editEvMaxSongs').value)||20};
+  // ── פריט 9: סנכרון djId לפי שם הדיג'יי החדש (רק לבעלים) ──
+  if(currentUserType==='owner'&&newDjName){
+    const matched=Object.keys(_djNames).find(k=>k!=='owner'&&_djNames[k]===newDjName);
+    updates.djId=matched||'owner';
+  }
   const snap=await get(fbRef(db,'events/'+rid));
   await set(fbRef(db,'events/'+rid),{...(snap.val()||{}),...updates});
   document.getElementById('editEvModal').classList.remove('show');
