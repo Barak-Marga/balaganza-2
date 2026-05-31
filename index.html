@@ -1217,6 +1217,7 @@ const WF_I18N={
     "added":"השיר נוסף","removed":"השיר הוסר",
     "starred":"סומן כ-Must","unstarred":"הסימון הוסר",
     "limit-reached":"הגעת למקסימום השירים ברשימה",
+    "already-added":"השיר כבר ברשימה",
     "stars-limit":"הגעת למקסימום סימוני Must",
     "days-to-go":"נשארו ${n} ימים!",
     "preview-error":"לא ניתן להשמיע preview לשיר זה"
@@ -1234,6 +1235,7 @@ const WF_I18N={
     "added":"Song added","removed":"Song removed",
     "starred":"Marked as Must","unstarred":"Mark removed",
     "limit-reached":"You reached the song limit",
+    "already-added":"This song is already on the list",
     "stars-limit":"You reached the Must limit",
     "days-to-go":"${n} DAYS TO GO!",
     "preview-error":"Preview not available for this song"
@@ -1469,14 +1471,13 @@ function wfStartSongListeners(){
   ['reception','party'].forEach(listName=>{
     const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+listName+'/songs');
     const unsub=onValue(listRef,snap=>{
-      const all=[];const mine=[];
+      const all=[];
       snap.forEach(child=>{
         const song={_id:child.key,...child.val()};
         all.push(song);
-        if(song.addedBy===wfState.guestId)mine.push(song);
       });
-      mine.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-      wfState.songs[listName]=mine;
+      all.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      wfState.songs[listName]=all;
       if(listName===wfState.activeList){wfRenderSongList();}
       wfUpdateCountLine();
     });
@@ -1580,8 +1581,11 @@ async function wfAddSong(songData){
   const cfg=wfState.event.weddingConfig||{};
   const maxSongs=cfg.maxSongsPerGuestPerList||5;
   const list=wfState.songs[wfState.activeList];
-  if(list.length>=maxSongs){wfShowToast(wfT('limit-reached'));return;}
-  if(list.some(s=>s.trackId===songData.trackId))return;
+  // ספירת השירים שהמשתמש הנוכחי הוסיף (מגבלה אישית)
+  const myCount=list.filter(s=>s.addedBy===wfState.guestId).length;
+  if(myCount>=maxSongs){wfShowToast(wfT('limit-reached'));return;}
+  // כפילות: השיר כבר ברשימה (מתישהו, גם אם נוסף ע"י בן/בת הזוג)
+  if(list.some(s=>s.trackId===songData.trackId)){wfShowToast(wfT('already-added')||'השיר כבר ברשימה');return;}
   const rid=wfState.event.roomId||urlRoom;
   const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs');
   const newRef=push(listRef);
@@ -1598,6 +1602,9 @@ async function wfAddSong(songData){
 }
 
 async function wfRemoveSong(songId){
+  const list=wfState.songs[wfState.activeList]||[];
+  const song=list.find(s=>s._id===songId);
+  if(!song||song.addedBy!==wfState.guestId)return; // הגנה: רק המוסיף יכול למחוק
   const rid=wfState.event.roomId||urlRoom;
   await set(fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs/'+songId),null);
   wfShowToast(wfT('removed'));
@@ -1634,6 +1641,8 @@ function wfRenderSongList(){
   }
   container.innerHTML=list.map(song=>{
     const previewBtn=song.previewUrl?`<button class="wf-icon-btn preview list-preview" data-preview="${wfEsc(song.previewUrl)}" style="width:28px;height:28px;font-size:10px">▶</button>`:'';
+    const isMine=song.addedBy===wfState.guestId;
+    const removeBtn=isMine?`<button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>`:'';
     return `
     <div class="wf-song-row">
       <div class="wf-song-cover" style="background-image:url('${wfEsc(song.cover)}')"></div>
@@ -1644,7 +1653,7 @@ function wfRenderSongList(){
       <div class="wf-song-actions">
         ${previewBtn}
         <button class="wf-star-btn ${song.starred?'starred':''}" data-star="${wfEsc(song._id)}">${song.starred?'★':'☆'}</button>
-        <button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>
+        ${removeBtn}
       </div>
     </div>`;
   }).join('');
@@ -1667,9 +1676,11 @@ function wfRenderSongList(){
 function wfUpdateCountLine(){
   const cfg=(wfState.event&&wfState.event.weddingConfig)||{};
   const list=wfState.songs[wfState.activeList];
+  // מציג כמה אני הוספתי מתוך המכסה האישית שלי
+  const myCount=list.filter(s=>s.addedBy===wfState.guestId).length;
   const stars=wfCountStars();
   document.getElementById('wfCountLine').textContent=wfT('count-line',{
-    added:list.length,
+    added:myCount,
     max:cfg.maxSongsPerGuestPerList||5,
     stars:stars,
     maxStars:cfg.maxStarsPerGuest||10
