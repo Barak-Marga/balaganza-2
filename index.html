@@ -523,6 +523,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
             <span id="evDateBtnTxt">📅 סינון לפי תאריך</span>
             <input type="date" id="evSearchDate" onchange="renderDJEvents()" onclick="try{this.showPicker&&this.showPicker()}catch(e){}" aria-label="סינון לפי תאריך" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;color-scheme:dark">
           </label>
+          <select id="evDjFilter" onchange="renderDJEvents()" style="display:none;flex:1;min-width:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:8px 6px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;outline:none;direction:rtl;color-scheme:dark"></select>
           <button id="evSearchClear" onclick="clearEvSearch()" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ddd;padding:7px 12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700">✕ נקה</button>
         </div>
         <div style="display:flex;gap:6px;margin-bottom:12px;padding:0 2px">
@@ -3505,6 +3506,7 @@ function evMatchesSearch(ev,q){
 function clearEvSearch(){
   const a=document.getElementById('evSearchInp');if(a)a.value='';
   const b=document.getElementById('evSearchDate');if(b)b.value='';
+  const c=document.getElementById('evDjFilter');if(c)c.value='';
   renderDJEvents();
 }
 
@@ -3600,11 +3602,33 @@ function renderDJEvents(){
   }
   // ── שאלות פתוחות: מונה כללי + באנר + באדג' בטאב (לפני סינון החיפוש) ──
   updateOpenQIndicators(evArr);
+  // ── סינון לפי די-ג'יי (בעלים בלבד) ──
+  const _djSel=document.getElementById('evDjFilter');
+  if(_djSel){
+    if(currentUserType==='owner'){
+      const cur=_djSel.value||'';
+      const ids={owner:(_djNames&&_djNames.owner)||'ברק'};
+      Object.keys(_djNames||{}).forEach(k=>{if(k!=='owner')ids[k]=_djNames[k]||k;});
+      // די-ג'יים שקיימים באירועים אבל כבר לא ברשימה
+      evArr.forEach(([rid,ev])=>{const k=ev.djId||'owner';if(!ids[k])ids[k]=ev.djName||k;});
+      const cnt={};evArr.forEach(([rid,ev])=>{const k=ev.djId||'owner';cnt[k]=(cnt[k]||0)+1;});
+      const opts='<option value="">🎧 כל הדי-ג׳יים</option>'+Object.keys(ids).map(k=>`<option value="${escA(k)}">${esc(ids[k])} (${cnt[k]||0})</option>`).join('');
+      if(_djSel.dataset.opts!==opts){_djSel.innerHTML=opts;_djSel.dataset.opts=opts;}
+      _djSel.value=ids[cur]?cur:'';
+      _djSel.style.display='';
+      _djSel.style.borderColor=_djSel.value?'rgba(168,85,247,.6)':'rgba(255,255,255,.15)';
+      _djSel.style.color=_djSel.value?'#c084fc':'#ccc';
+      if(_djSel.value)evArr=evArr.filter(([rid,ev])=>(ev.djId||'owner')===_djSel.value);
+    } else {
+      _djSel.style.display='none';
+    }
+  }
   // ── חיפוש לפי שם / תאריך ──
   const _q=((document.getElementById('evSearchInp')||{}).value||'').trim();
   const _qd=((document.getElementById('evSearchDate')||{}).value||'');
   const _clr=document.getElementById('evSearchClear');
-  if(_clr)_clr.style.display=(_q||_qd)?'':'none';
+  const _djActive=!!(_djSel&&currentUserType==='owner'&&_djSel.value);
+  if(_clr)_clr.style.display=(_q||_qd||_djActive)?'':'none';
   const _dt=document.getElementById('evDateBtnTxt');
   if(_dt)_dt.textContent=_qd?'📅 '+new Date(_qd+'T00:00:00').toLocaleDateString('he-IL'):'📅 סינון לפי תאריך';
   const _db=document.getElementById('evDateBtn');
@@ -3632,8 +3656,8 @@ function renderDJEvents(){
     return (b[1].createdAt||0)-(a[1].createdAt||0);
   });
   if(!evArr.length){
-    list.innerHTML=(_q||_qd)
-      ?'<div class="empty"><span class="ico">🔍</span><p>לא נמצאו אירועים התואמים לחיפוש</p></div>'
+    list.innerHTML=(_q||_qd||_djActive)
+      ?'<div class="empty"><span class="ico">🔍</span><p>לא נמצאו אירועים התואמים לחיפוש'+(_djActive&&!_q&&!_qd?(evShowPast?' בעבר':' באירועים הקרובים — נסה "אירועי עבר"'):'')+'</p></div>'
       :evShowPast?'<div class="empty"><span class="ico">🕘</span><p>אין אירועי עבר</p></div>'
       :'<div class="empty"><span class="ico">📋</span><p>אין אירועים קרובים<br>צור אירוע חדש ↑'+(_pastCount?'<br>או לחץ "אירועי עבר"':'')+'</p></div>';
     return;
