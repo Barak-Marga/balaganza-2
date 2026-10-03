@@ -514,15 +514,23 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <!-- באנר שאלות פתוחות (מוצג רק כשיש שאלות שלא נענו) -->
         <div id="openQBanner" onclick="openAllOpenQuestions()" style="display:none;cursor:pointer;background:rgba(255,59,48,.12);border:2px solid rgba(255,59,48,.5);border-radius:12px;padding:10px 14px;margin-bottom:12px;color:#ff6b6b;font-weight:900;font-size:14px;direction:rtl;text-align:right"></div>
         <!-- חיפוש אירוע לפי שם / תאריך -->
-        <div style="display:flex;gap:6px;margin-bottom:10px;padding:0 2px;align-items:center">
-          <input type="text" id="evSearchInp" oninput="renderDJEvents()" placeholder="🔍 חיפוש לפי שם / תאריך (למשל 12/10)" autocomplete="off" style="flex:1;min-width:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:'Heebo',sans-serif;font-size:13px;outline:none;direction:rtl">
-          <input type="date" id="evSearchDate" onchange="renderDJEvents()" title="סינון לפי תאריך" style="width:128px;flex-shrink:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:7px 6px;font-family:'Heebo',sans-serif;font-size:12px;outline:none;color-scheme:dark">
-          <button id="evSearchClear" onclick="clearEvSearch()" title="נקה חיפוש" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#aaa;padding:7px 10px;cursor:pointer;font-size:13px">✕</button>
+        <div style="margin-bottom:8px;padding:0 2px">
+          <input type="text" id="evSearchInp" oninput="renderDJEvents()" placeholder="🔍 חיפוש לפי שם, מקום או תאריך" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:9px 12px;font-family:'Heebo',sans-serif;font-size:14px;outline:none;direction:rtl">
         </div>
-        <div style="display:flex;gap:8px;margin-bottom:12px;padding:0 2px">
-          <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">🕐 לפי יצירה</button>
-          <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">📅 לפי תאריך קרוב</button>
+        <div style="display:flex;gap:6px;margin-bottom:10px;padding:0 2px;align-items:stretch">
+          <!-- כפתור תאריך: ה-input השקוף יושב מעל הכפתור כך שהקשה פותחת את בורר התאריכים של הטלפון -->
+          <label id="evDateBtn" style="position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:8px 10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden">
+            <span id="evDateBtnTxt">📅 סינון לפי תאריך</span>
+            <input type="date" id="evSearchDate" onchange="renderDJEvents()" onclick="try{this.showPicker&&this.showPicker()}catch(e){}" aria-label="סינון לפי תאריך" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;color-scheme:dark">
+          </label>
+          <button id="evSearchClear" onclick="clearEvSearch()" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ddd;padding:7px 12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700">✕ נקה</button>
         </div>
+        <div style="display:flex;gap:6px;margin-bottom:12px;padding:0 2px">
+          <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🕐 לפי יצירה</button>
+          <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">📅 תאריך קרוב</button>
+          <button id="evPastBtn" onclick="togglePastEvents()" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🕘 אירועי עבר</button>
+        </div>
+        <div id="evPastNote" style="display:none;font-size:12px;color:#c9a227;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:6px 10px;margin:0 2px 10px">🕘 מוצגים אירועי עבר בלבד — לחץ שוב על "אירועי עבר" כדי לחזור לאירועים הקרובים</div>
         <div class="ev-list" id="djEvList">
           <div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>
         </div>
@@ -2919,7 +2927,11 @@ function loadCelebrantDjMessages(){
       <div style="background:rgba(74,159,255,.08);border:1px solid rgba(74,159,255,.2);border-radius:10px;padding:9px 12px">
         <div style="font-size:12px;color:#4a9fff;font-weight:700;margin-bottom:3px">🎂 ${m.name}</div>
         <div style="font-size:13px">${esc(m.text)}</div>
-        ${m.reply?`<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#a78bfa">🎧 DJ: ${esc(m.reply)}</div>`:''}
+        ${m.reply
+          ?`<div style="margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#a78bfa">🎧 DJ: ${esc(m.reply)}</div><div style="font-size:11px;color:#00C853;margin-top:4px;font-weight:700">✅ נענתה</div>`
+          :m.readAt
+            ?`<div style="font-size:11px;color:#8bc34a;margin-top:4px;font-weight:700">👁️ הדי-ג׳יי קרא</div>`
+            :`<div style="font-size:11px;color:#888;margin-top:4px">⏳ ממתינה לתשובה</div>`}
       </div>`).join('');
     box.scrollTop=box.scrollHeight;
   });
@@ -2947,7 +2959,10 @@ function openDjMessages(rid,evName){
         <div style="font-size:13px;margin-bottom:6px">${esc(m.text)}</div>
         ${m.reply
           ?`<div style="font-size:12px;color:#4a9fff;background:rgba(74,159,255,.08);border-radius:8px;padding:6px 10px">🎧 DJ: ${esc(m.reply)}</div>`
-          :`<div style="display:flex;gap:6px;margin-top:6px">
+          :`${m.readAt
+              ?`<div style="font-size:11px;color:#8bc34a;margin-bottom:4px">✓ נקראה (ללא תשובה) · <a href="#" onclick="event.preventDefault();markQuestionRead('${escA(rid)}','${k}',false)" style="color:#999">בטל סימון</a></div>`
+              :`<button onclick="markQuestionRead('${escA(rid)}','${k}',true)" style="margin-bottom:4px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:3px 10px;font-family:Heebo,sans-serif;font-size:11px;font-weight:700;cursor:pointer">✓ סמן כנקראה</button>`}
+            <div style="display:flex;gap:6px;margin-top:6px">
               <input id="djReplyInp_${k}" placeholder="כתוב תשובה..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
               <button onclick="sendDjReply('${k}','djReplyInp_${k}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
             </div>`}
@@ -3443,6 +3458,18 @@ async function vote(key){
 
 // ── DJ EVENTS ──
 let evSortMode='recent';
+let evShowPast=false;
+function isPastEvent(ev){
+  if(!ev||!ev.date)return false;
+  const t=new Date();t.setHours(0,0,0,0);
+  return new Date(ev.date+'T00:00:00')<t;
+}
+function togglePastEvents(){
+  evShowPast=!evShowPast;
+  const b=document.getElementById('evPastBtn');
+  if(b){b.style.background=evShowPast?'rgba(212,175,55,.18)':'transparent';b.style.borderColor=evShowPast?'rgba(212,175,55,.55)':'rgba(255,255,255,.1)';b.style.color=evShowPast?'#D4AF37':'#aaa';}
+  renderDJEvents();
+}
 function setEvSort(mode){
   evSortMode=mode;
   const rBtn=document.getElementById('evSortRecent');
@@ -3482,7 +3509,7 @@ function clearEvSearch(){
 // ── שאלות פתוחות מחוגגים (הודעות ללא תשובת DJ) ──
 function getOpenQuestions(ev){
   const msgs=(ev&&ev.djMessages)||{};
-  return Object.entries(msgs).filter(([k,m])=>m&&m.text&&m.from!=='dj'&&!m.reply);
+  return Object.entries(msgs).filter(([k,m])=>m&&m.text&&m.from!=='dj'&&!m.reply&&!m.readAt);
 }
 function countOpenQuestions(ev){return getOpenQuestions(ev).length;}
 let _allQModalOpen=false;
@@ -3494,7 +3521,7 @@ function updateOpenQIndicators(evArr){
   const banner=document.getElementById('openQBanner');
   if(banner){
     if(total){
-      banner.innerHTML=`🔔 יש ${total===1?'שאלה אחת':total+' שאלות'} שדורשות מענה${evCount>1?' ב-'+evCount+' אירועים':''} — <u>לחץ כאן כדי לענות</u>`;
+      banner.innerHTML=`🔔 יש ${total===1?'שאלה אחת שדורשת':total+' שאלות שדורשות'} מענה${evCount>1?' ב-'+evCount+' אירועים':''} — <u>לחץ כאן כדי לענות</u>`;
       banner.style.display='block';
     } else banner.style.display='none';
   }
@@ -3531,10 +3558,17 @@ function renderAllOpenQuestions(){
             <input id="${inpId}" data-qkey="${escA(qk)}" value="${escA(typed[qk]||'')}" placeholder="כתוב תשובה..." onkeydown="if(event.key==='Enter')sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
             <button onclick="sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
           </div>
+          <button onclick="markQuestionRead('${escA(rid)}','${escA(k)}',true)" style="margin-top:6px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:4px 10px;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;cursor:pointer">✓ סמן כנקראה (בלי לענות)</button>
         </div>`;
       }).join('')}
     </div>`;
   }).join('');
+}
+async function markQuestionRead(rid,msgKey,read){
+  try{
+    await set(fbRef(db,'events/'+rid+'/djMessages/'+msgKey+'/readAt'),read?Date.now():null);
+    toast(read?'✓ סומנה כנקראה':'הסימון בוטל — השאלה שוב פתוחה','info');
+  }catch(e){toast('שגיאה: '+e.message,'error');}
 }
 async function sendDjReplyTo(rid,msgKey,inputId){
   const inp=document.getElementById(inputId);
@@ -3561,6 +3595,18 @@ function renderDJEvents(){
   const _qd=((document.getElementById('evSearchDate')||{}).value||'');
   const _clr=document.getElementById('evSearchClear');
   if(_clr)_clr.style.display=(_q||_qd)?'':'none';
+  const _dt=document.getElementById('evDateBtnTxt');
+  if(_dt)_dt.textContent=_qd?'📅 '+new Date(_qd+'T00:00:00').toLocaleDateString('he-IL'):'📅 סינון לפי תאריך';
+  const _db=document.getElementById('evDateBtn');
+  if(_db){_db.style.borderColor=_qd?'rgba(74,159,255,.55)':'rgba(255,255,255,.15)';_db.style.color=_qd?'#4a9fff':'#ccc';}
+  // אירועי עבר / קרובים — חיפוש פעיל מחפש בכל האירועים
+  const _pastCount=evArr.filter(([rid,ev])=>isPastEvent(ev)).length;
+  const _pb=document.getElementById('evPastBtn');
+  if(_pb)_pb.textContent='🕘 אירועי עבר'+(_pastCount?' ('+_pastCount+')':'');
+  const _searching=!!(_q||_qd);
+  const _pn=document.getElementById('evPastNote');
+  if(_pn)_pn.style.display=(evShowPast&&!_searching)?'block':'none';
+  if(!_searching)evArr=evArr.filter(([rid,ev])=>evShowPast?isPastEvent(ev):!isPastEvent(ev));
   if(_qd)evArr=evArr.filter(([rid,ev])=>ev.date===_qd);
   if(_q)evArr=evArr.filter(([rid,ev])=>evMatchesSearch(ev,_q));
   evArr=evArr.sort((a,b)=>{
@@ -3578,7 +3624,8 @@ function renderDJEvents(){
   if(!evArr.length){
     list.innerHTML=(_q||_qd)
       ?'<div class="empty"><span class="ico">🔍</span><p>לא נמצאו אירועים התואמים לחיפוש</p></div>'
-      :'<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';
+      :evShowPast?'<div class="empty"><span class="ico">🕘</span><p>אין אירועי עבר</p></div>'
+      :'<div class="empty"><span class="ico">📋</span><p>אין אירועים קרובים<br>צור אירוע חדש ↑'+(_pastCount?'<br>או לחץ "אירועי עבר"':'')+'</p></div>';
     return;
   }
   list.innerHTML=evArr.map(([rid,ev])=>{
@@ -3593,6 +3640,7 @@ function renderDJEvents(){
     const evTypeBorder=ev.type==='חתונה'?'3px solid gold':ev.type==='אירוע חברה'?'3px solid #8B2BE2':'';
     return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}${openQ?'box-shadow:0 0 0 2px rgba(255,59,48,.55);':''}">
       <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
+      ${isPastEvent(ev)?'<span style="display:inline-block;font-size:11px;font-weight:700;color:#c9a227;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);border-radius:6px;padding:1px 7px;margin-bottom:6px">🕘 אירוע עבר</span>':''}
       ${openQPill}
       ${ev.type!=='חתונה'?renderEvCelebrantPrefs(ev):''}
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
