@@ -3799,19 +3799,46 @@ async function restoreEv(rid){
   try{await set(fbRef(db,'events/'+rid+'/archived'),null);toast('♻️ האירוע שוחזר','success');}
   catch(e){toast('שגיאה: '+e.message,'error');}
 }
+// יומן מחיקות לצמיתות — שומר רק פרטים בסיסיים, כדי שהספירה לפי די-ג'יי לא תאבד
+let _delLog={};
+async function loadDeletionLog(){
+  try{const sn=await get(fbRef(db,'config/deletionLog'));_delLog=sn.val()||{};}catch(e){_delLog={};}
+}
+async function _purgeOne(rid){
+  const ev=allEvents[rid]||{};const a=ev.archived||{};
+  const entry={name:ev.name||'',date:ev.date||'',type:ev.type||'',djId:ev.djId||'owner',djName:ev.djName||'',
+    by:a.by||'unknown',byName:a.byName||'',at:a.at||0,purgedAt:Date.now()};
+  try{await set(fbRef(db,'config/deletionLog/'+rid),entry);_delLog[rid]=entry;}catch(e){console.warn('deletionLog write failed',e);}
+  await set(fbRef(db,'events/'+rid),null);
+  await set(fbRef(db,'rooms/'+rid),null);
+}
 async function purgeEv(rid){
   if(currentUserType!=='owner')return;
   const ev=allEvents[rid]||{};
   if(!confirm('מחיקה סופית של "'+(ev.name||'')+'" וכל השירים שלו?\nאי אפשר לשחזר אחרי זה.'))return;
-  await set(fbRef(db,'events/'+rid),null);
-  await set(fbRef(db,'rooms/'+rid),null);
-  toast('האירוע נמחק לצמיתות','info');
+  try{await _purgeOne(rid);toast('האירוע נמחק לצמיתות','info');}
+  catch(e){toast('שגיאה: '+e.message,'error');}
+}
+async function purgeAllArchived(){
+  if(currentUserType!=='owner')return;
+  const ids=Object.keys(allEvents).filter(k=>allEvents[k]&&allEvents[k].archived);
+  if(!ids.length){toast('הארכיון ריק','info');return;}
+  if(!confirm('למחוק לצמיתות את כל '+ids.length+' האירועים שבארכיון, כולל כל השירים שלהם?\nאי אפשר לשחזר אחרי זה.'))return;
+  const typed=prompt('לאישור סופי, הקלד/י את המילה: מחק','');
+  if((typed||'').trim()!=='מחק'){toast('המחיקה בוטלה','info');return;}
+  let ok=0,fail=0;
+  for(const rid of ids){
+    try{await _purgeOne(rid);ok++;}catch(e){fail++;console.error('purge',rid,e);}
+  }
+  toast(fail?('נמחקו '+ok+' · נכשלו '+fail):('🗑️ '+ok+' אירועים נמחקו לצמיתות'),fail?'error':'info',5000);
+  renderDJEvents();
 }
 let evShowArchive=false;
 function toggleArchiveView(){
   evShowArchive=!evShowArchive;
   if(evShowArchive&&evShowPast)togglePastEvents();
   renderDJEvents();
+  if(evShowArchive)loadDeletionLog().then(()=>{if(evShowArchive)renderDJEvents();});
 }
 function _djLabel(id,fallback){
   if(!id||id==='owner')return (_djNames&&_djNames.owner)||'👑 בעלים';
@@ -3819,14 +3846,21 @@ function _djLabel(id,fallback){
 }
 function renderArchiveView(list,arch,q){
   // סיכום: כמה אירועים מחק כל אחד
+  // ספירה: אירועים בארכיון + אירועים שכבר נמחקו לצמיתות (מהיומן)
   const by={};
-  arch.forEach(([rid,ev])=>{const a=ev.archived||{};const k=a.by||'unknown';if(!by[k])by[k]={n:0,name:a.byName||_djLabel(k)};by[k].n++;});
+  const add=(k,name)=>{k=k||'unknown';if(!by[k])by[k]={n:0,name:name||_djLabel(k)};by[k].n++;};
+  arch.forEach(([rid,ev])=>{const a=ev.archived||{};add(a.by,a.byName);});
+  const archIds=new Set(arch.map(x=>x[0]));
+  const purged=Object.entries(_delLog||{}).filter(([rid])=>!archIds.has(rid));
+  purged.forEach(([rid,l])=>add(l.by,l.byName));
+  const total=arch.length+purged.length;
   const sum=document.getElementById('evArchiveSummary');
   if(sum){
     sum.style.display='block';
-    sum.innerHTML='<div style="font-weight:900;color:#ddd;margin-bottom:4px">🗄️ ארכיון — '+arch.length+' אירועים שנמחקו</div>'
-      +(arch.length?'<div style="color:#aaa">נמחקו ע״י: '+Object.keys(by).sort((a,b)=>by[b].n-by[a].n).map(k=>'<b style="color:#eee">'+esc(by[k].name)+'</b> ('+by[k].n+')').join(' · ')+'</div>':'')
-      +'<div style="color:#777;font-size:11px;margin-top:4px">נרשם רק ממחיקות שבוצעו מעכשיו והלאה</div>';
+    sum.innerHTML='<div style="font-weight:900;color:#ddd;margin-bottom:4px">🗄️ ארכיון — '+arch.length+' אירועים'+(purged.length?' <span style="color:#888;font-weight:400">(+'+purged.length+' נמחקו לצמיתות)</span>':'')+'</div>'
+      +(total?'<div style="color:#aaa">סה״כ מחיקות לפי מי שמחק: '+Object.keys(by).sort((a,b)=>by[b].n-by[a].n).map(k=>'<b style="color:#eee">'+esc(by[k].name)+'</b> ('+by[k].n+')').join(' · ')+'</div>':'')
+      +'<div style="color:#777;font-size:11px;margin-top:4px">נרשם רק ממחיקות שבוצעו מעכשיו והלאה</div>'
+      +(arch.length?'<button onclick="purgeAllArchived()" style="margin-top:8px;width:100%;background:rgba(255,59,48,.12);border:2px solid rgba(255,59,48,.5);border-radius:10px;color:#ff6b6b;font-family:Heebo,sans-serif;font-size:13px;font-weight:900;padding:8px;cursor:pointer">⛔ מחק לצמיתות את כל הארכיון ('+arch.length+')</button>':'');
   }
   let rows=arch;
   if(q)rows=rows.filter(([rid,ev])=>evMatchesSearch(ev,q)||String((ev.archived||{}).byName||'').includes(q));
