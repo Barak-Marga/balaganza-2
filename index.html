@@ -3543,6 +3543,14 @@ function renderAllOpenQuestions(){
   const typed={};
   box.querySelectorAll('input[data-qkey]').forEach(i=>{if(i.value)typed[i.dataset.qkey]=i.value;});
   const groups=_allQEvArr.map(([rid,ev])=>[rid,ev,getOpenQuestions(ev).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0))]).filter(g=>g[2].length);
+  // מיון לפי תאריך האירוע: הקרובים קודם, אחריהם אירועי עבר (מהחדש לישן), ובסוף אירועים בלי תאריך
+  const _today=new Date();_today.setHours(0,0,0,0);
+  const _dkey=ev=>{
+    if(!ev.date)return [2,0];
+    const t=new Date(ev.date+'T'+(ev.time||'00:00')).getTime();
+    return new Date(ev.date+'T00:00:00')>=_today?[0,t]:[1,-t];
+  };
+  groups.sort((a,b)=>{const ka=_dkey(a[1]),kb=_dkey(b[1]);return ka[0]-kb[0]||ka[1]-kb[1];});
   if(!groups.length){box.innerHTML='<div style="font-size:14px;color:#00C853;text-align:center;padding:20px">✅ אין שאלות פתוחות — הכל נענה!</div>';return;}
   box.innerHTML=groups.map(([rid,ev,qs])=>{
     const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
