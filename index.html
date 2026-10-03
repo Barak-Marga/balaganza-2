@@ -550,12 +550,6 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <div class="fld"><label>טקסט ברכה לחוגג/ת</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
-        <div class="admin-card">
-          <h3>🎮 ניהול משחקים</h3>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">המשחקים שהחוגג/ת רואה במסך "הפעילויות שלי". אפשר להוסיף, לערוך, להשבית, לשנות סדר ולהגדיר באדג׳.</div>
-          <div id="gamesAdminList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
-          <button class="btn-full btn-blue" onclick="addNewGame()">➕ הוסף משחק חדש</button>
-        </div>
       </div>
     </div>
     <div class="tab-body" id="djBCreate">
@@ -618,6 +612,13 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     </div>
     <div class="tab-body" id="djBManage">
       <div class="admin-sec">
+        <!-- Games management -->
+        <div class="admin-card">
+          <h3>🎮 ניהול משחקים</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">המשחקים שהחוגג/ת רואה במסך "הפעילויות שלי". אפשר להוסיף, לערוך, להשבית, לשנות סדר ולהגדיר באדג׳.</div>
+          <div id="gamesAdminList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+          <button class="btn-full btn-blue" onclick="addNewGame()">➕ הוסף משחק חדש</button>
+        </div>
         <!-- Change Owner Password -->
         <div class="admin-card">
           <h3>🔑 שינוי סיסמת בעלים</h3>
@@ -3165,6 +3166,9 @@ async function savePrefixes(){
 }
 
 function renderDJManage(){
+  // פאנל ניהול המשחקים — טעינה טרייה מ-Firebase
+  renderGamesAdmin();
+  loadGamesConfig().then(renderGamesAdmin).catch(()=>{});
   const waTmplEl=document.getElementById('waMsgTemplate');
   if(waTmplEl&&_waMsgTemplate)waTmplEl.value=_waMsgTemplate;
   renderPrefixesCard();
@@ -3269,9 +3273,7 @@ function updateDJHeader(){
   if(d.ig)document.getElementById('aboutIG').value=d.ig;
   if(d.fb)document.getElementById('aboutFB').value=d.fb;
   if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
-  // פאנל ניהול המשחקים — טעינה טרייה מ-Firebase
-  try{await loadGamesConfig();}catch(e){}
-  renderGamesAdmin();
+
   const welEl=document.getElementById('aboutCelebrantWelcome');
   if(welEl)welEl.value=d.celebrantWelcome||'';
 }
