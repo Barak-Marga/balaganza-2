@@ -378,6 +378,9 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
 <div id="sGuest" class="scr">
   <canvas id="laserCanvas"></canvas>
   <div style="max-width:540px;margin:0 auto;padding-bottom:80px">
+    <div id="gDjBackBar" style="display:none;padding:8px 12px 0">
+      <button onclick="location.href=location.origin+location.pathname" style="width:100%;background:rgba(212,175,55,.15);border:2px solid rgba(212,175,55,.45);border-radius:10px;padding:7px 12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">← חזרה לרשימת האירועים (ממשק ניהול)</button>
+    </div>
     <div class="hdr">
       <img class="hdr-logo" id="lGuest" src="" alt="">
       <div>
@@ -403,7 +406,11 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <button onclick="promptCelebrantCode()" style="background:rgba(26,47,191,.2);border:2px solid rgba(26,47,191,.5);border-radius:10px;padding:7px 14px;color:#818cf8;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת עם קוד</button>
         </div>
         <div id="hCelebrantActBtn" style="display:none;margin-top:8px">
-          <button onclick="openCelebrantActivities()" style="background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:7px 14px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎮 הפעילויות שלי</button>
+          <div style="display:flex;gap:6px">
+            <button onclick="openCelebrantActivities('choose')" style="flex:1;background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:7px 10px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer">🎮 ערוך בחירות</button>
+            <button onclick="openCelebrantActivities('questions')" style="flex:1;position:relative;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.4);border-radius:10px;padding:7px 10px;color:#4a9fff;font-size:12px;font-weight:900;cursor:pointer">💬 שאלה לדי-ג׳יי<span id="hCelebReplyBadge" style="display:none;position:absolute;top:-8px;left:-6px;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;line-height:18px"></span></button>
+          </div>
+          <div style="font-size:11px;color:rgba(212,175,55,.8);text-align:center;margin-top:6px">⭐ כחוגג/ת אפשר לסמן עד 5 שירי חובה · 🗑️ ולמחוק שירים מהתור</div>
         </div>
       </div>
     </div>
@@ -497,13 +504,21 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <button class="icon-btn" onclick="djLogout()">יציאה 🚪</button>
     </div>
     <div class="tabs">
-      <div class="tab on" id="djT1" onclick="djTab('events')">📋 אירועים</div>
+      <div class="tab on" id="djT1" onclick="djTab('events')">📋 אירועים<span id="djT1QBadge" style="display:none;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900;margin-right:5px;line-height:17px"></span></div>
       <div class="tab" id="djT2" onclick="djTab('create')">✨ צור אירוע</div>
       <div class="tab" id="djT3" onclick="djTab('about')">📝 עלינו</div>
       <div class="tab" id="djT4" onclick="djTab('manage')" style="display:none">⚙️ ניהול</div>
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
+        <!-- באנר שאלות פתוחות (מוצג רק כשיש שאלות שלא נענו) -->
+        <div id="openQBanner" onclick="openAllOpenQuestions()" style="display:none;cursor:pointer;background:rgba(255,59,48,.12);border:2px solid rgba(255,59,48,.5);border-radius:12px;padding:10px 14px;margin-bottom:12px;color:#ff6b6b;font-weight:900;font-size:14px;direction:rtl;text-align:right"></div>
+        <!-- חיפוש אירוע לפי שם / תאריך -->
+        <div style="display:flex;gap:6px;margin-bottom:10px;padding:0 2px;align-items:center">
+          <input type="text" id="evSearchInp" oninput="renderDJEvents()" placeholder="🔍 חיפוש לפי שם / תאריך (למשל 12/10)" autocomplete="off" style="flex:1;min-width:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:'Heebo',sans-serif;font-size:13px;outline:none;direction:rtl">
+          <input type="date" id="evSearchDate" onchange="renderDJEvents()" title="סינון לפי תאריך" style="width:128px;flex-shrink:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:7px 6px;font-family:'Heebo',sans-serif;font-size:12px;outline:none;color-scheme:dark">
+          <button id="evSearchClear" onclick="clearEvSearch()" title="נקה חיפוש" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#aaa;padding:7px 10px;cursor:pointer;font-size:13px">✕</button>
+        </div>
         <div style="display:flex;gap:8px;margin-bottom:12px;padding:0 2px">
           <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">🕐 לפי יצירה</button>
           <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer">📅 לפי תאריך קרוב</button>
@@ -528,9 +543,10 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
         <div class="admin-card">
-          <h3>🎮 ערוך הסברי משחקים</h3>
-          <div class="fld"><label>💋 נשיקה סטירה</label><textarea id="gameDesc_kiss_slap" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎒 משחק החפצים</label><textarea id="gameDesc_objects" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🎵 משחק השירים</label><textarea id="gameDesc_songs" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🕺 תחרות ריקודים</label><textarea id="gameDesc_dance" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🔐 משחק הכספות</label><textarea id="gameDesc_vault" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div><div class="fld"><label>🏅 כלוב הזהב</label><textarea id="gameDesc_goldcage" rows="2" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div>
-          <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור הסברים</button>
+          <h3>🎮 ניהול משחקים</h3>
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">המשחקים שהחוגג/ת רואה במסך "הפעילויות שלי". אפשר להוסיף, לערוך, להשבית, לשנות סדר ולהגדיר באדג׳.</div>
+          <div id="gamesAdminList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px"></div>
+          <button class="btn-full btn-blue" onclick="addNewGame()">➕ הוסף משחק חדש</button>
         </div>
       </div>
     </div>
@@ -656,6 +672,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <!-- Wedding-only: tabs for reception / party -->
       <div id="eqWeddingTabs" style="display:none;gap:8px;margin:8px 0 12px">
         <button id="eqWTReception" onclick="setEqWeddingList('reception')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,215,0,.5);background:rgba(255,215,0,.15);color:#FFD700;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">💐 קבלת פנים <span id="eqWTReceptionCount" style="font-weight:400;color:#bbb">(0)</span></button>
+        <button id="eqWTChuppah" onclick="setEqWeddingList('chuppah')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">💍 חופה <span id="eqWTChuppahCount" style="font-weight:400"></span></button>
         <button id="eqWTParty" onclick="setEqWeddingList('party')" style="flex:1;padding:10px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">🪩 מסיבה <span id="eqWTPartyCount" style="font-weight:400">(0)</span></button>
       </div>
       <!-- Celebrant choices display -->
@@ -718,10 +735,9 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     <div style="font-size:22px;text-align:center;margin-bottom:6px">👑</div>
     <div id="premiumModalTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:#D4AF37;text-align:center;margin-bottom:12px"></div>
     <input type="hidden" id="premiumModalGameId">
-    <div style="font-size:13px;color:#aaa;margin-bottom:16px;text-align:center;line-height:1.7">זהו שדרוג פרימיום. השאר/י מספר טלפון של הורה ואנחנו ניצור קשר לתיאום ותשלום.</div>
-    <div style="font-size:13px;color:#888;margin-bottom:6px;font-weight:700">📱 טלפון הורה ליצירת קשר</div>
-    <input type="tel" id="premiumModalPhone" placeholder="050-000-0000" style="width:100%;background:rgba(255,255,255,.08);border:2px solid rgba(212,175,55,.3);border-radius:10px;color:white;padding:10px 12px;font-family:'Heebo',sans-serif;font-size:15px;direction:rtl;outline:none;box-sizing:border-box;margin-bottom:16px">
-    <button onclick="submitPremiumInterest()" style="width:100%;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:12px;cursor:pointer;margin-bottom:8px">שלח בקשה 👑</button>
+    <div id="premiumModalDesc" style="font-size:13px;color:#ccc;margin-bottom:12px;text-align:right;line-height:1.7;background:rgba(255,255,255,.05);border-radius:10px;padding:10px 12px;white-space:pre-line"></div>
+    <div id="premiumModalBody" style="font-size:13px;color:#aaa;margin-bottom:14px;text-align:center;line-height:1.7">זהו שדרוג בתשלום. לחצו על הכפתור כדי לשלוח לנו הודעת וואטסאפ עם פרטי האירוע, ואנחנו נחזור אליכם לתיאום.</div>
+    <a id="premiumModalWaBtn" href="#" target="_blank" rel="noopener" onclick="onPremiumWaClick()" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;background:#25D366;border:none;border-radius:12px;color:white;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:12px;cursor:pointer;margin-bottom:8px;text-decoration:none">💬 שלחו לנו הודעה בוואטסאפ</a>
     <button onclick="closePremiumModal()" style="width:100%;background:transparent;border:none;color:#666;font-family:'Heebo',sans-serif;font-size:13px;cursor:pointer">ביטול</button>
   </div>
 </div>
@@ -732,6 +748,33 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     <div id="gameInfoTitle" style="font-family:'Fredoka One',cursive;font-size:20px;color:white;margin-bottom:14px;text-align:center"></div>
     <div id="gameInfoDesc" style="font-size:14px;line-height:1.8;color:#e0e0e0;background:rgba(255,255,255,.06);border-radius:12px;padding:14px 16px;text-align:right"></div>
     <button onclick="closeGameInfo()" style="margin-top:16px;width:100%;background:rgba(168,85,247,.2);border:2px solid rgba(168,85,247,.4);border-radius:12px;color:#c084fc;font-family:'Heebo',sans-serif;font-size:15px;font-weight:900;padding:11px;cursor:pointer">הבנתי ✓</button>
+  </div>
+</div>
+
+<!-- ══ GAME EDIT MODAL (owner) ══ -->
+<div id="gameEditModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;padding:16px">
+  <div style="background:#1e3060;border:2px solid rgba(168,85,247,.4);border-radius:18px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;padding:22px 18px;direction:rtl;text-align:right">
+    <div id="gameEditModalTitle" style="font-family:'Fredoka One',cursive;font-size:19px;color:white;margin-bottom:14px;text-align:center"></div>
+    <input type="hidden" id="gameEditId">
+    <div style="display:flex;gap:8px">
+      <div class="fld" style="width:70px;flex-shrink:0"><label>אימוג׳י</label><input type="text" id="gameEditEmoji" maxlength="4" style="text-align:center;font-size:20px"></div>
+      <div class="fld" style="flex:1"><label>שם המשחק</label><input type="text" id="gameEditName" maxlength="40"></div>
+    </div>
+    <div class="fld"><label>הסבר (מוצג בכפתור "מידע")</label><textarea id="gameEditDesc" rows="4" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:Heebo,sans-serif;font-size:13px;resize:vertical;direction:rtl"></textarea></div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#ddd;margin:6px 0;cursor:pointer"><input type="checkbox" id="gameEditEnabled" style="width:18px;height:18px"> פעיל (מוצג לחוגג/ת)</label>
+    <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#D4AF37;margin:6px 0;cursor:pointer"><input type="checkbox" id="gameEditPremium" style="width:18px;height:18px"> 👑 שדרוג פרימיום (בתשלום)</label>
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px;margin:10px 0">
+      <label style="display:flex;align-items:center;gap:8px;font-size:14px;color:#ddd;cursor:pointer"><input type="checkbox" id="gameEditBadgeEnabled" onchange="updateBadgePreview()" style="width:18px;height:18px"> 🏷️ באדג׳ על המשחק</label>
+      <div class="fld" style="margin-top:8px"><label>טקסט הבאדג׳</label><input type="text" id="gameEditBadgeText" maxlength="30" placeholder="למשל: ללא עלות זמנית" oninput="updateBadgePreview()"></div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">צבע</div>
+      <div id="gameEditColors" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+      <div style="font-size:12px;color:var(--muted)">תצוגה: <span id="gameEditBadgePreview"></span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="saveGameEdit()" style="flex:2;background:rgba(168,85,247,.25);border:2px solid rgba(168,85,247,.5);border-radius:12px;color:#c084fc;font-family:'Heebo',sans-serif;font-size:14px;font-weight:900;padding:11px;cursor:pointer">💾 שמור</button>
+      <button onclick="closeGameEdit()" style="flex:1;background:transparent;border:2px solid rgba(255,255,255,.12);border-radius:12px;color:#aaa;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;padding:11px;cursor:pointer">ביטול</button>
+    </div>
+    <button id="gameEditDeleteBtn" onclick="deleteGameFromEdit()" style="width:100%;margin-top:8px;background:transparent;border:1px solid rgba(255,80,80,.3);border-radius:10px;color:#ff7777;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;padding:8px;cursor:pointer">🗑️ מחק משחק זה</button>
   </div>
 </div>
 
@@ -823,7 +866,24 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
   .wf-songs-sub { font-size: 11px; letter-spacing: 3px; margin: 0 0 24px; color: #666; }
   .wf-songs-sub:empty { margin: 0 0 4px; }
 
-  .wf-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  .wf-tabs { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 18px; }
+  /* ── שירים שנוספו במכשיר אחר ── */
+  .wf-song-by { font-size: 10px; color: #999; margin: 2px 0 0; }
+  .wf-star-static { color: #e0a900; font-size: 16px; padding: 4px 6px; }
+  /* ── חופה ── */
+  .wf-ch-q { font-size: 15px; margin: 0 0 4px; color: #1a1a1a; font-weight: 600; }
+  .wf-ch-hint { font-size: 11px; line-height: 1.5; color: #666; margin: 0 0 14px; }
+  .wf-ch-group { font-size: 10px; letter-spacing: 2px; color: #888; margin: 10px 0 6px; text-transform: uppercase; text-align: start; }
+  .wf-ch-toggles { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+  .wf-ch-toggle { border: 0.5px solid #1a1a1a; background: #fff; color: #1a1a1a; border-radius: 20px; padding: 7px 12px; font-size: 12px; cursor: pointer; font-family: Arial, Helvetica, sans-serif; }
+  .wf-ch-toggle.on { background: #1a1a1a; color: #fff; }
+  .wf-ch-slots { margin-top: 18px; text-align: start; }
+  .wf-ch-slot { border: 0.5px solid rgba(0,0,0,0.18); border-radius: 6px; padding: 12px; margin-bottom: 10px; }
+  .wf-ch-slot.done { border-color: #1a1a1a; }
+  .wf-ch-slot-title { font-size: 11px; letter-spacing: 2px; color: #1a1a1a; margin: 0 0 10px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; }
+  .wf-ch-pick { width: 100%; background: #fff; border: 0.5px dashed #1a1a1a; border-radius: 4px; padding: 10px; font-size: 13px; color: #1a1a1a; cursor: pointer; font-family: Arial, Helvetica, sans-serif; }
+  .wf-ch-link { background: none; border: none; font-size: 11px; color: #666; text-decoration: underline; cursor: pointer; padding: 0; font-family: Arial, Helvetica, sans-serif; }
+  .wf-ch-empty { text-align: center; font-size: 12px; color: #666; padding: 14px 0; }
   .wf-tab {
     border: 0.5px solid #1a1a1a; padding: 12px 6px; border-radius: 4px;
     background: #fff; color: #1a1a1a; text-align: center; cursor: pointer;
@@ -1002,11 +1062,16 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <p class="wf-tab-label" id="wfTabReceptionLabel"></p>
         <p class="wf-tab-name" id="wfTabReceptionName"></p>
       </button>
+      <button class="wf-tab" data-list="chuppah" onclick="wfSwitchTab('chuppah')">
+        <p class="wf-tab-label" id="wfTabChuppahLabel"></p>
+        <p class="wf-tab-name" id="wfTabChuppahName"></p>
+      </button>
       <button class="wf-tab" data-list="party" onclick="wfSwitchTab('party')">
         <p class="wf-tab-label" id="wfTabPartyLabel"></p>
         <p class="wf-tab-name" id="wfTabPartyName"></p>
       </button>
     </div>
+    <div id="wfListPanel">
     <div class="wf-search-box">
       <input type="text" class="wf-search-input" id="wfSearchInput">
       <span class="wf-search-icon">🔍</span>
@@ -1018,6 +1083,8 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     </div>
     <div class="wf-song-list" id="wfSongList"></div>
     <p class="wf-count-line" id="wfCountLine"></p>
+    </div>
+    <div id="wfChuppahPanel" style="display:none"></div>
   </section>
 </div>
 <div class="wf-toast" id="wfToast"></div>
@@ -1356,6 +1423,8 @@ document.getElementById('nameInp').addEventListener('keydown',e=>{if(e.key==='En
 
 function loadGuestEvent(){
   if(!urlRoom)return;
+  // כפתור חזרה לממשק הניהול — רק כשדיג'יי/בעלים מחובר בדפדפן הזה
+  try{const bb=document.getElementById('gDjBackBar');if(bb)bb.style.display=localStorage.getItem('b_userType')?'block':'none';}catch(e){}
   get(fbRef(db,'events/'+urlRoom)).then(snap=>{
     const ev=snap.val();if(!ev)return;
     // Party mode check
@@ -1399,7 +1468,22 @@ const WF_I18N={
     "limit-reached":"הגעת למקסימום השירים ברשימה",
     "stars-limit":"הגעת למקסימום סימוני Must",
     "days-to-go":"נשארו ${n} ימים!",
-    "preview-error":"לא ניתן להשמיע preview לשיר זה"
+    "preview-error":"לא ניתן להשמיע preview לשיר זה",
+    "by-other":"נוסף במכשיר אחר",
+    "by-name":"נוסף ע״י ${name}",
+    "in-list":"${n} שירים ברשימה",
+    "already":"השיר כבר ברשימה",
+    "tab-chuppah-label":"CEREMONY","tab-chuppah-name":"חופה",
+    "ch-question":"מה רלוונטי לחופה שלכם?",
+    "ch-hint":"סמנו את הרגעים שיש בחופה שלכם, ואז בחרו שיר לכל אחד. נכנסים יחד? סמנו ״הזוג יחד״. כל אחד בנפרד? סמנו חתן וכלה.",
+    "ch-group-entrance":"כניסה לחופה","ch-group-more":"רגעים נוספים",
+    "ch-couple":"כניסת הזוג יחד","ch-groom":"כניסת החתן","ch-bride":"כניסת הכלה",
+    "ch-glass":"שבירת הכוס","ch-parents":"כניסת ההורים","ch-bridesmaids":"כניסת השושבינים",
+    "ch-pick":"+ בחירת שיר","ch-change":"החלפה","ch-cancel":"ביטול",
+    "ch-empty":"סמנו למעלה מה רלוונטי לחופה, ואז תוכלו לבחור שיר לכל רגע",
+    "ch-count":"${chosen}/${total} שירי חופה נבחרו",
+    "ch-saved":"השיר נשמר","ch-removed":"השיר הוסר",
+    "ch-search-ph":"חפשו שיר ל${slot}…"
   },
   en:{
     "the":"THE","wedding":"Wedding","of":"OF",
@@ -1416,7 +1500,22 @@ const WF_I18N={
     "limit-reached":"You reached the song limit",
     "stars-limit":"You reached the Must limit",
     "days-to-go":"${n} DAYS TO GO!",
-    "preview-error":"Preview not available for this song"
+    "preview-error":"Preview not available for this song",
+    "by-other":"Added on another device",
+    "by-name":"Added by ${name}",
+    "in-list":"${n} songs in list",
+    "already":"This song is already in the list",
+    "tab-chuppah-label":"CEREMONY","tab-chuppah-name":"Chuppah",
+    "ch-question":"What's part of your ceremony?",
+    "ch-hint":"Mark the moments in your ceremony, then pick a song for each. Walking in together? Choose \"Couple together\". Separately? Choose groom and bride.",
+    "ch-group-entrance":"Walking down the aisle","ch-group-more":"More moments",
+    "ch-couple":"Couple together","ch-groom":"Groom entrance","ch-bride":"Bride entrance",
+    "ch-glass":"Breaking the glass","ch-parents":"Parents entrance","ch-bridesmaids":"Bridesmaids entrance",
+    "ch-pick":"+ Choose a song","ch-change":"Change","ch-cancel":"Cancel",
+    "ch-empty":"Mark what's part of your ceremony above, then pick a song for each moment",
+    "ch-count":"${chosen}/${total} ceremony songs chosen",
+    "ch-saved":"Song saved","ch-removed":"Song removed",
+    "ch-search-ph":"Search a song for ${slot}…"
   }
 };
 
@@ -1428,7 +1527,11 @@ const wfState={
   activeList:"reception",
   guestId:null,
   guestName:null,
-  songs:{reception:[],party:[]},
+  songs:{reception:[],party:[]},     // השירים שנוספו מהמכשיר הזה (למגבלות)
+  allSongs:{reception:[],party:[]},  // כל השירים ברשימה (לתצוגה)
+  chuppah:{},                        // events/{rid}/weddingChuppah
+  chPicking:null,                    // הרגע שבו מחפשים שיר כרגע
+  chSearchTimeout:null,
   searchTimeout:null,
   audio:null,
   currentPreviewId:null,
@@ -1461,6 +1564,7 @@ function wfSetLang(lang){
   wfRenderStatic();
   wfRenderSongList();
   wfUpdateCountLine();
+  wfRenderChuppah();
 }
 
 function wfRenderStatic(){
@@ -1513,6 +1617,8 @@ function wfRenderStatic(){
   document.getElementById('wfTabReceptionName').textContent=wfT('tab-reception-name');
   document.getElementById('wfTabPartyLabel').textContent=wfT('tab-party-label');
   document.getElementById('wfTabPartyName').textContent=wfT('tab-party-name');
+  document.getElementById('wfTabChuppahLabel').textContent=wfT('tab-chuppah-label');
+  document.getElementById('wfTabChuppahName').textContent=wfT('tab-chuppah-name');
   document.getElementById('wfSearchInput').placeholder=wfT('search-placeholder');
   const maxStars=cfg.maxStarsPerGuest||10;
   document.getElementById('wfMustHintText').textContent=wfT('must-hint',{n:maxStars});
@@ -1525,6 +1631,10 @@ function wfSwitchTab(listName){
   });
   document.getElementById('wfSearchInput').value='';
   document.getElementById('wfSearchResults').innerHTML='';
+  const isCh=listName==='chuppah';
+  document.getElementById('wfListPanel').style.display=isCh?'none':'';
+  document.getElementById('wfChuppahPanel').style.display=isCh?'':'none';
+  if(isCh){wfRenderChuppah();return;}
   wfRenderSongList();
   wfUpdateCountLine();
 }
@@ -1537,7 +1647,12 @@ function wfInit(ev){
   wfState.guestId=guestId; // מזהה דפדפן יציב
   wfState.guestName=guestName||'Guest'; // אורח אנונימי בחתונה
   wfState.songs={reception:[],party:[]};
+  wfState.allSongs={reception:[],party:[]};
+  wfState.chuppah={};wfState.chPicking=null;
   wfState.activeList='reception';
+  const _lp=document.getElementById('wfListPanel');if(_lp)_lp.style.display='';
+  const _cp=document.getElementById('wfChuppahPanel');if(_cp)_cp.style.display='none';
+  document.querySelectorAll('#sWedding .wf-tab').forEach(t=>t.classList.toggle('active',t.dataset.list==='reception'));
   // קביעת שפה
   wfSetLang(wfDetectInitialLang());
   // טוגל שפה
@@ -1552,6 +1667,7 @@ function wfInit(ev){
   // האזנה ל-Firebase (כולל heroImage)
   wfStartSongListeners();
   wfStartHeroListener();
+  wfStartChuppahListener();
 }
 
 // ── העלאה והחלפת תמונת קאבר ──
@@ -1658,7 +1774,9 @@ function wfStartSongListeners(){
         if(song.addedBy===wfState.guestId)mine.push(song);
       });
       mine.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      all.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
       wfState.songs[listName]=mine;
+      wfState.allSongs[listName]=all;
       if(listName===wfState.activeList){wfRenderSongList();}
       wfUpdateCountLine();
     });
@@ -1678,21 +1796,23 @@ function wfSetupSearch(){
   };
 }
 
-async function wfDoSearch(query){
-  const results=document.getElementById('wfSearchResults');
+async function wfFetchSongs(query){
   try{
     const res=await fetch('/api/itunes-search?term='+encodeURIComponent(query)+'&limit=8');
     const data=await res.json();
-    wfRenderSearchResults(data.results||[]);
+    return data.results||[];
   }catch(err){
     console.error(err);
     // fallback ישיר ל-iTunes אם ה-proxy לא עובד
-    try{
-      const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(query)+'&entity=song&limit=8');
-      const d2=await r2.json();
-      wfRenderSearchResults(d2.results||[]);
-    }catch(e2){results.innerHTML='';}
+    const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(query)+'&entity=song&limit=8');
+    const d2=await r2.json();
+    return d2.results||[];
   }
+}
+async function wfDoSearch(query){
+  const results=document.getElementById('wfSearchResults');
+  try{wfRenderSearchResults(await wfFetchSongs(query));}
+  catch(e2){results.innerHTML='';}
 }
 
 function wfEsc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');}
@@ -1763,7 +1883,7 @@ async function wfAddSong(songData){
   const maxSongs=cfg.maxSongsPerGuestPerList||5;
   const list=wfState.songs[wfState.activeList];
   if(list.length>=maxSongs){wfShowToast(wfT('limit-reached'));return;}
-  if(list.some(s=>s.trackId===songData.trackId))return;
+  if((wfState.allSongs[wfState.activeList]||[]).some(s=>s.trackId===songData.trackId)){wfShowToast(wfT('already'));return;}
   const rid=wfState.event.roomId||urlRoom;
   const listRef=fbRef(db,'events/'+rid+'/weddingLists/'+wfState.activeList+'/songs');
   const newRef=push(listRef);
@@ -1807,8 +1927,9 @@ function wfCountStars(){
 }
 
 function wfRenderSongList(){
-  const list=wfState.songs[wfState.activeList];
+  const list=wfState.allSongs[wfState.activeList];
   const container=document.getElementById('wfSongList');
+  if(!list||!container)return;
   if(!list.length){
     const emptyKey=wfState.activeList==='reception'?'empty-reception':'empty-party';
     container.innerHTML='<p class="wf-song-list-empty">'+wfT(emptyKey)+'</p>';
@@ -1816,17 +1937,25 @@ function wfRenderSongList(){
   }
   container.innerHTML=list.map(song=>{
     const previewBtn=song.previewUrl?`<button class="wf-icon-btn preview list-preview" data-preview="${wfEsc(song.previewUrl)}" style="width:28px;height:28px;font-size:10px">▶</button>`:'';
+    const mine=song.addedBy===wfState.guestId;
+    const nm=song.addedByName&&song.addedByName!=='Guest'?song.addedByName:'';
+    const byLine=mine?'':`<p class="wf-song-by">${wfEsc(nm?wfT('by-name',{name:nm}):wfT('by-other'))}</p>`;
+    // שירים מהמכשיר הזה — עם כוכב/מחיקה; שירים ממכשיר אחר — לצפייה בלבד
+    const actions=mine
+      ?`<button class="wf-star-btn ${song.starred?'starred':''}" data-star="${wfEsc(song._id)}">${song.starred?'★':'☆'}</button>
+        <button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>`
+      :(song.starred?'<span class="wf-star-static">★</span>':'');
     return `
     <div class="wf-song-row">
       <div class="wf-song-cover" style="background-image:url('${wfEsc(song.cover)}')"></div>
       <div class="wf-song-info">
         <p class="wf-song-title">${wfEsc(song.title)}</p>
         <p class="wf-song-artist">${wfEsc(song.artist)}</p>
+        ${byLine}
       </div>
       <div class="wf-song-actions">
         ${previewBtn}
-        <button class="wf-star-btn ${song.starred?'starred':''}" data-star="${wfEsc(song._id)}">${song.starred?'★':'☆'}</button>
-        <button class="wf-remove-btn" data-remove="${wfEsc(song._id)}">×</button>
+        ${actions}
       </div>
     </div>`;
   }).join('');
@@ -1849,12 +1978,160 @@ function wfRenderSongList(){
 function wfUpdateCountLine(){
   const cfg=(wfState.event&&wfState.event.weddingConfig)||{};
   const list=wfState.songs[wfState.activeList];
+  if(!list)return;
   const stars=wfCountStars();
+  const total=(wfState.allSongs[wfState.activeList]||[]).length;
   document.getElementById('wfCountLine').textContent=wfT('count-line',{
     added:list.length,
     max:cfg.maxSongsPerGuestPerList||5,
     stars:stars,
     maxStars:cfg.maxStarsPerGuest||10
+  })+(total>list.length?' · '+wfT('in-list',{n:total}):'');
+}
+
+// ════ חופה — בחירת שירים לרגעי הטקס ════
+// סדר הרגעים לפי סדר הטקס; group: entrance = כניסה לחופה
+const WF_CH_SLOTS=[
+  {id:'parents',group:'more'},
+  {id:'bridesmaids',group:'more'},
+  {id:'couple',group:'entrance'},
+  {id:'groom',group:'entrance'},
+  {id:'bride',group:'entrance'},
+  {id:'glass',group:'more'}
+];
+function wfChRid(){return (wfState.event&&wfState.event.roomId)||urlRoom;}
+function wfStartChuppahListener(){
+  const rid=wfChRid();if(!rid)return;
+  const unsub=onValue(fbRef(db,'events/'+rid+'/weddingChuppah'),snap=>{
+    wfState.chuppah=snap.val()||{};
+    wfRenderChuppah();
+  });
+  wfState.unsubs.push(unsub);
+}
+async function wfToggleChuppahSlot(slotId){
+  const cur=wfState.chuppah[slotId]||{};
+  const on=!cur.enabled;
+  wfState.chuppah={...wfState.chuppah,[slotId]:{...cur,enabled:on}};
+  if(!on&&wfState.chPicking===slotId)wfState.chPicking=null;
+  wfRenderChuppah();
+  try{await set(fbRef(db,'events/'+wfChRid()+'/weddingChuppah/'+slotId+'/enabled'),on);}
+  catch(e){wfShowToast('Error: '+e.message);}
+}
+function wfStartChuppahPick(slotId){
+  wfState.chPicking=slotId;
+  wfRenderChuppah();
+  const inp=document.getElementById('wfChSearch');if(inp)inp.focus();
+}
+function wfCancelChuppahPick(){wfState.chPicking=null;wfRenderChuppah();}
+async function wfSetChuppahSong(slotId,songData){
+  const rid=wfChRid();
+  const song={...songData,addedBy:wfState.guestId,ts:Date.now()};
+  wfState.chPicking=null;
+  try{
+    await set(fbRef(db,'events/'+rid+'/weddingChuppah/'+slotId+'/song'),song);
+    await set(fbRef(db,'events/'+rid+'/weddingChuppah/'+slotId+'/enabled'),true);
+    wfShowToast(wfT('ch-saved'));
+  }catch(e){wfShowToast('Error: '+e.message);}
+}
+async function wfRemoveChuppahSong(slotId){
+  try{
+    await set(fbRef(db,'events/'+wfChRid()+'/weddingChuppah/'+slotId+'/song'),null);
+    wfShowToast(wfT('ch-removed'));
+  }catch(e){wfShowToast('Error: '+e.message);}
+}
+function wfChuppahCounts(ch){
+  const en=WF_CH_SLOTS.filter(x=>ch[x.id]&&ch[x.id].enabled);
+  return {total:en.length,chosen:en.filter(x=>ch[x.id].song).length};
+}
+function wfRenderChuppah(){
+  const panel=document.getElementById('wfChuppahPanel');
+  if(!panel||!wfState.event)return;
+  // שמירת טקסט החיפוש אם הרינדור קרה תוך כדי הקלדה (עדכון מ-Firebase)
+  const prevInp=document.getElementById('wfChSearch');
+  const prevVal=prevInp?prevInp.value:'';
+  const hadFocus=prevInp&&document.activeElement===prevInp;
+  panel.dir=wfState.lang==='he'?'rtl':'ltr';
+  const ch=wfState.chuppah||{};
+  const toggle=x=>`<button class="wf-ch-toggle ${ch[x.id]&&ch[x.id].enabled?'on':''}" onclick="wfToggleChuppahSlot('${x.id}')">${ch[x.id]&&ch[x.id].enabled?'✓ ':''}${wfEsc(wfT('ch-'+x.id))}</button>`;
+  const enabled=WF_CH_SLOTS.filter(x=>ch[x.id]&&ch[x.id].enabled);
+  const slotHtml=x=>{
+    const d=ch[x.id]||{};const song=d.song;
+    let inner='';
+    if(wfState.chPicking===x.id){
+      inner=`<div class="wf-search-box"><input type="text" class="wf-search-input" id="wfChSearch" placeholder="${wfEsc(wfT('ch-search-ph',{slot:wfT('ch-'+x.id)}))}" autocomplete="off"><span class="wf-search-icon">🔍</span></div>
+        <div class="wf-search-results" id="wfChResults"></div>
+        <button class="wf-ch-link" onclick="wfCancelChuppahPick()">${wfEsc(wfT('ch-cancel'))}</button>`;
+    } else if(song){
+      const pv=song.previewUrl?`<button class="wf-icon-btn preview" data-preview="${wfEsc(song.previewUrl)}" style="width:28px;height:28px;font-size:10px">▶</button>`:'';
+      inner=`<div class="wf-song-row" style="padding:0;border:none">
+        <div class="wf-song-cover" style="background-image:url('${wfEsc(song.cover)}')"></div>
+        <div class="wf-song-info"><p class="wf-song-title">${wfEsc(song.title)}</p><p class="wf-song-artist">${wfEsc(song.artist)}</p></div>
+        <div class="wf-song-actions">${pv}<button class="wf-remove-btn" onclick="wfRemoveChuppahSong('${x.id}')">×</button></div>
+      </div>`;
+    } else {
+      inner=`<button class="wf-ch-pick" onclick="wfStartChuppahPick('${x.id}')">${wfEsc(wfT('ch-pick'))}</button>`;
+    }
+    const change=song&&wfState.chPicking!==x.id?`<button class="wf-ch-link" onclick="wfStartChuppahPick('${x.id}')">${wfEsc(wfT('ch-change'))}</button>`:'';
+    return `<div class="wf-ch-slot ${song?'done':''}"><div class="wf-ch-slot-title"><span>${song?'✓ ':''}${wfEsc(wfT('ch-'+x.id))}</span>${change}</div>${inner}</div>`;
+  };
+  const c=wfChuppahCounts(ch);
+  panel.innerHTML=`
+    <p class="wf-ch-q">${wfEsc(wfT('ch-question'))}</p>
+    <p class="wf-ch-hint">${wfEsc(wfT('ch-hint'))}</p>
+    <p class="wf-ch-group">${wfEsc(wfT('ch-group-entrance'))}</p>
+    <div class="wf-ch-toggles">${WF_CH_SLOTS.filter(x=>x.group==='entrance').map(toggle).join('')}</div>
+    <p class="wf-ch-group">${wfEsc(wfT('ch-group-more'))}</p>
+    <div class="wf-ch-toggles">${WF_CH_SLOTS.filter(x=>x.group==='more').map(toggle).join('')}</div>
+    <div class="wf-ch-slots">${enabled.length?enabled.map(slotHtml).join(''):`<p class="wf-ch-empty">${wfEsc(wfT('ch-empty'))}</p>`}</div>
+    ${c.total?`<p class="wf-count-line">${wfEsc(wfT('ch-count',c))}</p>`:''}`;
+  panel.querySelectorAll('.wf-ch-slot .wf-icon-btn.preview').forEach(btn=>{
+    btn.onclick=()=>{const url=btn.dataset.preview;if(!url){wfShowToast(wfT('preview-error'));return;}wfTogglePreview(url,btn);};
+  });
+  const inp=document.getElementById('wfChSearch');
+  if(inp){
+    if(prevVal){inp.value=prevVal;}
+    if(hadFocus||!prevInp)inp.focus();
+    inp.oninput=()=>{
+      const q=inp.value.trim();
+      clearTimeout(wfState.chSearchTimeout);
+      const res=document.getElementById('wfChResults');
+      if(q.length<2){res.innerHTML='';return;}
+      res.innerHTML='<div style="text-align:center;padding:14px;font-size:11px;color:#999;letter-spacing:2px">…</div>';
+      wfState.chSearchTimeout=setTimeout(()=>wfChDoSearch(q),350);
+    };
+    if(prevVal&&prevVal.trim().length>=2)wfChDoSearch(prevVal.trim());
+  }
+}
+async function wfChDoSearch(q){
+  const slot=wfState.chPicking;
+  const res=document.getElementById('wfChResults');if(!res||!slot)return;
+  let items=[];
+  try{items=await wfFetchSongs(q);}catch(e){res.innerHTML='';return;}
+  if(wfState.chPicking!==slot)return;
+  const box=document.getElementById('wfChResults');if(!box)return;
+  if(!items.length){box.innerHTML='';return;}
+  box.innerHTML=items.map((item,idx)=>{
+    const cover=(item.artworkUrl100||'').replace('100x100','200x200');
+    return `<div class="wf-search-result">
+      <div class="wf-search-result-cover" style="background-image:url('${wfEsc(cover)}')"></div>
+      <div class="wf-search-result-info"><p class="wf-search-result-title">${wfEsc(item.trackName)}</p><p class="wf-search-result-artist">${wfEsc(item.artistName)}</p></div>
+      <div class="wf-search-result-actions">
+        <button class="wf-icon-btn preview" data-preview="${wfEsc(item.previewUrl||'')}">▶</button>
+        <button class="wf-icon-btn add" data-chadd="${idx}">+</button>
+      </div></div>`;
+  }).join('');
+  box.querySelectorAll('[data-chadd]').forEach(btn=>{
+    btn.onclick=()=>{
+      const item=items[parseInt(btn.dataset.chadd)];
+      wfSetChuppahSong(slot,{
+        trackId:item.trackId||'',title:item.trackName||'',artist:item.artistName||'',album:item.collectionName||'',
+        cover:(item.artworkUrl100||'').replace('100x100','200x200'),previewUrl:item.previewUrl||'',
+        spotifyQuery:(item.trackName||'')+' '+(item.artistName||'')
+      });
+    };
+  });
+  box.querySelectorAll('.wf-icon-btn.preview').forEach(btn=>{
+    btn.onclick=()=>{const url=btn.dataset.preview;if(!url){wfShowToast(wfT('preview-error'));return;}wfTogglePreview(url,btn);};
   });
 }
 
@@ -2017,8 +2294,16 @@ async function promptCelebrantCode(){
   const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='none';
   const ab=document.getElementById('hCelebrantActBtn');if(ab)ab.style.display='block';
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 🎂 (חוגג/ת)';
-  toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success',3000);
-  setTimeout(()=>openCelebrantActivities(),400);
+  // רינדור מחדש של התור כדי שכפתורי המחיקה / כוכב יופיעו מיד
+  renderGuestQ();
+  startCelebrantReplyWatcher();
+  // ההעדפות נפתחות אוטומטית רק בפעם הראשונה; אחרי מילוי — עריכה/שאלה דרך הכפתורים
+  if(celebrantPrefsFilled(ev)){
+    toast('🎂 ברוך/ה שובך! גישת חוגג/ת פעילה 🎉','success',3000);
+  } else {
+    toast('🎂 גישת חוגג/ת פעילה! ללא הגבלות 🎉','success',3000);
+    setTimeout(()=>openCelebrantActivities(),400);
+  }
   const existingUploadBtn=document.getElementById('celebrantUploadBtn');
   if(!existingUploadBtn){
     const hero=document.getElementById('eventHero');
@@ -2186,7 +2471,8 @@ async function editDJNote(rid,currentNote){
 }
 
 // ══ CELEBRANT ACTIVITIES ══
-const CELEBRANT_GAMES = [
+// ── ברירת מחדל: משמשת כל עוד אין רשימת משחקים ב-Firebase (config/games) ──
+const GAMES_FALLBACK = [
   {id:'kiss_slap',   name:'נשיקה סטירה',          emoji:'💋',  premium:false},
   {id:'objects',     name:'משחק החפצים',           emoji:'🎒',  premium:false},
   {id:'songs',       name:'משחק השירים',            emoji:'🎵',  premium:false},
@@ -2194,6 +2480,11 @@ const CELEBRANT_GAMES = [
   {id:'vault',       name:'משחק הכספות',            emoji:'🔐',  premium:true},
   {id:'goldcage',    name:'כלוב הזהב',              emoji:'🏅',  premium:true},
 ];
+const GAME_BADGE_COLORS=['#D4AF37','#00C853','#4a9fff','#a855f7','#ff3b30','#FFA500','#ff4fa3'];
+const GAME_BADGE_FALLBACK={songs:{enabled:true,text:'ללא עלות זמנית',color:'#00C853'}};
+// רשימת המשחקים בפועל (כולל משחקים מושבתים), ממוינת לפי order
+let CELEBRANT_GAMES = GAMES_FALLBACK.map((g,i)=>({...g,enabled:true,order:i,badge:GAME_BADGE_FALLBACK[g.id]||null}));
+let _gamesFromFirebase=false;
 const GAME_DESC_DEFAULTS = {
   kiss_slap: 'משחק כיפי שבו האורחים מצביעים — נשיקה או סטירה? הדיג\'יי מנחה את ההצבעות ומוסיף אנרגיה לאירוע!',
   objects:   'כל אורח מניח חפץ אישי — והחוגג/ת צריך לנחש למי הוא שייך. משחק מצחיק שמחמם אווירה!',
@@ -2205,14 +2496,185 @@ const GAME_DESC_DEFAULTS = {
 let _gameDescriptions = {...GAME_DESC_DEFAULTS};
 let celebrantChoicesSelected = new Set();
 
-async function openCelebrantActivities(){
+// טעינת המשחקים מ-Firebase; אם אין — fallback (כולל הסברים ישנים מ-about/gameDescriptions)
+function applyGamesConfig(gamesObj,legacyDescs){
+  if(legacyDescs)_gameDescriptions={...GAME_DESC_DEFAULTS,...legacyDescs};
+  if(gamesObj&&typeof gamesObj==='object'&&Object.keys(gamesObj).length){
+    _gamesFromFirebase=true;
+    CELEBRANT_GAMES=Object.entries(gamesObj).map(([id,g])=>({id,name:g.name||id,emoji:g.emoji||'🎮',premium:!!g.premium,enabled:g.enabled!==false,order:typeof g.order==='number'?g.order:999,description:g.description||'',badge:g.badge||null}))
+      .sort((a,b)=>a.order-b.order);
+  } else {
+    _gamesFromFirebase=false;
+    CELEBRANT_GAMES=GAMES_FALLBACK.map((g,i)=>({...g,enabled:true,order:i,badge:GAME_BADGE_FALLBACK[g.id]||null}));
+  }
+}
+async function loadGamesConfig(){
+  const res=await Promise.allSettled([get(fbRef(db,'config/games')),get(fbRef(db,'about/gameDescriptions'))]);
+  const v=i=>res[i].status==='fulfilled'?res[i].value.val():null;
+  applyGamesConfig(v(0),v(1));
+}
+function getGameFull(id){
+  const g=CELEBRANT_GAMES.find(x=>x.id===id);
+  if(!g)return null;
+  return {...g,description:g.description||_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||''};
+}
+// ══ ניהול משחקים (בעלים) ══
+let _gameEditCurrentId=null;
+let _gameEditSelectedColor='#D4AF37';
+function gamesToFirebaseObj(arr){
+  const obj={};
+  arr.forEach((g,i)=>{
+    obj[g.id]={name:g.name,emoji:g.emoji||'🎮',premium:!!g.premium,enabled:g.enabled!==false,order:i,
+      description:(g.description||_gameDescriptions[g.id]||GAME_DESC_DEFAULTS[g.id]||''),
+      badge:g.badge&&g.badge.text?{enabled:!!g.badge.enabled,text:g.badge.text,color:g.badge.color||'#D4AF37'}:null};
+  });
+  return obj;
+}
+async function saveAllGames(arr){
+  const obj=gamesToFirebaseObj(arr);
+  try{
+    await set(fbRef(db,'config/games'),obj);
+    applyGamesConfig(obj);
+    renderGamesAdmin();
+    return true;
+  }catch(e){
+    console.error('saveAllGames',e);
+    toast('שמירה נכשלה — ייתכן שחוקי Firebase חוסמים את config/games ('+e.message+')','error',6000);
+    return false;
+  }
+}
+function renderGamesAdmin(){
+  const list=document.getElementById('gamesAdminList');if(!list)return;
+  if(!CELEBRANT_GAMES.length){list.innerHTML='<div style="font-size:13px;color:var(--muted);text-align:center;padding:10px">אין משחקים — הוסף משחק חדש</div>';return;}
+  list.innerHTML=CELEBRANT_GAMES.map((g0,i)=>{
+    const g=getGameFull(g0.id);
+    const isFirst=i===0,isLast=i===CELEBRANT_GAMES.length-1;
+    const arrow=(dir,dis)=>`<button onclick="moveGameOrder('${escA(g.id)}',${dir})" ${dis?'disabled':''} style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);border-radius:6px;color:#c084fc;width:24px;height:20px;cursor:${dis?'not-allowed':'pointer'};font-size:11px;padding:0;opacity:${dis?'.35':'1'}">${dir<0?'▲':'▼'}</button>`;
+    const tag=g.premium?'<span style="font-size:10px;background:rgba(212,175,55,.2);color:#D4AF37;border-radius:4px;padding:1px 6px;font-weight:700">👑 פרימיום</span>':'';
+    const off=g.enabled===false?'<span style="font-size:10px;background:rgba(255,255,255,.08);color:#999;border-radius:4px;padding:1px 6px;font-weight:700">מושבת</span>':'';
+    return `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1.5px solid ${g.premium?'rgba(212,175,55,.3)':'rgba(255,255,255,.1)'};border-radius:12px;padding:8px 10px;opacity:${g.enabled===false?'.55':'1'}">
+      <div style="display:flex;flex-direction:column;gap:3px">${arrow(-1,isFirst)}${arrow(1,isLast)}</div>
+      <div style="font-size:24px">${esc(g.emoji||'🎮')}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14px;color:#fff;margin-bottom:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${esc(g.name)} ${tag} ${off} ${gameBadgeHtml(g,10)}</div>
+        <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(g.description||'אין הסבר')}</div>
+      </div>
+      <button onclick="openGameEdit('${escA(g.id)}')" style="background:rgba(74,159,255,.15);border:1.5px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;padding:6px 10px;cursor:pointer;flex-shrink:0">✏️ ערוך</button>
+    </div>`;
+  }).join('')+(_gamesFromFirebase?'':'<div style="font-size:11px;color:var(--muted);text-align:center">מוצגת רשימת ברירת המחדל — היא תישמר ב-Firebase בעריכה הראשונה</div>');
+}
+function renderBadgeColorPicker(){
+  const wrap=document.getElementById('gameEditColors');if(!wrap)return;
+  wrap.innerHTML=GAME_BADGE_COLORS.map(c=>`<button type="button" onclick="_gameEditSelectedColor='${c}';renderBadgeColorPicker();updateBadgePreview()" title="${c}" style="width:28px;height:28px;border-radius:50%;background:${c};border:3px solid ${_gameEditSelectedColor===c?'#fff':'transparent'};cursor:pointer;padding:0;box-shadow:0 0 0 1px rgba(0,0,0,.3)"></button>`).join('');
+}
+function updateBadgePreview(){
+  const el=document.getElementById('gameEditBadgePreview');if(!el)return;
+  const on=document.getElementById('gameEditBadgeEnabled').checked;
+  const txt=document.getElementById('gameEditBadgeText').value.trim();
+  el.innerHTML=on&&txt?gameBadgeHtml({badge:{enabled:true,text:txt,color:_gameEditSelectedColor}},12):'<span style="color:#666">ללא באדג׳</span>';
+}
+function _fillGameEdit(g,isNew){
+  _gameEditCurrentId=isNew?null:g.id;
+  _gameEditSelectedColor=(g.badge&&g.badge.color)||'#D4AF37';
+  document.getElementById('gameEditModalTitle').textContent=isNew?'➕ משחק חדש':'עריכת: '+(g.emoji||'')+' '+g.name;
+  document.getElementById('gameEditId').value=isNew?'':g.id;
+  document.getElementById('gameEditName').value=g.name||'';
+  document.getElementById('gameEditEmoji').value=g.emoji||'🎮';
+  document.getElementById('gameEditDesc').value=g.description||'';
+  document.getElementById('gameEditPremium').checked=!!g.premium;
+  document.getElementById('gameEditEnabled').checked=g.enabled!==false;
+  document.getElementById('gameEditBadgeEnabled').checked=!!(g.badge&&g.badge.enabled);
+  document.getElementById('gameEditBadgeText').value=(g.badge&&g.badge.text)||'';
+  document.getElementById('gameEditDeleteBtn').style.display=isNew?'none':'block';
+  renderBadgeColorPicker();updateBadgePreview();
+  document.getElementById('gameEditModal').style.display='flex';
+}
+function addNewGame(){
+  if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  _fillGameEdit({name:'',emoji:'🎮',description:'',premium:false,enabled:true,badge:null},true);
+}
+function openGameEdit(id){
+  if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  const g=getGameFull(id);if(!g){toast('משחק לא נמצא','error');return;}
+  _fillGameEdit(g,false);
+}
+function closeGameEdit(){document.getElementById('gameEditModal').style.display='none';_gameEditCurrentId=null;}
+async function saveGameEdit(){
+  if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  const name=document.getElementById('gameEditName').value.trim();
+  if(!name){toast('יש להזין שם משחק','error');return;}
+  const badgeText=document.getElementById('gameEditBadgeText').value.trim();
+  const data={
+    name,
+    emoji:document.getElementById('gameEditEmoji').value.trim()||'🎮',
+    description:document.getElementById('gameEditDesc').value.trim(),
+    premium:document.getElementById('gameEditPremium').checked,
+    enabled:document.getElementById('gameEditEnabled').checked,
+    badge:badgeText?{enabled:document.getElementById('gameEditBadgeEnabled').checked,text:badgeText,color:_gameEditSelectedColor}:null
+  };
+  // עובדים על עותק מלא של הרשימה (כולל הסברים מ-fallback) כדי שהשמירה הראשונה תזרע את כל המשחקים
+  const arr=CELEBRANT_GAMES.map(g=>getGameFull(g.id));
+  if(_gameEditCurrentId){
+    const i=arr.findIndex(g=>g.id===_gameEditCurrentId);
+    if(i<0){toast('משחק לא נמצא','error');return;}
+    arr[i]={...arr[i],...data};
+  } else {
+    arr.push({id:'g_'+Date.now().toString(36),...data});
+  }
+  if(await saveAllGames(arr)){closeGameEdit();toast('✅ המשחק נשמר!','success');}
+}
+async function deleteGameFromEdit(){
+  if(!_gameEditCurrentId)return;
+  const g=getGameFull(_gameEditCurrentId);
+  if(!confirm('למחוק את המשחק "'+(g?g.name:'')+'"?\n(אפשר גם רק להשבית אותו)'))return;
+  const arr=CELEBRANT_GAMES.map(x=>getGameFull(x.id)).filter(x=>x.id!==_gameEditCurrentId);
+  if(await saveAllGames(arr)){closeGameEdit();toast('🗑️ המשחק נמחק','info');}
+}
+async function moveGameOrder(id,dir){
+  if(currentUserType!=='owner')return;
+  const arr=CELEBRANT_GAMES.map(g=>getGameFull(g.id));
+  const i=arr.findIndex(g=>g.id===id),j=i+dir;
+  if(i<0||j<0||j>=arr.length)return;
+  [arr[i],arr[j]]=[arr[j],arr[i]];
+  await saveAllGames(arr);
+}
+// צ'יפים של בחירות החוגג/ת + עניין בפרימיום על כרטיס האירוע (ממשק הדי-ג'יי)
+function renderEvCelebrantPrefs(ev){
+  const choices=ev.celebrantChoices||{};
+  const prem=ev.premiumInterest||{};
+  const chosen=Object.keys(choices).filter(k=>choices[k]).map(k=>getGameFull(k)).filter(Boolean);
+  const premG=Object.keys(prem).map(k=>getGameFull(k)).filter(Boolean);
+  if(!chosen.length&&!premG.length)return '';
+  const chip=(g,gold)=>`<span style="background:${gold?'rgba(212,175,55,.15)':'rgba(168,85,247,.18)'};border:1.5px solid ${gold?'rgba(212,175,55,.5)':'rgba(168,85,247,.45)'};border-radius:8px;padding:2px 8px;font-size:11px;font-weight:700;color:${gold?'#D4AF37':'#c084fc'}">${gold?'👑 ':''}${esc(g.emoji||'')} ${esc(g.name)}</span>`;
+  return `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px;align-items:center"><span style="font-size:11px;color:var(--muted)">🎮 בחירות:</span>${chosen.map(g=>chip(g,false)).join('')}${premG.map(g=>chip(g,true)).join('')}</div>`;
+}
+
+function gameBadgeHtml(g,size){
+  const b=g&&g.badge;
+  if(!b||!b.enabled||!b.text)return '';
+  const c=b.color||'#D4AF37';
+  return '<span style="font-size:'+(size||10)+'px;background:'+c+'26;color:'+c+';border:1px solid '+c+'66;border-radius:4px;padding:1px 6px;margin-right:4px;font-weight:700;white-space:nowrap">'+esc(b.text)+'</span>';
+}
+
+// האם החוגג/ת כבר מילא/ה העדפות (בחירת משחקים / פרימיום / שמירה קודמת)
+function celebrantPrefsFilled(ev){
+  const room=currentRoom||urlRoom;
+  try{if(localStorage.getItem('b_celebPrefs_'+room))return true;}catch(e){}
+  if(!ev)return false;
+  if(Object.values(ev.celebrantChoices||{}).some(Boolean))return true;
+  if(ev.premiumInterest&&Object.keys(ev.premiumInterest).length)return true;
+  return false;
+}
+// mode: undefined = זרימה ראשונה (מסך פתיחה), 'choose' = עריכת בחירות, 'questions' = שאלות לדי-ג'יי
+async function openCelebrantActivities(mode){
   try{
     const logoEl=document.getElementById('lCelebrantAct');
     const mainLogo=document.getElementById('lGuest');
     if(logoEl&&mainLogo)logoEl.src=mainLogo.src;
-    document.getElementById('celebActInfo').style.display='block';
-    document.getElementById('celebActChoose').style.display='none';
-    document.getElementById('celebActDjQ').style.display='none';
+    document.getElementById('celebActInfo').style.display=mode?'none':'block';
+    document.getElementById('celebActChoose').style.display=mode==='choose'?'block':'none';
+    document.getElementById('celebActDjQ').style.display=mode==='questions'?'block':'none';
+    if(mode==='questions')markCelebrantRepliesSeen();
     // הצג שם חוגג/ת
     if(currentRoom){
       get(fbRef(db,'events/'+currentRoom+'/celebrantName')).then(snap=>{
@@ -2248,15 +2710,16 @@ async function openCelebrantActivities(){
 function renderCelebrantGameList(){
   const list=document.getElementById('celebActGameList');
   if(!list)return;
-  const freeGames=CELEBRANT_GAMES.filter(g=>!g.premium);
-  const premiumGames=CELEBRANT_GAMES.filter(g=>g.premium);
+  const activeGames=CELEBRANT_GAMES.filter(g=>g.enabled!==false);
+  const freeGames=activeGames.filter(g=>!g.premium);
+  const premiumGames=activeGames.filter(g=>g.premium);
   function renderGame(g){
     const sel=celebrantChoicesSelected.has(g.id);
     const bg=sel?'rgba(168,85,247,.15)':'rgba(255,255,255,.04)';
     const border=sel?'rgba(168,85,247,.6)':'rgba(255,255,255,.1)';
     const chkBg=sel?'#a855f7':'transparent';
     const chkBorder=sel?'#a855f7':'rgba(255,255,255,.2)';
-    const freeBadge=(g.id==='songs')?'<span style="font-size:10px;background:rgba(0,200,83,.15);color:#00C853;border-radius:4px;padding:1px 6px;margin-right:4px">&#x1F7E2; ללא עלות זמנית</span>':'';
+    const freeBadge=gameBadgeHtml(g,10);
     const premiumSub=g.premium?'<div style="font-size:11px;color:#aaa;margin-top:2px">שדרוג בתשלום — המשרד ייצור קשר</div>':'';
     const id=g.id;
     const infoBtn='<button onclick="event.stopPropagation();showGameInfo(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
@@ -2265,23 +2728,27 @@ function renderCelebrantGameList(){
     const clickHandler='toggleCelebrantGame(&quot;'+id+'&quot;)';
     return '<div style="display:flex;align-items:center;gap:10px;background:'+bg+';border:2px solid '+border+';border-radius:12px;padding:12px 14px;cursor:'+cursor+'" onclick="'+clickHandler+'">'
       +'<span style="font-size:22px">'+g.emoji+'</span>'
-      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+g.name+freeBadge+'</div>'+premiumSub+'</div>'
+      +'<div style="flex:1"><div style="font-weight:700;font-size:14px">'+esc(g.name)+freeBadge+'</div>'+premiumSub+'</div>'
       +infoBtn
       +chk
       +'</div>';
   }
   let html='';
-  html+='<div style="font-size:11px;font-weight:700;color:#a78bfa;letter-spacing:1px;margin-bottom:6px;padding-right:4px">פעילויות חינמיות</div>';
-  html+=freeGames.map(renderGame).join('');
-  html+='<div style="font-size:11px;font-weight:700;color:#D4AF37;letter-spacing:1px;margin-top:16px;margin-bottom:6px;padding-right:4px">👑 שדרוגי פרימיום</div>';
-  html+=premiumGames.map(renderGame).join('');
+  if(freeGames.length){
+    html+='<div style="font-size:11px;font-weight:700;color:#a78bfa;letter-spacing:1px;margin-bottom:6px;padding-right:4px">פעילויות חינמיות</div>';
+    html+=freeGames.map(renderGame).join('');
+  }
+  if(premiumGames.length){
+    html+='<div style="font-size:11px;font-weight:700;color:#D4AF37;letter-spacing:1px;margin-top:16px;margin-bottom:6px;padding-right:4px">👑 שדרוגי פרימיום</div>';
+    html+=premiumGames.map(renderGame).join('');
+  }
   list.innerHTML=html;
 }
 
 function showGameInfo(id){
-  const game=CELEBRANT_GAMES.find(g=>g.id===id);
+  const game=getGameFull(id);
   if(!game)return;
-  const desc=_gameDescriptions[id]||GAME_DESC_DEFAULTS[id]||'';
+  const desc=game.description;
   const modal=document.getElementById('gameInfoModal');
   document.getElementById('gameInfoTitle').textContent=game.emoji+' '+game.name;
   document.getElementById('gameInfoDesc').textContent=desc;
@@ -2295,43 +2762,72 @@ function updateCelebChoiceSummary(){
   if(!summary||!list)return;
   const sel=CELEBRANT_GAMES.filter(g=>celebrantChoicesSelected.has(g.id));
   if(sel.length){
-    list.innerHTML=sel.map(g=>'<span style="background:rgba(168,85,247,.2);border:1.5px solid rgba(168,85,247,.5);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#c084fc">'+g.emoji+' '+g.name+'</span>').join('');
+    list.innerHTML=sel.map(g=>'<span style="background:rgba(168,85,247,.2);border:1.5px solid rgba(168,85,247,.5);border-radius:8px;padding:5px 12px;font-size:13px;font-weight:700;color:#c084fc">'+g.emoji+' '+esc(g.name)+'</span>').join('');
     summary.style.display='block';
   } else {
     summary.style.display='none';
   }
 }
 
-function openPremiumModal(id,game){
-  document.getElementById('premiumModalTitle').textContent=game.emoji+' '+game.name;
+let _premiumModalGameId='';
+let _premiumModalBlocked=false;
+async function openPremiumModal(id,game){
+  _premiumModalGameId=id;
+  _premiumModalBlocked=false;
+  const g=getGameFull(id)||game;
+  document.getElementById('premiumModalTitle').textContent=g.emoji+' '+g.name;
   document.getElementById('premiumModalGameId').value=id;
-  document.getElementById('premiumModalPhone').value='';
+  const descEl=document.getElementById('premiumModalDesc');
+  if(descEl){descEl.textContent=g.description||'';descEl.style.display=g.description?'block':'none';}
+  const btn=document.getElementById('premiumModalWaBtn');
+  const body=document.getElementById('premiumModalBody');
+  body.textContent='זהו שדרוג בתשלום. לחצו על הכפתור כדי לשלוח לנו הודעת וואטסאפ עם פרטי האירוע, ואנחנו נחזור אליכם לתיאום.';
+  btn.style.display='flex';
+  btn.href='https://wa.me/972509896598';
   document.getElementById('premiumModal').style.display='flex';
+  // פרטי אירוע + מספר המשרד (about/wa) לבניית ההודעה
+  let ev={},wa='';
+  try{
+    const res=await Promise.allSettled([get(fbRef(db,'events/'+currentRoom)),get(fbRef(db,'about/wa'))]);
+    if(res[0].status==='fulfilled')ev=res[0].value.val()||{};
+    if(res[1].status==='fulfilled')wa=res[1].value.val()||'';
+  }catch(e){}
+  // בדיקת 24 שעות לפני האירוע
+  if(ev.date){
+    const evDt=new Date(ev.date+'T'+(ev.time||'00:00'));
+    const hoursLeft=(evDt-Date.now())/3600000;
+    if(hoursLeft>=0&&hoursLeft<24){
+      _premiumModalBlocked=true;
+      body.textContent='לא ניתן להזמין שדרוג פרימיום פחות מ-24 שעות לפני האירוע 🙏';
+      btn.style.display='none';
+      return;
+    }
+  }
+  let num=String(wa||'972509896598').replace(/[^0-9]/g,'');
+  if(num.startsWith('0'))num='972'+num.slice(1);
+  const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
+  const lines=[
+    'היי בלאגנזה! 👋',
+    'אני '+(guestName||'החוגג/ת')+' ואשמח לשמוע פרטים על שדרוג הפרימיום: '+g.emoji+' '+g.name,
+    '',
+    'פרטי האירוע:',
+    '🎉 '+(ev.name||''),
+    dateStr?'📅 '+dateStr+(ev.time?' בשעה '+ev.time:''):'',
+    ev.location?'📍 '+ev.location:'',
+    ev.djName?'🎧 DJ: '+ev.djName:'',
+    '🔑 קוד אירוע: '+currentRoom
+  ].filter(x=>x!==null&&x!==undefined).filter((x,i,arr)=>x!==''||i===2);
+  btn.href='https://wa.me/'+num+'?text='+encodeURIComponent(lines.join('\n'));
 }
 function closePremiumModal(){document.getElementById('premiumModal').style.display='none';}
-async function submitPremiumInterest(){
-  const id=document.getElementById('premiumModalGameId').value;
-  const phone=document.getElementById('premiumModalPhone').value.trim();
-  if(!phone){toast('יש להזין מספר טלפון','error');return;}
-  if(!currentRoom){closePremiumModal();return;}
-  // בדיקת 24ש' לפני האירוע
-  try{
-    const snap=await get(fbRef(db,'events/'+currentRoom));
-    const ev=snap.val()||{};
-    if(ev.date){
-      const evTime=ev.time||'00:00';
-      const evDt=new Date(ev.date+'T'+evTime);
-      const hoursLeft=(evDt-Date.now())/3600000;
-      if(hoursLeft>=0&&hoursLeft<24){
-        toast('לא ניתן לשנות פרימיום בפחות מ-24 שעות לפני האירוע','error',4000);
-        closePremiumModal();return;
-      }
-    }
-  }catch(e){}
-  await set(fbRef(db,'events/'+currentRoom+'/premiumInterest/'+id),{ts:Date.now(),guestId,guestName:guestName||'חוגג/ת',phone});
-  closePremiumModal();
-  toast('💌 קיבלנו! המשרד ייצור קשר למספר '+phone,'success',5000);
+// לחיצה על כפתור הוואטסאפ: הלינק נפתח (href), ובמקביל נרשם עניין בפרימיום לממשק הדי-ג'יי
+function onPremiumWaClick(){
+  if(_premiumModalBlocked)return;
+  if(_premiumModalGameId)notifyPremiumInterest(_premiumModalGameId);
+  setTimeout(()=>{closePremiumModal();toast('💌 תודה! נחזור אליכם בהקדם','success',4000);},300);
 }
+// תאימות לאחור
+async function submitPremiumInterest(){onPremiumWaClick();}
 
 async function notifyPremiumInterest(gameId){
   if(!currentRoom)return;
@@ -2346,7 +2842,7 @@ async function toggleCelebrantGame(id){
     openPremiumModal(id,game);
     return;
   }
-  const freeSelected=[...celebrantChoicesSelected].filter(sid=>!CELEBRANT_GAMES.find(x=>x.id===sid)?.premium);
+  const freeSelected=[...celebrantChoicesSelected].filter(sid=>{const x=CELEBRANT_GAMES.find(y=>y.id===sid);return x&&!x.premium&&x.enabled!==false;});
   if(celebrantChoicesSelected.has(id)){
     celebrantChoicesSelected.delete(id);
   } else {
@@ -2367,10 +2863,12 @@ async function saveCelebrantChoices(){
   const obj={};
   CELEBRANT_GAMES.filter(g=>!g.premium).forEach(g=>{obj[g.id]=celebrantChoicesSelected.has(g.id);});
   await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
+  try{localStorage.setItem('b_celebPrefs_'+currentRoom,'1');}catch(e){}
   toast('✅ הבחירה נשמרה!','success');
   // הצג שאלות לDJ אחרי אישור
   document.getElementById('celebActChoose').style.display='none';
   document.getElementById('celebActDjQ').style.display='block';
+  markCelebrantRepliesSeen();
   document.getElementById('celebActDjQ').scrollIntoView({behavior:'smooth'});
 }
 
@@ -2381,6 +2879,33 @@ async function sendCelebrantDjMessage(){
   await push(fbRef(db,'events/'+currentRoom+'/djMessages'),{from:'celebrant',name:guestName||'חוגג/ת',text:txt,ts:Date.now(),reply:''});
   inp.value='';
   toast('📬 נשלח!','success');
+}
+
+// ── חיווי לחוגג/ת: הדי-ג'יי ענה לשאלה ──
+let _celebReplyUnsub=null;
+let _celebReplyCount=0;
+function _celebSeenKey(){return 'b_celebSeenReplies_'+(currentRoom||urlRoom);}
+function startCelebrantReplyWatcher(){
+  const room=currentRoom||urlRoom;if(!room)return;
+  if(_celebReplyUnsub){try{_celebReplyUnsub();}catch(e){}}
+  let first=true;
+  _celebReplyUnsub=onValue(fbRef(db,'events/'+room+'/djMessages'),snap=>{
+    const msgs=snap.val()||{};
+    const replied=Object.values(msgs).filter(m=>m&&m.reply).length;
+    let seen=0;try{seen=parseInt(localStorage.getItem(_celebSeenKey())||'0')||0;}catch(e){}
+    if(!first&&replied>_celebReplyCount)toast('🎧 הדי-ג׳יי ענה לשאלה שלך!','success',4000);
+    first=false;
+    _celebReplyCount=replied;
+    const onQ=document.getElementById('sCelebrantActivities')?.classList.contains('on')&&document.getElementById('celebActDjQ')?.style.display==='block';
+    if(onQ){markCelebrantRepliesSeen();return;}
+    const b=document.getElementById('hCelebReplyBadge');
+    const unseen=Math.max(0,replied-seen);
+    if(b){b.textContent=unseen;b.style.display=unseen?'inline-block':'none';}
+  });
+}
+function markCelebrantRepliesSeen(){
+  try{localStorage.setItem(_celebSeenKey(),String(_celebReplyCount));}catch(e){}
+  const b=document.getElementById('hCelebReplyBadge');if(b)b.style.display='none';
 }
 
 function loadCelebrantDjMessages(){
@@ -2404,6 +2929,7 @@ function loadCelebrantDjMessages(){
 let _djMsgRoom='';
 let _djMsgUnsubscribe=null;
 function openDjMessages(rid,evName){
+  _allQModalOpen=false;
   _djMsgRoom=rid;
   if(_djMsgUnsubscribe)_djMsgUnsubscribe();
   const modal=document.getElementById('djMessagesModal');
@@ -2435,6 +2961,7 @@ async function sendDjReply(msgKey,inputId){
   toast('✅ תשובה נשלחה','success');
 }
 function closeDjMessages(){
+  _allQModalOpen=false;
   if(_djMsgUnsubscribe){_djMsgUnsubscribe();_djMsgUnsubscribe=null;}
   document.getElementById('djMessagesModal').style.display='none';
 }
@@ -2519,16 +3046,22 @@ function onEvTypeChange(){
 }
 
 async function loadConfig(){
-  const [namesSnap,passSnap,prefixesSnap,tmplSnap]=await Promise.all([
+  // allSettled — כישלון בקריאה אחת לא מפיל את כל הטעינה
+  const res=await Promise.allSettled([
     get(fbRef(db,'config/djNames')),
     get(fbRef(db,'config/passwords')),
     get(fbRef(db,'config/eventPrefixes')),
-    get(fbRef(db,'config/waMsgTemplate'))
+    get(fbRef(db,'config/waMsgTemplate')),
+    get(fbRef(db,'config/games')),
+    get(fbRef(db,'about/gameDescriptions'))
   ]);
-  const djNames=namesSnap.val();
-  const djPasswords=passSnap.val();
-  const eventPrefixes=prefixesSnap.val();
-  const waMsgTemplate=tmplSnap.val();
+  const val=i=>{try{return res[i].status==='fulfilled'?res[i].value.val():null;}catch(e){return null;}};
+  res.forEach((r,i)=>{if(r.status==='rejected')console.warn('loadConfig read failed #'+i,r.reason);});
+  const djNames=val(0);
+  const djPasswords=val(1);
+  const eventPrefixes=val(2);
+  const waMsgTemplate=val(3);
+  applyGamesConfig(val(4),val(5));
   if(djNames){
     _djNames={owner:DJ_NAMES.owner};
     Object.keys(djNames).forEach(k=>{if(k!=='owner')_djNames[k]=djNames[k];});
@@ -2720,23 +3253,17 @@ function updateDJHeader(){
   if(d.wa)document.getElementById('aboutWA').value=d.wa;
   if(d.ig)document.getElementById('aboutIG').value=d.ig;
   if(d.fb)document.getElementById('aboutFB').value=d.fb;
-  const gd=d.gameDescriptions||{};
-  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
-    const el=document.getElementById('gameDesc_'+id);
-    if(el)el.value=gd[id]||GAME_DESC_DEFAULTS[id]||'';
-  });
   if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
+  // פאנל ניהול המשחקים — טעינה טרייה מ-Firebase
+  try{await loadGamesConfig();}catch(e){}
+  renderGamesAdmin();
   const welEl=document.getElementById('aboutCelebrantWelcome');
   if(welEl)welEl.value=d.celebrantWelcome||'';
 }
 async function saveAbout(){
   if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
-  const gameDescriptions={};
-  Object.keys(GAME_DESC_DEFAULTS).forEach(id=>{
-    const el=document.getElementById('gameDesc_'+id);
-    if(el)gameDescriptions[id]=el.value.trim()||GAME_DESC_DEFAULTS[id];
-  });
-  _gameDescriptions={...gameDescriptions};
+  // הסברי המשחקים מנוהלים עכשיו בפאנל המשחקים (config/games); שומרים את הישנים כגיבוי
+  const gameDescriptions={..._gameDescriptions};
   const d={
     brand:document.getElementById('aboutBrand').value.trim(),
     tagline:document.getElementById('aboutTagline').value.trim(),
@@ -2872,9 +3399,10 @@ function renderGuestQ(){
     const mv=s.voters&&s.voters[guestId];
     return `<div class="qi ${mv?'voted':''} ${i===0?'top1':''}">
       ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
-      <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
+      <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}${s.must?' <span style="font-size:10px;background:rgba(212,175,55,.25);color:#D4AF37;border-radius:5px;padding:1px 5px;font-weight:700">⭐ חובה</span>':''}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
       <button class="preview-btn" data-preview="${s.preview||''}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" onclick="event.stopPropagation();playQueuePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>
       <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${mv?'#FFB800':voteColor(s.votes||0,maxVotes)}">${s.votes||0}</span></button>
+      ${isCelebrant?`<button onclick="event.stopPropagation();toggleMustSong('${s.key}')" title="${s.must?'הסר סימון חובה':'סמן כשיר חובה'}" style="background:${s.must?'rgba(212,175,55,.25)':'rgba(255,255,255,.05)'};border:2px solid ${s.must?'rgba(212,175,55,.7)':'rgba(255,255,255,.15)'};border-radius:8px;color:${s.must?'#FFD700':'#888'};cursor:pointer;padding:5px 7px;font-size:14px;flex-shrink:0">${s.must?'★':'☆'}</button>`:''}
       ${isCelebrant?`<button onclick="event.stopPropagation();delGuestSong('${s.key}')" style="background:rgba(232,23,26,.15);border:2px solid rgba(232,23,26,.35);border-radius:8px;color:#ff6b6b;cursor:pointer;padding:5px 8px;font-size:13px;flex-shrink:0" title="מחק שיר">🗑️</button>`:''}
     </div>`;
   }).join('');
@@ -2884,6 +3412,20 @@ function renderGuestQ(){
 function countMyVotes(room){
   const q=allQueues[room]||{};
   return Object.values(q).reduce((sum,s)=>(s.voters&&s.voters[guestId])?sum+1:sum,0);
+}
+const MAX_MUST_SONGS=5;
+async function toggleMustSong(key){
+  if(!isCelebrant)return;
+  const q=allQueues[currentRoom]||{};
+  const song=q[key];if(!song)return;
+  if(!song.must){
+    const cnt=Object.values(q).filter(s=>s&&s.must).length;
+    if(cnt>=MAX_MUST_SONGS){toast('ניתן לסמן עד '+MAX_MUST_SONGS+' שירי חובה ⭐','error');return;}
+  }
+  try{
+    await set(fbRef(db,'rooms/'+currentRoom+'/queue/'+key+'/must'),song.must?null:true);
+    toast(song.must?'הסימון הוסר':'⭐ סומן כשיר חובה','success');
+  }catch(e){toast('שגיאה בשמירה: '+e.message,'error');}
 }
 async function delGuestSong(key){
   if(!isCelebrant)return;
@@ -2910,6 +3452,101 @@ function setEvSort(mode){
   renderDJEvents();
 }
 
+// ── חיפוש אירועים לפי שם / תאריך ──
+function evDateVariants(iso){
+  if(!iso)return [];
+  const p=iso.split('-');if(p.length!==3)return [iso];
+  const y=p[0],mm=p[1],dd=p[2],m=String(+mm),d=String(+dd),yy=y.slice(2);
+  let long='';
+  try{long=new Date(iso+'T00:00:00').toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});}catch(e){}
+  return [iso,`${y}/${mm}/${dd}`,`${d}/${m}/${y}`,`${dd}/${mm}/${y}`,`${d}/${m}/${yy}`,`${dd}/${mm}/${yy}`,`${d}/${m}`,`${dd}/${mm}`,`${m}/${y}`,`${mm}/${y}`,long];
+}
+function evMatchesSearch(ev,q){
+  const ql=q.toLowerCase();
+  const txt=[ev.name,ev.celebrantName,ev.location,ev.djName,ev.type].filter(Boolean).join(' ').toLowerCase();
+  if(txt.includes(ql))return true;
+  // תאריך: מאחדים מפרידים (. - /) ובודקים התאמת תחילית לכל אחד מפורמטי התאריך
+  const qd=q.replace(/[.\-\\]/g,'/').replace(/\s+/g,'');
+  const vars=evDateVariants(ev.date);
+  if(!vars.length)return false;
+  if(('|'+vars.join('|')).includes('|'+qd))return true;
+  // חיפוש מילולי בתאריך הארוך (למשל "אוקטובר" או "שבת")
+  return vars[vars.length-1].toLowerCase().includes(ql);
+}
+function clearEvSearch(){
+  const a=document.getElementById('evSearchInp');if(a)a.value='';
+  const b=document.getElementById('evSearchDate');if(b)b.value='';
+  renderDJEvents();
+}
+
+// ── שאלות פתוחות מחוגגים (הודעות ללא תשובת DJ) ──
+function getOpenQuestions(ev){
+  const msgs=(ev&&ev.djMessages)||{};
+  return Object.entries(msgs).filter(([k,m])=>m&&m.text&&m.from!=='dj'&&!m.reply);
+}
+function countOpenQuestions(ev){return getOpenQuestions(ev).length;}
+let _allQModalOpen=false;
+let _allQEvArr=[];
+function updateOpenQIndicators(evArr){
+  _allQEvArr=evArr;
+  const total=evArr.reduce((s,[rid,ev])=>s+countOpenQuestions(ev),0);
+  const evCount=evArr.filter(([rid,ev])=>countOpenQuestions(ev)>0).length;
+  const banner=document.getElementById('openQBanner');
+  if(banner){
+    if(total){
+      banner.innerHTML=`🔔 יש ${total===1?'שאלה אחת':total+' שאלות'} שדורשות מענה${evCount>1?' ב-'+evCount+' אירועים':''} — <u>לחץ כאן כדי לענות</u>`;
+      banner.style.display='block';
+    } else banner.style.display='none';
+  }
+  const tb=document.getElementById('djT1QBadge');
+  if(tb){tb.textContent=total;tb.style.display=total?'inline-block':'none';}
+  if(_allQModalOpen)renderAllOpenQuestions();
+}
+function openAllOpenQuestions(){
+  if(_djMsgUnsubscribe){_djMsgUnsubscribe();_djMsgUnsubscribe=null;}
+  const modal=document.getElementById('djMessagesModal');if(!modal)return;
+  _allQModalOpen=true;
+  document.getElementById('djMsgModalTitle').textContent='🔔 שאלות שממתינות למענה';
+  modal.style.display='flex';
+  renderAllOpenQuestions();
+}
+function renderAllOpenQuestions(){
+  const box=document.getElementById('djMsgModalList');if(!box)return;
+  // שמירת טקסט שהוקלד לפני רינדור מחדש (עדכונים בזמן אמת)
+  const typed={};
+  box.querySelectorAll('input[data-qkey]').forEach(i=>{if(i.value)typed[i.dataset.qkey]=i.value;});
+  const groups=_allQEvArr.map(([rid,ev])=>[rid,ev,getOpenQuestions(ev).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0))]).filter(g=>g[2].length);
+  if(!groups.length){box.innerHTML='<div style="font-size:14px;color:#00C853;text-align:center;padding:20px">✅ אין שאלות פתוחות — הכל נענה!</div>';return;}
+  box.innerHTML=groups.map(([rid,ev,qs])=>{
+    const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
+    return `<div style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:900;color:#fff;margin-bottom:6px">${getTypeEmoji(ev.type)} ${esc(ev.name||'')}${dateStr?` <span style="color:#888;font-weight:400">• ${dateStr}</span>`:''}</div>
+      ${qs.map(([k,m])=>{
+        const qk=rid+'__'+k;const inpId='allQInp_'+qk.replace(/[^a-zA-Z0-9_\-]/g,'_');
+        const when=m.ts?new Date(m.ts).toLocaleString('he-IL',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'}):'';
+        return `<div style="background:rgba(255,59,48,.06);border:1px solid rgba(255,59,48,.3);border-radius:10px;padding:10px 14px;margin-bottom:8px">
+          <div style="font-size:12px;color:#a78bfa;font-weight:700;margin-bottom:3px">🎂 ${esc(m.name||'חוגג/ת')}${when?` <span style="color:#666;font-weight:400">${when}</span>`:''}</div>
+          <div style="font-size:13px;margin-bottom:6px;white-space:pre-line">${esc(m.text)}</div>
+          <div style="display:flex;gap:6px">
+            <input id="${inpId}" data-qkey="${escA(qk)}" value="${escA(typed[qk]||'')}" placeholder="כתוב תשובה..." onkeydown="if(event.key==='Enter')sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
+            <button onclick="sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+async function sendDjReplyTo(rid,msgKey,inputId){
+  const inp=document.getElementById(inputId);
+  if(!inp||!inp.value.trim())return;
+  const txt=inp.value.trim();
+  inp.value='';
+  try{
+    await set(fbRef(db,'events/'+rid+'/djMessages/'+msgKey+'/reply'),txt);
+    toast('✅ תשובה נשלחה','success');
+  }catch(e){inp.value=txt;toast('שגיאה בשליחה: '+e.message,'error');}
+}
+
 function renderDJEvents(){
   const list=document.getElementById('djEvList');if(!list)return;
   let evArr=Object.entries(allEvents);
@@ -2917,6 +3554,15 @@ function renderDJEvents(){
   if(currentUserType&&currentUserType!=='owner'){
     evArr=evArr.filter(([rid,ev])=>ev.djId===currentUserType);
   }
+  // ── שאלות פתוחות: מונה כללי + באנר + באדג' בטאב (לפני סינון החיפוש) ──
+  updateOpenQIndicators(evArr);
+  // ── חיפוש לפי שם / תאריך ──
+  const _q=((document.getElementById('evSearchInp')||{}).value||'').trim();
+  const _qd=((document.getElementById('evSearchDate')||{}).value||'');
+  const _clr=document.getElementById('evSearchClear');
+  if(_clr)_clr.style.display=(_q||_qd)?'':'none';
+  if(_qd)evArr=evArr.filter(([rid,ev])=>ev.date===_qd);
+  if(_q)evArr=evArr.filter(([rid,ev])=>evMatchesSearch(ev,_q));
   evArr=evArr.sort((a,b)=>{
     if(evSortMode==='date'){
       const today=new Date(); today.setHours(0,0,0,0);
@@ -2929,17 +3575,26 @@ function renderDJEvents(){
     }
     return (b[1].createdAt||0)-(a[1].createdAt||0);
   });
-  if(!evArr.length){list.innerHTML='<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';return;}
+  if(!evArr.length){
+    list.innerHTML=(_q||_qd)
+      ?'<div class="empty"><span class="ico">🔍</span><p>לא נמצאו אירועים התואמים לחיפוש</p></div>'
+      :'<div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>';
+    return;
+  }
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
+    const openQ=countOpenQuestions(ev);
+    const openQPill=openQ?`<div onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;background:rgba(255,59,48,.15);border:1.5px solid rgba(255,59,48,.55);color:#ff6b6b;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:900;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:#ff3b30;display:inline-block"></span>${openQ===1?'שאלה פתוחה':openQ+' שאלות פתוחות'} — לחץ למענה</div>`:'';
     const gUrl=location.origin+location.pathname+'?room='+encodeURIComponent(rid);
     const djUrl=location.origin+location.pathname+'?dj=true';
     const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
     const typeEmoji=getTypeEmoji(ev.type);
     const evTypeColor=ev.type==='חתונה'?'rgba(255,215,0,0.25)':ev.type==='אירוע חברה'?'rgba(138,43,226,0.2)':'';
     const evTypeBorder=ev.type==='חתונה'?'3px solid gold':ev.type==='אירוע חברה'?'3px solid #8B2BE2':'';
-    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}">
+    return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}${openQ?'box-shadow:0 0 0 2px rgba(255,59,48,.55);':''}">
       <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
+      ${openQPill}
+      ${ev.type!=='חתונה'?renderEvCelebrantPrefs(ev):''}
       <span class="ev-song-badge">${cnt} שירים 🎵</span>
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
       ${ev.djNotes?`<div style="font-size:12px;color:rgba(74,159,255,.8);background:rgba(74,159,255,.07);border:1px solid rgba(74,159,255,.2);border-radius:8px;padding:6px 10px;margin-bottom:8px;white-space:pre-line">📝 ${esc(ev.djNotes.slice(0,120))}${ev.djNotes.length>120?'…':''}</div>`:''}
@@ -2950,7 +3605,7 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
         <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
-        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות</button>
+        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות${openQ?` <span style="background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900">${openQ}</span>`:''}</button>
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
@@ -3048,6 +3703,7 @@ function openEQ(rid,name,type,date,fromOwner){
   eqWeddingState.isWedding=isWedding;
   eqWeddingState.activeList='reception';
   eqWeddingState.songs={reception:[],party:[]};
+  eqWeddingState.chuppah={};
   if(isWedding){
     setEqWeddingList('reception',true);
     startEqWeddingListeners(rid);
@@ -3149,7 +3805,7 @@ function renderEQ(force){
     return '<div class="qi'+(i===0?' top1':'')+'" style="'+celebBorder+'">'
       +artImg
       +'<div class="qi-info">'
-        +'<div class="qi-name">'+rank(i)+' '+esc(s.name)+celebBadge+'</div>'
+        +'<div class="qi-name">'+rank(i)+' '+esc(s.name)+celebBadge+(s.must?' <span style="font-size:10px;background:rgba(255,215,0,.25);color:#FFD700;border-radius:5px;padding:1px 5px;font-weight:700">⭐ חובה</span>':'')+'</div>'
         +'<div class="qi-artist">'+esc(s.artist||'')+'</div>'
         +'<div class="qi-by"'+celebByColor+'>בקשה של '+esc(s.requestedBy||'אנונימי')+'</div>'
       +'</div>'
@@ -3167,6 +3823,7 @@ const eqWeddingState={
   isWedding:false,
   activeList:'reception',
   songs:{reception:[],party:[]},
+  chuppah:{},
   unsubs:[]
 };
 
@@ -3188,6 +3845,19 @@ function startEqWeddingListeners(rid){
     });
     eqWeddingState.unsubs.push(unsub);
   });
+  // חופה
+  const chUnsub=onValue(fbRef(db,'events/'+rid+'/weddingChuppah'),snap=>{
+    eqWeddingState.chuppah=snap.val()||{};
+    updateEqWeddingCounts();
+    if(eqWeddingState.activeList==='chuppah')renderEqWedding();
+  });
+  eqWeddingState.unsubs.push(chUnsub);
+}
+// שמות הרגעים בחופה (ממשק הניהול), לפי סדר הטקס
+const EQ_CH_LABELS={parents:'👨‍👩‍👧 כניסת ההורים',bridesmaids:'💐 כניסת השושבינים',couple:'💑 כניסת הזוג יחד',groom:'🤵 כניסת החתן',bride:'👰 כניסת הכלה',glass:'🥂 שבירת הכוס'};
+function eqChuppahItems(){
+  const ch=eqWeddingState.chuppah||{};
+  return Object.keys(EQ_CH_LABELS).filter(k=>ch[k]&&ch[k].enabled).map(k=>({slot:k,label:EQ_CH_LABELS[k],song:ch[k].song||null}));
 }
 
 function setEqWeddingList(listName,skipRender){
@@ -3204,6 +3874,8 @@ function setEqWeddingList(listName,skipRender){
     };
     style(tR,listName==='reception');
     style(tP,listName==='party');
+    const tC=document.getElementById('eqWTChuppah');
+    if(tC)style(tC,listName==='chuppah');
   }
   if(!skipRender)renderEqWedding();
 }
@@ -3213,11 +3885,31 @@ function updateEqWeddingCounts(){
   const pc=document.getElementById('eqWTPartyCount');
   if(rc)rc.textContent='('+eqWeddingState.songs.reception.length+')';
   if(pc)pc.textContent='('+eqWeddingState.songs.party.length+')';
+  const cc=document.getElementById('eqWTChuppahCount');
+  if(cc){const it=eqChuppahItems();cc.textContent=it.length?'('+it.filter(x=>x.song).length+'/'+it.length+')':'';}
 }
 
 function renderEqWedding(){
   const list=document.getElementById('eqList');
   const cnt=document.getElementById('eqCount');
+  if(eqWeddingState.activeList==='chuppah'){
+    const items=eqChuppahItems();
+    cnt.textContent=items.filter(x=>x.song).length+'/'+items.length;
+    cnt.style.background='';
+    if(!items.length){list.innerHTML='<div class="empty"><span class="ico">💍</span><p>הזוג עדיין לא סימן רגעים לחופה</p></div>';return;}
+    list.innerHTML=items.map(it=>{
+      const s=it.song;
+      const tag='<div style="font-size:11px;font-weight:900;color:#FFD700;margin-bottom:2px">'+it.label+'</div>';
+      if(!s)return '<div class="qi" style="border:2px dashed rgba(255,215,0,.35)"><div class="qi-art">⏳</div><div class="qi-info">'+tag+'<div class="qi-artist">טרם נבחר שיר</div></div></div>';
+      const artImg=s.cover?'<img src="'+s.cover+'" alt="" onerror="this.style.display=\'none\'">':'<div class="qi-art">🎵</div>';
+      const previewBtn=s.previewUrl?'<button class="preview-btn" data-preview="'+s.previewUrl+'" onclick="event.stopPropagation();togglePreview(this,\''+escA(s.title)+'\',\''+escA(s.artist)+'\',\''+escA(s.cover||'')+'\')">\u25b6</button>':'';
+      return '<div class="qi" style="border:2px solid rgba(255,215,0,.45);background:rgba(255,215,0,.06)">'+artImg
+        +'<div class="qi-info">'+tag+'<div class="qi-name">'+esc(s.title)+'</div><div class="qi-artist">'+esc(s.artist||'')+'</div></div>'
+        +previewBtn
+        +'<button class="del-btn" onclick="delChuppahSong(\''+it.slot+'\')">&#x1F5D1;&#xFE0F;</button></div>';
+    }).join('');
+    return;
+  }
   const songs=eqWeddingState.songs[eqWeddingState.activeList]||[];
   cnt.textContent=songs.length;
   cnt.style.background='';
@@ -3244,6 +3936,11 @@ function renderEqWedding(){
   }).join('');
 }
 
+async function delChuppahSong(slot){
+  if(!currentEQRoom)return;
+  if(!confirm('להסיר את השיר מהרגע הזה בחופה?'))return;
+  await set(fbRef(db,'events/'+currentEQRoom+'/weddingChuppah/'+slot+'/song'),null);
+}
 async function delWeddingSong(songId){
   if(!currentEQRoom)return;
   await set(fbRef(db,'events/'+currentEQRoom+'/weddingLists/'+eqWeddingState.activeList+'/songs/'+songId),null);
@@ -3505,9 +4202,9 @@ async function exportSpotifyWedding(){
     }
   }
 
-  const lists=eqWeddingState.songs;
-  const totalSongs=lists.reception.length+lists.party.length;
-  if(!totalSongs){toast('שתי הרשימות ריקות','error');return;}
+  const lists={...eqWeddingState.songs,chuppah:eqChuppahItems().filter(x=>x.song).map(x=>({...x.song,starred:false}))};
+  const totalSongs=lists.reception.length+lists.party.length+lists.chuppah.length;
+  if(!totalSongs){toast('כל הרשימות ריקות','error');return;}
 
   document.getElementById('btnSP').disabled=true;
   try{
@@ -3519,13 +4216,13 @@ async function exportSpotifyWedding(){
     const results=[];
     const pendingState=[]; // ייווצר רק אם 403
 
-    for(const listName of ['reception','party']){
+    for(const listName of ['reception','chuppah','party']){
       const listSongs=lists[listName];
       if(!listSongs.length){
         results.push({listName,plId:null,uris:[],notFound:[],skipped:true});
         continue;
       }
-      const niceList=listName==='reception'?'קבלת פנים':'מסיבה';
+      const niceList=listName==='reception'?'קבלת פנים':listName==='chuppah'?'חופה':'מסיבה';
       const plName=`💍 ${couple} – ${niceList}`;
       const plDesc=`${niceList} | פלייליסט שנוצר ע"י ${djName} | בלאגנזה`;
 
@@ -3535,7 +4232,8 @@ async function exportSpotifyWedding(){
       if(!pl.id){throw new Error('יצירת פלייליסט נכשלה ל-'+niceList);}
 
       // חיפוש כל שיר בספוטיפיי — קודם השירים המסומנים ב-Must (חשוב לדיג'יי שיהיו בראש)
-      const sortedSongs=[...listSongs].sort((a,b)=>{
+      // בחופה שומרים על סדר הטקס; בשאר — Must בראש
+      const sortedSongs=listName==='chuppah'?[...listSongs]:[...listSongs].sort((a,b)=>{
         if(a.starred&&!b.starred)return -1;
         if(!a.starred&&b.starred)return 1;
         return (a.createdAt||0)-(b.createdAt||0);
@@ -3597,7 +4295,7 @@ async function exportSpotifyWedding(){
       let html='';
       results.forEach(r=>{
         if(r.skipped){return;}
-        const niceList=r.listName==='reception'?'💐 קבלת פנים':'🪩 מסיבה';
+        const niceList=r.listName==='reception'?'💐 קבלת פנים':r.listName==='chuppah'?'💍 חופה':'🪩 מסיבה';
         html+=`<div style="margin-bottom:10px;padding:8px;background:rgba(29,185,84,.1);border-radius:8px"><strong>${niceList}:</strong> ${r.uris.length}/${r.uris.length+r.notFound.length} שירים נוספו`;
         if(r.notFound.length){
           html+=`<div style="margin-top:4px;color:#FF8C00;font-size:12px"><strong>❌ לא נמצאו (${r.notFound.length}):</strong><div style="margin-top:2px">${r.notFound.map(x=>`• ${esc(x.name)}${x.artist?' – '+esc(x.artist):''}`).join('<br>')}</div></div>`;
@@ -3607,7 +4305,7 @@ async function exportSpotifyWedding(){
       el.innerHTML=html;
       el.className='sp-msg show ok';
     }
-    toast('🎵 שני הפלייליסטים נוצרו!','success');
+    toast('🎵 הפלייליסטים נוצרו!','success');
     // פותח את שניהם בלשוניות חדשות
     setTimeout(()=>{
       results.forEach(r=>{if(r.plId)window.open(`https://open.spotify.com/playlist/${r.plId}`,'_blank');});
