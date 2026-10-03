@@ -531,6 +531,8 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">📅 תאריך קרוב</button>
           <button id="evPastBtn" onclick="togglePastEvents()" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🕘 אירועי עבר</button>
         </div>
+        <button id="evArchiveBtn" onclick="toggleArchiveView()" style="display:none;width:calc(100% - 4px);margin:0 2px 10px;padding:7px 0;border-radius:10px;border:2px dashed rgba(255,255,255,.15);background:transparent;color:#999;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🗄️ ארכיון אירועים שנמחקו</button>
+        <div id="evArchiveSummary" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;margin:0 2px 10px;font-size:13px;line-height:1.7"></div>
         <div id="evPastNote" style="display:none;font-size:12px;color:#c9a227;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:6px 10px;margin:0 2px 10px">🕘 מוצגים אירועי עבר בלבד — לחץ שוב על "אירועי עבר" כדי לחזור לאירועים הקרובים</div>
         <div class="ev-list" id="djEvList">
           <div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>
@@ -1302,7 +1304,8 @@ function initScreen(){
   if(urlRoom){
     // בדיקה מקדימה: אם האירוע מסוג חתונה — דילוג על מסך השם
     get(fbRef(db,'events/'+urlRoom)).then(snap=>{
-      const ev=snap.val();
+      const _ev0=snap.val();
+      const ev=_ev0&&!_ev0.archived?_ev0:null; // אירוע בארכיון = כמו אירוע שנמחק
       if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
         // אורח אנונימי בחתונה — guestName ריק, המזהה הקיים של הדפדפן (guestId) מספיק
         guestName='';
@@ -1361,7 +1364,7 @@ function goBackAbout(){show(prevScreen||'sGuest');}
 // Load event details into the name entry card
 function loadEntryEventDetails(room){
   get(fbRef(db,'events/'+room)).then(snap=>{
-    const ev=snap.val();if(!ev)return;
+    const ev=snap.val();if(!ev||ev.archived)return;
     const wrap=document.getElementById('entryEvDetails');
     const typeEmoji=getTypeEmoji(ev.type);
     const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'}):'';
@@ -3600,8 +3603,28 @@ function renderDJEvents(){
   if(currentUserType&&currentUserType!=='owner'){
     evArr=evArr.filter(([rid,ev])=>ev.djId===currentUserType);
   }
+  // ── ארכיון: אירועים שנמחקו לא מוצגים ברשימה הרגילה ──
+  const _archAll=evArr.filter(([rid,ev])=>ev.archived);
+  evArr=evArr.filter(([rid,ev])=>!ev.archived);
+  const _ab=document.getElementById('evArchiveBtn');
+  const _isOwner=currentUserType==='owner';
+  if(!_isOwner)evShowArchive=false;
+  if(_ab){
+    _ab.style.display=_isOwner?'block':'none';
+    _ab.textContent=evShowArchive?'← חזרה לרשימת האירועים':'🗄️ ארכיון אירועים שנמחקו'+(_archAll.length?' ('+_archAll.length+')':'');
+    _ab.style.borderColor=evShowArchive?'rgba(255,255,255,.4)':'rgba(255,255,255,.15)';
+    _ab.style.color=evShowArchive?'#eee':'#999';
+  }
+  const _as=document.getElementById('evArchiveSummary');
+  if(_as&&!evShowArchive)_as.style.display='none';
   // ── שאלות פתוחות: מונה כללי + באנר + באדג' בטאב (לפני סינון החיפוש) ──
   updateOpenQIndicators(evArr);
+  if(evShowArchive&&_isOwner){
+    const _qa=((document.getElementById('evSearchInp')||{}).value||'').trim();
+    const _pn0=document.getElementById('evPastNote');if(_pn0)_pn0.style.display='none';
+    renderArchiveView(list,_archAll,_qa);
+    return;
+  }
   // ── סינון לפי די-ג'יי (בעלים בלבד) ──
   const _djSel=document.getElementById('evDjFilter');
   if(_djSel){
@@ -3756,11 +3779,75 @@ async function createEv(){
   djTab('events');
 }
 
+// "מחק" = העברה לארכיון (נשמר מי מחק ומתי). מחיקה סופית — רק בעלים, מתוך הארכיון
 async function deleteEv(rid){
-  if(!confirm('למחוק את האירוע וכל השירים שלו?'))return;
+  const ev=allEvents[rid]||{};
+  if(!confirm('למחוק את האירוע "'+(ev.name||'')+'"?\n\nהאירוע יועבר לארכיון ויהיה אפשר לשחזר אותו.'))return;
+  try{
+    await set(fbRef(db,'events/'+rid+'/archived'),{
+      by:currentUserType||'unknown',
+      byName:(_djNames&&_djNames[currentUserType])||currentUserName||currentUserType||'',
+      at:Date.now()
+    });
+    toast('🗄️ האירוע הועבר לארכיון','info');
+  }catch(e){
+    toast('המחיקה נכשלה — ייתכן שחוקי Firebase חוסמים את השדה archived ('+e.message+')','error',6000);
+  }
+}
+async function restoreEv(rid){
+  if(currentUserType!=='owner')return;
+  try{await set(fbRef(db,'events/'+rid+'/archived'),null);toast('♻️ האירוע שוחזר','success');}
+  catch(e){toast('שגיאה: '+e.message,'error');}
+}
+async function purgeEv(rid){
+  if(currentUserType!=='owner')return;
+  const ev=allEvents[rid]||{};
+  if(!confirm('מחיקה סופית של "'+(ev.name||'')+'" וכל השירים שלו?\nאי אפשר לשחזר אחרי זה.'))return;
   await set(fbRef(db,'events/'+rid),null);
   await set(fbRef(db,'rooms/'+rid),null);
-  toast('האירוע נמחק','info');
+  toast('האירוע נמחק לצמיתות','info');
+}
+let evShowArchive=false;
+function toggleArchiveView(){
+  evShowArchive=!evShowArchive;
+  if(evShowArchive&&evShowPast)togglePastEvents();
+  renderDJEvents();
+}
+function _djLabel(id,fallback){
+  if(!id||id==='owner')return (_djNames&&_djNames.owner)||'👑 בעלים';
+  return (_djNames&&_djNames[id])||fallback||id;
+}
+function renderArchiveView(list,arch,q){
+  // סיכום: כמה אירועים מחק כל אחד
+  const by={};
+  arch.forEach(([rid,ev])=>{const a=ev.archived||{};const k=a.by||'unknown';if(!by[k])by[k]={n:0,name:a.byName||_djLabel(k)};by[k].n++;});
+  const sum=document.getElementById('evArchiveSummary');
+  if(sum){
+    sum.style.display='block';
+    sum.innerHTML='<div style="font-weight:900;color:#ddd;margin-bottom:4px">🗄️ ארכיון — '+arch.length+' אירועים שנמחקו</div>'
+      +(arch.length?'<div style="color:#aaa">נמחקו ע״י: '+Object.keys(by).sort((a,b)=>by[b].n-by[a].n).map(k=>'<b style="color:#eee">'+esc(by[k].name)+'</b> ('+by[k].n+')').join(' · ')+'</div>':'')
+      +'<div style="color:#777;font-size:11px;margin-top:4px">נרשם רק ממחיקות שבוצעו מעכשיו והלאה</div>';
+  }
+  let rows=arch;
+  if(q)rows=rows.filter(([rid,ev])=>evMatchesSearch(ev,q)||String((ev.archived||{}).byName||'').includes(q));
+  rows.sort((a,b)=>((b[1].archived||{}).at||0)-((a[1].archived||{}).at||0));
+  if(!rows.length){list.innerHTML='<div class="empty"><span class="ico">🗄️</span><p>'+(arch.length?'לא נמצאו אירועים בארכיון שתואמים לחיפוש':'הארכיון ריק')+'</p></div>';return;}
+  list.innerHTML=rows.map(([rid,ev])=>{
+    const a=ev.archived||{};
+    const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
+    const when=a.at?new Date(a.at).toLocaleString('he-IL',{day:'numeric',month:'numeric',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
+    return `<div class="ev-item" style="opacity:.92;border:2px dashed rgba(255,255,255,.18)">
+      <div class="ev-name">${getTypeEmoji(ev.type)} ${esc(ev.name||'')}</div>
+      <div class="ev-meta">${ev.type?esc(ev.type)+' ':''}${dateStr?'• '+dateStr+' ':''}• DJ: ${esc(ev.djName||_djLabel(ev.djId))} • ${cnt} שירים</div>
+      <div style="font-size:12px;color:#ff8a80;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.3);border-radius:8px;padding:5px 10px;margin-bottom:8px">🗑️ נמחק ע״י <b>${esc(a.byName||_djLabel(a.by))}</b>${when?' · '+when:''}</div>
+      <div class="ev-btns">
+        <button class="ev-btn" style="background:rgba(0,200,83,.12);color:#00C853;border-color:rgba(0,200,83,.4);font-weight:900" onclick="restoreEv('${escA(rid)}')">♻️ שחזר</button>
+        <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name||'')}','${escA(ev.type||'')}','${escA(dateStr)}',true)">📋 תור (${cnt})</button>
+        <button class="ev-btn ev-btn-del" onclick="purgeEv('${escA(rid)}')">⛔ מחק לצמיתות</button>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function openEQ(rid,name,type,date,fromOwner){
