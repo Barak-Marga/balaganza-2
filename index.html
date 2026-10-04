@@ -378,9 +378,6 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
 <div id="sGuest" class="scr">
   <canvas id="laserCanvas"></canvas>
   <div style="max-width:540px;margin:0 auto;padding-bottom:80px">
-    <div id="gDjBackBar" style="display:none;padding:8px 12px 0">
-      <button onclick="location.href=location.origin+location.pathname" style="width:100%;background:rgba(212,175,55,.15);border:2px solid rgba(212,175,55,.45);border-radius:10px;padding:7px 12px;color:#D4AF37;font-family:'Heebo',sans-serif;font-size:13px;font-weight:900;cursor:pointer">← חזרה לרשימת האירועים (ממשק ניהול)</button>
-    </div>
     <div class="hdr">
       <img class="hdr-logo" id="lGuest" src="" alt="">
       <div>
@@ -388,7 +385,8 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <div class="hdr-sub" id="gHdrSub">בקש שיר 🎵</div>
       </div>
       <div class="live-badge"><div class="live-dot"></div>LIVE</div>
-      <button class="icon-btn" onclick="show('sAbout','sGuest')">קצת עלינו</button>
+      <button id="gAboutBtn" class="icon-btn" onclick="show('sAbout','sGuest')">קצת עלינו</button>
+      <button id="gDjBackBar" class="icon-btn" onclick="location.href=location.origin+location.pathname" title="חזרה לממשק הניהול" style="display:none;background:rgba(212,175,55,.15);color:#D4AF37;border-color:rgba(212,175,55,.45)">← ניהול</button>
     </div>
     <div id="crowdBar"></div>
 
@@ -406,11 +404,10 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <button onclick="promptCelebrantCode()" style="background:rgba(26,47,191,.2);border:2px solid rgba(26,47,191,.5);border-radius:10px;padding:7px 14px;color:#818cf8;font-size:12px;font-weight:900;cursor:pointer;width:100%">🎂 כניסת חוגג/ת עם קוד</button>
         </div>
         <div id="hCelebrantActBtn" style="display:none;margin-top:8px">
-          <div style="display:flex;gap:6px">
-            <button onclick="openCelebrantActivities('choose')" style="flex:1;background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:7px 10px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer">🎮 ערוך בחירות</button>
-            <button onclick="openCelebrantActivities('questions')" style="flex:1;position:relative;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.4);border-radius:10px;padding:7px 10px;color:#4a9fff;font-size:12px;font-weight:900;cursor:pointer">💬 שאלה לדי-ג׳יי<span id="hCelebReplyBadge" style="display:none;position:absolute;top:-8px;left:-6px;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;line-height:18px"></span></button>
+          <div style="display:flex;gap:6px;justify-content:center;flex-wrap:nowrap">
+            <button onclick="openCelebrantActivities('choose')" style="white-space:nowrap;background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:5px 10px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer">🎮 הפעילויות שלי</button>
+            <button onclick="openCelebrantActivities('questions')" style="white-space:nowrap;position:relative;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.4);border-radius:10px;padding:5px 10px;color:#4a9fff;font-size:12px;font-weight:900;cursor:pointer">💬 שאלה לדי-ג׳יי<span id="hCelebReplyBadge" style="display:none;position:absolute;top:-8px;left:-6px;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;line-height:18px"></span></button>
           </div>
-          <div style="font-size:11px;color:rgba(212,175,55,.8);text-align:center;margin-top:6px">⭐ כחוגג/ת אפשר לסמן עד 5 שירי חובה · 🗑️ ולמחוק שירים מהתור</div>
         </div>
       </div>
     </div>
@@ -513,27 +510,25 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <div class="admin-sec">
         <!-- באנר שאלות פתוחות (מוצג רק כשיש שאלות שלא נענו) -->
         <div id="openQBanner" onclick="openAllOpenQuestions()" style="display:none;cursor:pointer;background:rgba(255,59,48,.12);border:2px solid rgba(255,59,48,.5);border-radius:12px;padding:10px 14px;margin-bottom:12px;color:#ff6b6b;font-weight:900;font-size:14px;direction:rtl;text-align:right"></div>
-        <!-- חיפוש אירוע לפי שם / תאריך -->
-        <div style="margin-bottom:8px;padding:0 2px">
-          <input type="text" id="evSearchInp" oninput="renderDJEvents()" placeholder="🔍 חיפוש לפי שם, מקום או תאריך" autocomplete="off" style="width:100%;box-sizing:border-box;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:9px 12px;font-family:'Heebo',sans-serif;font-size:14px;outline:none;direction:rtl">
-        </div>
-        <div style="display:flex;gap:6px;margin-bottom:10px;padding:0 2px;align-items:stretch">
-          <!-- כפתור תאריך: ה-input השקוף יושב מעל הכפתור כך שהקשה פותחת את בורר התאריכים של הטלפון -->
-          <label id="evDateBtn" style="position:relative;flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:8px 10px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;overflow:hidden">
-            <span id="evDateBtnTxt">📅 סינון לפי תאריך</span>
+        <!-- חיפוש אירוע: שורה אחת — טקסט + תאריך + די-ג'יי (בעלים) + ניקוי -->
+        <div style="display:flex;gap:5px;margin-bottom:8px;padding:0 2px;align-items:stretch">
+          <input type="text" id="evSearchInp" oninput="renderDJEvents()" placeholder="🔍 חיפוש שם / מקום / תאריך" autocomplete="off" style="flex:1;min-width:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:8px 10px;font-family:'Heebo',sans-serif;font-size:13px;outline:none;direction:rtl">
+          <!-- כפתור תאריך: ה-input השקוף יושב מעל הכפתור, הקשה פותחת את בורר התאריכים של הטלפון -->
+          <label id="evDateBtn" title="סינון לפי תאריך" style="position:relative;flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:4px;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:6px 9px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;overflow:hidden;white-space:nowrap">
+            <span id="evDateBtnTxt">📅</span>
             <input type="date" id="evSearchDate" onchange="renderDJEvents()" onclick="try{this.showPicker&&this.showPicker()}catch(e){}" aria-label="סינון לפי תאריך" style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;margin:0;color-scheme:dark">
           </label>
-          <select id="evDjFilter" onchange="renderDJEvents()" style="display:none;flex:1;min-width:0;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:8px 6px;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700;outline:none;direction:rtl;color-scheme:dark"></select>
-          <button id="evSearchClear" onclick="clearEvSearch()" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ddd;padding:7px 12px;cursor:pointer;font-family:'Heebo',sans-serif;font-size:13px;font-weight:700">✕ נקה</button>
+          <select id="evDjFilter" onchange="renderDJEvents()" title="סינון לפי די-ג׳יי" style="display:none;flex-shrink:0;width:96px;background:var(--surface2);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ccc;padding:6px 4px;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;outline:none;direction:rtl;color-scheme:dark"></select>
+          <button id="evSearchClear" onclick="clearEvSearch()" title="נקה סינון" style="display:none;flex-shrink:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:#ddd;padding:6px 9px;cursor:pointer;font-size:13px;font-weight:700">✕</button>
         </div>
-        <div style="display:flex;gap:6px;margin-bottom:12px;padding:0 2px">
-          <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🕐 לפי יצירה</button>
-          <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">📅 תאריך קרוב</button>
-          <button id="evPastBtn" onclick="togglePastEvents()" style="flex:1;padding:8px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🕘 אירועי עבר</button>
+        <div style="display:flex;gap:5px;margin-bottom:12px;padding:0 2px">
+          <button id="evSortRecent" onclick="setEvSort('recent')" style="flex:1;padding:7px 0;border-radius:10px;border:2px solid rgba(74,159,255,.4);background:rgba(74,159,255,.15);color:#4a9fff;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">🕐 יצירה</button>
+          <button id="evSortDate" onclick="setEvSort('date')" style="flex:1;padding:7px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">📅 קרוב</button>
+          <button id="evPastBtn" onclick="togglePastEvents()" style="flex:1;padding:7px 0;border-radius:10px;border:2px solid rgba(255,255,255,.1);background:transparent;color:#aaa;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">🕘 עבר</button>
+          <button id="evArchiveBtn" onclick="toggleArchiveView()" title="ארכיון אירועים שנמחקו" style="display:none;flex:1;padding:7px 0;border-radius:10px;border:2px dashed rgba(255,255,255,.18);background:transparent;color:#999;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap">🗄️ ארכיון</button>
         </div>
-        <button id="evArchiveBtn" onclick="toggleArchiveView()" style="display:none;width:calc(100% - 4px);margin:0 2px 10px;padding:7px 0;border-radius:10px;border:2px dashed rgba(255,255,255,.15);background:transparent;color:#999;font-family:'Heebo',sans-serif;font-size:12px;font-weight:700;cursor:pointer">🗄️ ארכיון אירועים שנמחקו</button>
         <div id="evArchiveSummary" style="display:none;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;margin:0 2px 10px;font-size:13px;line-height:1.7"></div>
-        <div id="evPastNote" style="display:none;font-size:12px;color:#c9a227;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:6px 10px;margin:0 2px 10px">🕘 מוצגים אירועי עבר בלבד — לחץ שוב על "אירועי עבר" כדי לחזור לאירועים הקרובים</div>
+        <div id="evPastNote" style="display:none;font-size:12px;color:#c9a227;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.3);border-radius:8px;padding:6px 10px;margin:0 2px 10px">🕘 מוצגים אירועי עבר — לחץ שוב על "עבר" כדי לחזור לאירועים הקרובים</div>
         <div class="ev-list" id="djEvList">
           <div class="empty"><span class="ico">📋</span><p>אין אירועים עדיין<br>צור אירוע חדש ↑</p></div>
         </div>
@@ -550,7 +545,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <div class="fld"><label>וואטסאפ (מספר)</label><input type="text" id="aboutWA" placeholder="972509896598"></div>
           <div class="fld"><label>אינסטגרם</label><input type="text" id="aboutIG" placeholder="balaganza"></div>
           <div class="fld"><label>פייסבוק</label><input type="text" id="aboutFB" placeholder="balaganza"></div>
-          <div class="fld"><label>טקסט ברכה לחוגג/ת</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
+          <div class="fld"><label>טקסט ברכה לחוגג/ת (אפשר לכתוב {שם} — יוחלף בשם החוגג/ת. ריק = ברירת מחדל)</label><textarea id="aboutCelebrantWelcome" rows="3" style="width:100%;background:var(--surface);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:14px;resize:vertical;direction:rtl" placeholder="היי! אנחנו מתרגשים לקראת האירוע שלך..."></textarea></div>
           <button class="btn-full btn-red" onclick="saveAbout()">💾 שמור שינויים</button>
         </div>
       </div>
@@ -711,8 +706,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     <div id="celebActNameTag" style="display:none;font-family:'Fredoka One',cursive;font-size:22px;color:white;text-align:center;margin-bottom:16px;text-shadow:2px 2px 0 rgba(168,85,247,.5)"></div>
     <!-- Info screen -->
     <div id="celebActInfo">
-      <div style="font-size:36px;margin-bottom:12px">🎂</div>
-      <div id="celebActWelcomeText" style="font-size:15px;line-height:1.8;color:#e0e0e0;background:rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:right;direction:rtl">היי! אנחנו מתרגשים לקראת האירוע שלך: זה אתר האירוע האישי שלך וניתן לבחור בו את הפעילויות שתרצה לאירוע! בואו נתחיל</div>
+      <div id="celebActWelcomeText" style="font-size:15px;line-height:1.8;color:#e0e0e0;background:rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;margin-bottom:24px;text-align:right;direction:rtl;white-space:pre-line"></div>
       <button onclick="document.getElementById('celebActInfo').style.display='none';document.getElementById('celebActChoose').style.display='block'" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:14px;padding:14px 40px;color:white;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;width:100%">בואו נתחיל 🎉</button>
     </div>
     <!-- Choose screen -->
@@ -724,13 +718,14 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px">✅ בחרת:</div>
         <div id="celebChoiceSummaryList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
       </div>
-      <div style="font-size:11px;color:#666;margin-bottom:16px;text-align:center">ניתן לשנות את הבחירה עד שעת תחילת האירוע</div>
+      <div style="font-size:11px;color:#666;margin-bottom:16px;text-align:center">ניתן לשנות את הבחירה עד 24 שעות לפני האירוע</div>
       <button onclick="saveCelebrantChoices()" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:14px;padding:14px 40px;color:white;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;width:100%">אישור הבחירה ✅</button>
+      <button onclick="openCelebrantActivities('questions')" style="margin-top:10px;background:rgba(74,159,255,.12);border:2px solid rgba(74,159,255,.35);border-radius:14px;padding:10px;color:#4a9fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%">💬 יש לך שאלה לדי-ג׳יי?</button>
     </div>
     <!-- DJ Questions -->
     <div id="celebActDjQ" style="margin-top:24px;text-align:right;direction:rtl;display:none">
       <div style="font-size:16px;font-weight:900;color:#4a9fff;margin-bottom:6px">📬 שאלות ובקשות לDJ</div>
-      <div id="celebActDjQIntro" style="font-size:13px;color:#aaa;line-height:1.7;background:rgba(74,159,255,.06);border:1px solid rgba(74,159,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;direction:rtl">רוצה לבקש שיר מיוחד? יש לך בקשה אישית לDJ? כתוב/י כאן וה-DJ יראה את זה בזמן האירוע.</div>
+      <div id="celebActDjQIntro" style="font-size:13px;color:#aaa;line-height:1.7;background:rgba(74,159,255,.06);border:1px solid rgba(74,159,255,.2);border-radius:10px;padding:10px 14px;margin-bottom:12px;direction:rtl">יש לך שאלה או בקשה לדי-ג׳יי? כתוב/י כאן הודעה, והדי-ג׳יי יגיב לך בהקדם 🎧</div>
       <div id="celebDjMessages" style="max-height:200px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px"></div>
       <div style="display:flex;gap:8px">
         <textarea id="celebDjMsgInput" rows="2" placeholder="כתוב שאלה או בקשה לDJ..." style="flex:1;background:rgba(255,255,255,.07);border:2px solid rgba(74,159,255,.3);border-radius:10px;color:white;padding:10px;font-family:'Heebo',sans-serif;font-size:13px;resize:none;outline:none;direction:rtl"></textarea>
@@ -1437,7 +1432,7 @@ document.getElementById('nameInp').addEventListener('keydown',e=>{if(e.key==='En
 function loadGuestEvent(){
   if(!urlRoom)return;
   // כפתור חזרה לממשק הניהול — רק כשדיג'יי/בעלים מחובר בדפדפן הזה
-  try{const bb=document.getElementById('gDjBackBar');if(bb)bb.style.display=localStorage.getItem('b_userType')?'block':'none';}catch(e){}
+  try{const bb=document.getElementById('gDjBackBar');const _isDj=!!localStorage.getItem('b_userType');if(bb)bb.style.display=_isDj?'':'none';const ab=document.getElementById('gAboutBtn');if(ab)ab.style.display=_isDj?'none':'';}catch(e){}
   get(fbRef(db,'events/'+urlRoom)).then(snap=>{
     const ev=snap.val();if(!ev)return;
     // Party mode check
@@ -2469,11 +2464,46 @@ async function confirmCrop(){
   _cropOriginalImage=null;
 }
 
-async function editCelebrantPass(rid,currentPass){
-  const newPass=prompt('קוד חוגג/ת לאירוע זה:\n(השאר ריק להסרת הגישה)',currentPass||'');
-  if(newPass===null)return; // cancelled
-  await set(fbRef(db,'events/'+rid+'/celebrantPass'),newPass.trim());
-  toast(newPass.trim()?'✅ קוד חוגג עודכן!':'קוד חוגג הוסר','info');
+// לחיצה על "קוד חוגג" — חלון עם העתקה / שינוי
+function editCelebrantPass(rid,currentPass){
+  let m=document.getElementById('celebCodeModal');
+  if(!m){
+    m=document.createElement('div');m.id='celebCodeModal';
+    m.style.cssText='display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;align-items:center;justify-content:center;padding:20px';
+    m.onclick=e=>{if(e.target===m)m.style.display='none';};
+    document.body.appendChild(m);
+  }
+  const ev=allEvents[rid]||{};
+  const code=(ev.celebrantPass!==undefined?ev.celebrantPass:currentPass)||'';
+  m.innerHTML=`<div style="background:#1e3060;border:2px solid rgba(212,175,55,.5);border-radius:18px;width:100%;max-width:360px;padding:22px 18px;direction:rtl;text-align:center">
+    <div style="font-size:13px;color:#aaa;margin-bottom:4px">🎂 קוד חוגג/ת — ${esc(ev.name||'')}</div>
+    <div id="celebCodeShow" style="font-family:monospace;font-size:32px;letter-spacing:4px;color:#D4AF37;font-weight:900;margin:6px 0 14px">${code?esc(code):'<span style="font-size:15px;color:#888;letter-spacing:0">אין קוד</span>'}</div>
+    <button onclick="copyCelebCode('${escA(code)}')" ${code?'':'disabled'} style="width:100%;margin-bottom:8px;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:Heebo,sans-serif;font-size:15px;font-weight:900;padding:10px;cursor:pointer;opacity:${code?1:.4}">📋 העתק קוד</button>
+    <div style="display:flex;gap:6px;margin-bottom:8px">
+      <input id="celebCodeInp" value="${escA(code)}" placeholder="קוד חדש" inputmode="numeric" style="flex:1;min-width:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:9px 10px;font-family:monospace;font-size:16px;text-align:center;outline:none">
+      <button onclick="saveCelebCode('${escA(rid)}')" style="flex-shrink:0;background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.45);border-radius:10px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:14px;font-weight:900;padding:9px 14px;cursor:pointer">✏️ שמור</button>
+    </div>
+    <div style="font-size:11px;color:#777;margin-bottom:10px">שמירה עם שדה ריק מבטלת את גישת החוגג/ת</div>
+    <button onclick="document.getElementById('celebCodeModal').style.display='none'" style="width:100%;background:transparent;border:none;color:#888;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer">סגור</button>
+  </div>`;
+  m.style.display='flex';
+}
+async function copyCelebCode(code){
+  if(!code)return;
+  try{await navigator.clipboard.writeText(code);}
+  catch(e){const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();try{document.execCommand('copy');}catch(_){}t.remove();}
+  toast('📋 הקוד הועתק: '+code,'success');
+}
+async function saveCelebCode(rid){
+  const v=(document.getElementById('celebCodeInp').value||'').trim();
+  const old=(allEvents[rid]||{}).celebrantPass||'';
+  if(v===old){document.getElementById('celebCodeModal').style.display='none';return;}
+  if(!v&&!confirm('להסיר את קוד החוגג/ת? החוגג/ת לא יוכל/תוכל להיכנס עם קוד.'))return;
+  try{
+    await set(fbRef(db,'events/'+rid+'/celebrantPass'),v);
+    document.getElementById('celebCodeModal').style.display='none';
+    toast(v?'✅ קוד חוגג עודכן: '+v:'קוד חוגג הוסר','info');
+  }catch(e){toast('שגיאה: '+e.message,'error');}
 }
 
 async function editDJNote(rid,currentNote){
@@ -2678,6 +2708,19 @@ function celebrantPrefsFilled(ev){
   if(ev.premiumInterest&&Object.keys(ev.premiumInterest).length)return true;
   return false;
 }
+// טקסט מסך הפתיחה לחוגג/ת. טקסט מותאם מ"עלינו" יכול לכלול {שם}
+const CELEB_WELCOME_DEFAULT='היי {שם}! אנחנו מתרגשים איתך לקראת האירוע!\nזה אתר האירוע האישי שלך ואפשר לבחור בו את הפעילויות לאירוע. לחיצה על הכפתור ומתחילים!';
+const CELEB_WELCOME_OLD='היי! אנחנו מתרגשים לקראת האירוע שלך: זה אתר האירוע האישי שלך וניתן לבחור בו את הפעילויות שתרצה לאירוע! בואו נתחיל';
+let _celebWelcomeCustom='';
+let _celebWelcomeName='';
+function _setCelebWelcome(name){
+  if(name!==undefined)_celebWelcomeName=name||'';
+  const el=document.getElementById('celebActWelcomeText');if(!el)return;
+  const custom=(_celebWelcomeCustom||'').trim();
+  let t=(custom&&custom!==CELEB_WELCOME_OLD)?custom:CELEB_WELCOME_DEFAULT;
+  t=t.split('{שם}').join(_celebWelcomeName).replace('היי !','היי!');
+  el.textContent=t;
+}
 // mode: undefined = זרימה ראשונה (מסך פתיחה), 'choose' = עריכת בחירות, 'questions' = שאלות לדי-ג'יי
 async function openCelebrantActivities(mode){
   try{
@@ -2694,8 +2737,10 @@ async function openCelebrantActivities(mode){
         const nameTag=document.getElementById('celebActNameTag');
         if(nameTag){
           const cname=snap.val()||guestName||'';
-          if(cname){nameTag.textContent='🎂 '+cname;nameTag.style.display='block';}
+          // במסך הפתיחה השם כבר מופיע בטקסט
+          if(cname&&mode){nameTag.textContent=cname;nameTag.style.display='block';}
           else nameTag.style.display='none';
+          _setCelebWelcome(cname);
         }
       }).catch(()=>{});
     }
@@ -2703,8 +2748,8 @@ async function openCelebrantActivities(mode){
     try{
       const snap=await get(fbRef(db,'about'));
       const d=snap.val()||{};
-      const welcomeEl=document.getElementById('celebActWelcomeText');
-      if(welcomeEl&&d.celebrantWelcome)welcomeEl.textContent=d.celebrantWelcome;
+      _celebWelcomeCustom=d.celebrantWelcome||'';
+      _setCelebWelcome();
       if(d.gameDescriptions)_gameDescriptions={...GAME_DESC_DEFAULTS,...d.gameDescriptions};
     }catch(e){}
     if(currentRoom){
@@ -2735,7 +2780,7 @@ function renderCelebrantGameList(){
     const freeBadge=gameBadgeHtml(g,10);
     const premiumSub=g.premium?'<div style="font-size:11px;color:#aaa;margin-top:2px">שדרוג בתשלום — המשרד ייצור קשר</div>':'';
     const id=g.id;
-    const infoBtn='<button onclick="event.stopPropagation();showGameInfo(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
+    const infoBtn='<button onclick="event.stopPropagation();'+(g.premium?'toggleCelebrantGame':'showGameInfo')+'(&quot;'+id+'&quot;)" style="background:rgba(74,159,255,.12);border:1.5px solid rgba(74,159,255,.3);border-radius:8px;padding:3px 8px;color:#4a9fff;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;white-space:nowrap;font-family:Heebo,sans-serif">מידע נוסף</button>';
     const chk=g.premium?'':'<div style="width:22px;height:22px;border-radius:50%;border:2px solid '+chkBorder+';background:'+chkBg+';display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px">'+(sel?'&#x2713;':'')+'</div>';
     const cursor=g.premium?'default':'pointer';
     const clickHandler='toggleCelebrantGame(&quot;'+id+'&quot;)';
@@ -2855,6 +2900,12 @@ async function toggleCelebrantGame(id){
     openPremiumModal(id,game);
     return;
   }
+  // נעילה: פחות מ-24 שעות לפני האירוע
+  const _ev=allEvents[currentRoom]||{};
+  if(_ev.date){
+    const _h=(new Date(_ev.date+'T'+(_ev.time||'00:00'))-Date.now())/3600000;
+    if(_h<24){toast('לא ניתן לשנות את הבחירה פחות מ-24 שעות לפני האירוע','error',4000);return;}
+  }
   const freeSelected=[...celebrantChoicesSelected].filter(sid=>{const x=CELEBRANT_GAMES.find(y=>y.id===sid);return x&&!x.premium&&x.enabled!==false;});
   if(celebrantChoicesSelected.has(id)){
     celebrantChoicesSelected.delete(id);
@@ -2878,11 +2929,8 @@ async function saveCelebrantChoices(){
   await set(fbRef(db,'events/'+currentRoom+'/celebrantChoices'),obj);
   try{localStorage.setItem('b_celebPrefs_'+currentRoom,'1');}catch(e){}
   toast('✅ הבחירה נשמרה!','success');
-  // הצג שאלות לDJ אחרי אישור
-  document.getElementById('celebActChoose').style.display='none';
-  document.getElementById('celebActDjQ').style.display='block';
-  markCelebrantRepliesSeen();
-  document.getElementById('celebActDjQ').scrollIntoView({behavior:'smooth'});
+  // חוזרים לפלייליסט; שאלות לדי-ג'יי זמינות בכפתור "💬 שאלה לדי-ג׳יי"
+  show('sGuest');
 }
 
 async function sendCelebrantDjMessage(){
@@ -3610,8 +3658,8 @@ function renderDJEvents(){
   const _isOwner=currentUserType==='owner';
   if(!_isOwner)evShowArchive=false;
   if(_ab){
-    _ab.style.display=_isOwner?'block':'none';
-    _ab.textContent=evShowArchive?'← חזרה לרשימת האירועים':'🗄️ ארכיון אירועים שנמחקו'+(_archAll.length?' ('+_archAll.length+')':'');
+    _ab.style.display=_isOwner?'':'none';
+    _ab.textContent=evShowArchive?'← חזרה':'🗄️ ארכיון'+(_archAll.length?' ('+_archAll.length+')':'');
     _ab.style.borderColor=evShowArchive?'rgba(255,255,255,.4)':'rgba(255,255,255,.15)';
     _ab.style.color=evShowArchive?'#eee':'#999';
   }
@@ -3635,7 +3683,7 @@ function renderDJEvents(){
       // די-ג'יים שקיימים באירועים אבל כבר לא ברשימה
       evArr.forEach(([rid,ev])=>{const k=ev.djId||'owner';if(!ids[k])ids[k]=ev.djName||k;});
       const cnt={};evArr.forEach(([rid,ev])=>{const k=ev.djId||'owner';cnt[k]=(cnt[k]||0)+1;});
-      const opts='<option value="">🎧 כל הדי-ג׳יים</option>'+Object.keys(ids).map(k=>`<option value="${escA(k)}">${esc(ids[k])} (${cnt[k]||0})</option>`).join('');
+      const opts='<option value="">🎧 כולם</option>'+Object.keys(ids).map(k=>`<option value="${escA(k)}">${esc(ids[k])} (${cnt[k]||0})</option>`).join('');
       if(_djSel.dataset.opts!==opts){_djSel.innerHTML=opts;_djSel.dataset.opts=opts;}
       _djSel.value=ids[cur]?cur:'';
       _djSel.style.display='';
@@ -3653,13 +3701,13 @@ function renderDJEvents(){
   const _djActive=!!(_djSel&&currentUserType==='owner'&&_djSel.value);
   if(_clr)_clr.style.display=(_q||_qd||_djActive)?'':'none';
   const _dt=document.getElementById('evDateBtnTxt');
-  if(_dt)_dt.textContent=_qd?'📅 '+new Date(_qd+'T00:00:00').toLocaleDateString('he-IL'):'📅 סינון לפי תאריך';
+  if(_dt)_dt.textContent=_qd?'📅 '+new Date(_qd+'T00:00:00').toLocaleDateString('he-IL',{day:'numeric',month:'numeric'}):'📅';
   const _db=document.getElementById('evDateBtn');
   if(_db){_db.style.borderColor=_qd?'rgba(74,159,255,.55)':'rgba(255,255,255,.15)';_db.style.color=_qd?'#4a9fff':'#ccc';}
   // אירועי עבר / קרובים — חיפוש פעיל מחפש בכל האירועים
   const _pastCount=evArr.filter(([rid,ev])=>isPastEvent(ev)).length;
   const _pb=document.getElementById('evPastBtn');
-  if(_pb)_pb.textContent='🕘 אירועי עבר'+(_pastCount?' ('+_pastCount+')':'');
+  if(_pb)_pb.textContent='🕘 עבר'+(_pastCount?' ('+_pastCount+')':'');
   const _searching=!!(_q||_qd);
   const _pn=document.getElementById('evPastNote');
   if(_pn)_pn.style.display=(evShowPast&&!_searching)?'block':'none';
@@ -3682,7 +3730,7 @@ function renderDJEvents(){
     list.innerHTML=(_q||_qd||_djActive)
       ?'<div class="empty"><span class="ico">🔍</span><p>לא נמצאו אירועים התואמים לחיפוש'+(_djActive&&!_q&&!_qd?(evShowPast?' בעבר':' באירועים הקרובים — נסה "אירועי עבר"'):'')+'</p></div>'
       :evShowPast?'<div class="empty"><span class="ico">🕘</span><p>אין אירועי עבר</p></div>'
-      :'<div class="empty"><span class="ico">📋</span><p>אין אירועים קרובים<br>צור אירוע חדש ↑'+(_pastCount?'<br>או לחץ "אירועי עבר"':'')+'</p></div>';
+      :'<div class="empty"><span class="ico">📋</span><p>אין אירועים קרובים<br>צור אירוע חדש ↑'+(_pastCount?'<br>או לחץ "🕘 עבר"':'')+'</p></div>';
     return;
   }
   list.innerHTML=evArr.map(([rid,ev])=>{
