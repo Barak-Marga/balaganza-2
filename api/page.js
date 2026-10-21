@@ -15,7 +15,7 @@ const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').re
 
 async function fb(path) {
   try {
-    const r = await fetch(`${DB}/${path}.json`);
+    const r = await fetch(`${DB}/${path}.json`, { signal: AbortSignal.timeout(2500) });
     if (!r.ok) return null;
     return await r.json();
   } catch (e) { return null; }
@@ -39,10 +39,10 @@ export default async function handler(req, res) {
 
   try {
     if (room) {
-      const [name, type, celebrantName, couple, archived, hasHero, meta] = await Promise.all([
+      const [name, type, celebrantName, couple, archived, meta] = await Promise.all([
         fb(`events/${room}/name`), fb(`events/${room}/type`), fb(`events/${room}/celebrantName`),
         fb(`events/${room}/weddingConfig/coupleNames`), fb(`events/${room}/archived`),
-        fb(`events/${room}/weddingConfig/heroImage`).then(v => !!v), fb('config/shareMeta'),
+        fb('config/shareMeta'),
       ]);
       if (name && !archived) {
         const kind = type === 'חתונה' ? 'wedding' : type === 'מסיבה פרטית' ? 'party' : 'default';
@@ -54,7 +54,7 @@ export default async function handler(req, res) {
           .split('{בני הזוג}').join(coupleTxt);
         const title = fill(cfg.title) || name;
         const desc = fill(cfg.desc);
-        const img = kind === 'wedding' && hasHero ? `${origin}/api/og-image?room=${room}`
+        const img = kind === 'wedding' ? `${origin}/api/og-image?room=${room}`
           : `${origin}/og/og-${kind}.png`;
         const url = `${origin}/?room=${room}`;
         const tags = `<title>${esc(title)}</title>

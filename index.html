@@ -1522,6 +1522,7 @@ function loadGuestEvent(){
     const hero=document.getElementById('eventHero');
     hero.style.display='block';
     document.getElementById('heroName').textContent=ev.name||'';
+    setEventDocTitle(ev);
     if(ev.djName){document.getElementById('hDJ').style.display='';document.getElementById('hDJTxt').textContent='DJ: '+ev.djName;}
     if(ev.date){const d=new Date(ev.date+'T00:00:00');document.getElementById('hDateTxt').textContent=d.toLocaleDateString('he-IL',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('hDate').style.display='flex';}
     if(ev.time){document.getElementById('hTimeTxt').textContent=ev.time;document.getElementById('hTime').style.display='flex';}
@@ -1728,7 +1729,18 @@ function wfSwitchTab(listName){
   wfUpdateCountLine();
 }
 
+// כותרת לשונית לפי אירוע (תבניות מ-config/shareMeta, כמו בתצוגה המקדימה בוואטסאפ)
+async function setEventDocTitle(ev){
+  if(!ev||!ev.name)return;
+  const kind=ev.type==='חתונה'?'wedding':ev.type==='מסיבה פרטית'?'party':'default';
+  let m=null;try{m=(await get(fbRef(db,'config/shareMeta/'+kind))).val();}catch(e){}
+  const tpl=((m&&m.title)||SHARE_META_DEFAULTS[kind].title);
+  const cn=ev.weddingConfig&&ev.weddingConfig.coupleNames;
+  const couple=(cn&&(cn.he||cn.en))||ev.celebrantName||ev.name;
+  document.title=tpl.split('{שם האירוע}').join(ev.name).split('{שם}').join(ev.celebrantName||ev.name).split('{בני הזוג}').join(couple);
+}
 function wfInit(ev){
+  setEventDocTitle(ev);
   // ניקוי מאזיני Firebase קודמים אם יש
   wfState.unsubs.forEach(unsub=>{try{unsub();}catch(e){}});
   wfState.unsubs=[];
@@ -4997,6 +5009,7 @@ let _spResults=[];
 let _spUnsub=null;
 
 function partyInit(ev){
+  setEventDocTitle(ev);
   show('sParty');
   // לוגו
   const logo=document.getElementById('spLogo');

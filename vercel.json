@@ -4,7 +4,14 @@
   },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/", "has": [{ "type": "query", "key": "room" }], "destination": "/api/page" },
+    {
+      "source": "/",
+      "has": [
+        { "type": "query", "key": "room" },
+        { "type": "header", "key": "user-agent", "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|Applebot|Googlebot|bingbot|Pinterest|vkShare|redditbot|Viber).*" }
+      ],
+      "destination": "/api/page"
+    },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
