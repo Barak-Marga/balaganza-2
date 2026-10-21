@@ -1,4 +1,7 @@
 {
+  "functions": {
+    "api/page.js": { "includeFiles": "index.html" }
+  },
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/", "has": [{ "type": "query", "key": "room" }], "destination": "/api/page" },

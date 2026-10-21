@@ -1,3 +1,7 @@
+import { readFile } from 'fs/promises';
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __dirnameSafe = () => { try { return path.dirname(fileURLToPath(import.meta.url)); } catch (e) { return process.cwd(); } };
 // מגיש את index.html עם כותרת ותמונה מותאמות לאירוע (תצוגה מקדימה בוואטסאפ / לשונית דפדפן)
 const DB = 'https://balaganza-default-rtdb.firebaseio.com';
 
@@ -23,11 +27,12 @@ export default async function handler(req, res) {
   const origin = `${proto}://${host}`;
   const room = String(req.query.room || '').replace(/[^A-Za-z0-9_-]/g, '');
 
-  let html;
-  try {
-    const r = await fetch(`${origin}/index.html`);
-    html = await r.text();
-  } catch (e) {
+  // קוראים את index.html מהדיסק (לא דרך HTTP — בגרסאות בדיקה מוגנות בקשת HTTP פנימית מקבלת דף התחברות)
+  let html = null;
+  for (const f of [path.join(process.cwd(), 'index.html'), path.join(__dirnameSafe(), '..', 'index.html')]) {
+    try { html = await readFile(f, 'utf8'); if (html && html.includes('<title>')) break; html = null; } catch (e) {}
+  }
+  if (!html) {
     res.writeHead(302, { Location: `/index.html?room=${encodeURIComponent(room)}` });
     return res.end();
   }
