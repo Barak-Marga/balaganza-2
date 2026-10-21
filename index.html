@@ -1364,12 +1364,21 @@ document.addEventListener('fb-ready',()=>{
         },1500);
       }
     }
-    onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
-    onValue(fbRef(db,'rooms'),snap=>{
-      const r=snap.val()||{};allQueues={};
-      Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
-      renderGuestQ();renderEQ();renderDJEvents();
-    });
+    if(urlRoom){
+      // אורח: טוענים רק את האירוע והתור שלו (לא את כל האירועים במערכת — זה מה שהאט את העלייה)
+      onValue(fbRef(db,'events/'+urlRoom),snap=>{const v=snap.val();if(v)allEvents[urlRoom]=v;else delete allEvents[urlRoom];});
+      onValue(fbRef(db,'rooms/'+urlRoom+'/queue'),snap=>{
+        allQueues[urlRoom]=snap.val()||{};
+        renderGuestQ();
+      });
+    } else {
+      onValue(fbRef(db,'events'),snap=>{allEvents=snap.val()||{};renderDJEvents();});
+      onValue(fbRef(db,'rooms'),snap=>{
+        const r=snap.val()||{};allQueues={};
+        Object.keys(r).forEach(rid=>{allQueues[rid]=r[rid].queue||{};});
+        renderGuestQ();renderEQ();renderDJEvents();
+      });
+    }
     // Pre-fill guest name if already registered FOR THIS ROOM (scoped to prevent cross-room name leakage)
     if(urlRoom){
       get(fbRef(db,'guestNames/'+urlRoom+'/'+guestId)).then(snap=>{
@@ -4816,6 +4825,7 @@ function sendWhatsAppLink(url,celebrantPass){
   try{if(navigator.clipboard)navigator.clipboard.writeText(msg).catch(()=>{});}catch(e){}
   const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   if(isIOS&&navigator.share){
+    toast('📋 ההודעה הועתקה — בוואטסאפ ביזנס, אם מופיע רק לינק: מחקו והדביקו',"info",5000);
     // באייפון: תפריט השיתוף של המערכת עם טקסט בלבד (בלי שדה url) — שומר על כל ההודעה,
     // ועובד גם עם וואטסאפ ביזנס וגם עם וואטסאפ רגיל
     navigator.share({text:msg}).catch(err=>{
