@@ -298,6 +298,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 #spAddedPop .sp-pop-ico{font-size:44px;margin-bottom:8px}
 #spAddedPop .sp-pop-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
 #spAddedPop .sp-pop-song{font-size:13px;color:#cc80ff;word-break:break-word}
+#sParty .sp-del-btn{background:rgba(232,23,26,.12);border:1px solid rgba(232,23,26,.35);border-radius:8px;color:#ff6b6b;cursor:pointer;width:30px;height:28px;font-size:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+#sParty .sp-del-btn:hover{background:rgba(232,23,26,.25)}
 #sParty .sp-search-panel{display:none}
 #sParty .sp-search-panel.open{display:block}
 
@@ -4912,6 +4914,16 @@ function spSetCelebrant(on){
   const b=document.getElementById('spCelebBox');if(b)b.classList.remove('open');
   const cb=document.getElementById('spCelebBtn');if(cb)cb.style.display=on?'none':cb.style.display;
   _spUpdateStatus();
+  if(allQueues[urlRoom])_spRenderQueue(allQueues[urlRoom]); // הצג מיד כפתורי מחיקה
+}
+async function spDelSong(key){
+  if(!isCelebrant||!db||!urlRoom)return;
+  const s=(allQueues[urlRoom]||{})[key];
+  if(!confirm('למחוק את "'+((s&&s.name)||'השיר')+'" מהתור?'))return;
+  try{
+    await set(fbRef(db,'rooms/'+urlRoom+'/queue/'+key),null);
+    toast('🗑️ השיר נמחק','info');
+  }catch(e){toast('שגיאה במחיקה: '+e.message,'error');}
 }
 function _spUpdateStatus(){
   const el=document.getElementById('spStatusTxt');if(!el)return;
@@ -4964,6 +4976,7 @@ function _spRenderQueue(raw){
       <button class="sp-vote-btn${myVote?' voted':''}" data-key="${s.key}" onclick="event.stopPropagation();spVote('${s.key}')">
         <i class="ti ti-flame" aria-hidden="true"></i> ${s.votes||0}
       </button>
+      ${isCelebrant?`<button class="sp-del-btn" title="מחק שיר" onclick="event.stopPropagation();spDelSong('${s.key}')">🗑️</button>`:''}
     </div>`;
   }).join('');
 }
