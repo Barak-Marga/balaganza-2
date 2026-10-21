@@ -423,7 +423,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <div id="hCelebrantActBtn" style="display:none;margin-top:8px">
           <div style="display:flex;gap:6px;justify-content:center;flex-wrap:nowrap">
             <button onclick="openCelebrantActivities('choose')" style="white-space:nowrap;background:rgba(168,85,247,.15);border:2px solid rgba(168,85,247,.4);border-radius:10px;padding:5px 10px;color:#a78bfa;font-size:12px;font-weight:900;cursor:pointer">🎮 הפעילויות שלי</button>
-            <button onclick="openCelebrantActivities('questions')" style="white-space:nowrap;position:relative;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.4);border-radius:10px;padding:5px 10px;color:#4a9fff;font-size:12px;font-weight:900;cursor:pointer">💬 שאלה לדי-ג׳יי<span id="hCelebReplyBadge" style="display:none;position:absolute;top:-8px;left:-6px;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;line-height:18px"></span></button>
+            <button id="hCelebAskDjBtn" onclick="openCelebrantActivities('questions')" style="white-space:nowrap;position:relative;background:rgba(74,159,255,.15);border:2px solid rgba(74,159,255,.4);border-radius:10px;padding:5px 10px;color:#4a9fff;font-size:12px;font-weight:900;cursor:pointer">💬 שאלה לדי-ג׳יי<span id="hCelebReplyBadge" style="display:none;position:absolute;top:-8px;left:-6px;background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;line-height:18px"></span></button>
           </div>
         </div>
       </div>
@@ -532,6 +532,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <div class="tab" id="djT2" onclick="djTab('create')">✨ צור אירוע</div>
       <div class="tab" id="djT3" onclick="djTab('about')">📝 עלינו</div>
       <div class="tab" id="djT4" onclick="djTab('manage')" style="display:none">⚙️ ניהול</div>
+      <div class="tab" id="djT5" onclick="djTab('settings')">🎛️ ההגדרות שלי</div>
     </div>
     <div class="tab-body on" id="djBEvents">
       <div class="admin-sec">
@@ -632,6 +633,25 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           </div>
           <div class="fld"><label>קוד חוגג/ת (גישה ללא הגבלה)</label><input type="text" id="evCelebrantPass" placeholder="ייווצר אוטומטית אם ריק (6 ספרות)"></div>
           <button class="btn-full btn-red" onclick="createEv()">🎉 צור אירוע</button>
+        </div>
+      </div>
+    </div>
+    <div class="tab-body" id="djBSettings">
+      <div class="admin-sec">
+        <div class="admin-card">
+          <h3>🎛️ ההגדרות שלי</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:12px">ההגדרות חלות על כל האירועים שמשויכים אליך</p>
+          <div class="fld" id="djSetForWrap" style="display:none"><label>הגדרות עבור</label><select id="djSetFor" onchange="loadDjSettingsForm()"></select></div>
+          <label style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">
+            <input type="checkbox" id="djSetMsgs" style="width:20px;height:20px;accent-color:#4a9fff">
+            <div><div style="font-weight:900;font-size:14px">💬 ממשק הודעות פעיל</div><div style="font-size:12px;color:var(--muted)">כבוי: החוגג/ת לא יראו "שאלה לדי-ג׳יי", ולא יוצגו לך התראות על שאלות</div></div>
+          </label>
+          <label style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">
+            <input type="checkbox" id="djSetLock" style="width:20px;height:20px;accent-color:#4a9fff" onchange="document.getElementById('djSetHoursWrap').style.opacity=this.checked?1:.4">
+            <div><div style="font-weight:900;font-size:14px">🔒 נעילת בחירות לפני האירוע</div><div style="font-size:12px;color:var(--muted)">כבוי: החוגג/ת יוכלו לשנות פעילויות עד תחילת האירוע</div></div>
+          </label>
+          <div class="fld" id="djSetHoursWrap"><label>כמה שעות לפני האירוע לנעול</label><input type="number" id="djSetHours" min="1" max="336" value="24"></div>
+          <button class="btn-full btn-red" onclick="saveDjSettings()">💾 שמור הגדרות</button>
         </div>
       </div>
     </div>
@@ -745,9 +765,9 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
         <div style="font-size:12px;font-weight:700;color:#a78bfa;margin-bottom:8px">✅ בחרת:</div>
         <div id="celebChoiceSummaryList" style="display:flex;flex-wrap:wrap;gap:8px"></div>
       </div>
-      <div style="font-size:11px;color:#666;margin-bottom:16px;text-align:center">ניתן לשנות את הבחירה עד 24 שעות לפני האירוע</div>
+      <div id="celebLockNote" style="font-size:11px;color:#666;margin-bottom:16px;text-align:center">ניתן לשנות את הבחירה עד 24 שעות לפני האירוע</div>
       <button onclick="saveCelebrantChoices()" style="background:linear-gradient(135deg,#a855f7,#6366f1);border:none;border-radius:14px;padding:14px 40px;color:white;font-family:'Heebo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;width:100%">אישור הבחירה ✅</button>
-      <button onclick="openCelebrantActivities('questions')" style="margin-top:10px;background:rgba(74,159,255,.12);border:2px solid rgba(74,159,255,.35);border-radius:14px;padding:10px;color:#4a9fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%">💬 יש לך שאלה לדי-ג׳יי?</button>
+      <button id="celebAskDjBtn2" onclick="openCelebrantActivities('questions')" style="margin-top:10px;background:rgba(74,159,255,.12);border:2px solid rgba(74,159,255,.35);border-radius:14px;padding:10px;color:#4a9fff;font-family:'Heebo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%">💬 יש לך שאלה לדי-ג׳יי?</button>
     </div>
     <!-- DJ Questions -->
     <div id="celebActDjQ" style="margin-top:24px;text-align:right;direction:rtl;display:none">
@@ -2328,10 +2348,11 @@ async function promptCelebrantCode(){
   const r=document.getElementById('hRulesRow');if(r)r.style.display='none';
   const b=document.getElementById('hCelebrantBtn');if(b)b.style.display='none';
   const ab=document.getElementById('hCelebrantActBtn');if(ab)ab.style.display='block';
+  applyCelebMsgVisibility(ev);
   document.getElementById('gHdrSub').textContent='היי '+guestName+' 🎂 (חוגג/ת)';
   // רינדור מחדש של התור כדי שכפתורי המחיקה / כוכב יופיעו מיד
   renderGuestQ();
-  startCelebrantReplyWatcher();
+  if(djMsgsEnabled(ev))startCelebrantReplyWatcher();
   // ההעדפות נפתחות אוטומטית רק בפעם הראשונה; אחרי מילוי — עריכה/שאלה דרך הכפתורים
   if(celebrantPrefsFilled(ev)){
     toast('🎂 ברוך/ה שובך! גישת חוגג/ת פעילה 🎉','success',3000);
@@ -2750,6 +2771,9 @@ function _setCelebWelcome(name){
 }
 // mode: undefined = זרימה ראשונה (מסך פתיחה), 'choose' = עריכת בחירות, 'questions' = שאלות לדי-ג'יי
 async function openCelebrantActivities(mode){
+  const _evM=allEvents[currentRoom]||{};
+  if(mode==='questions'&&!djMsgsEnabled(_evM))mode='choose';
+  applyCelebMsgVisibility(_evM);
   try{
     const logoEl=document.getElementById('lCelebrantAct');
     const mainLogo=document.getElementById('lGuest');
@@ -2929,10 +2953,8 @@ async function toggleCelebrantGame(id){
   }
   // נעילה: פחות מ-24 שעות לפני האירוע
   const _ev=allEvents[currentRoom]||{};
-  if(_ev.date){
-    const _h=(new Date(_ev.date+'T'+(_ev.time||'00:00'))-Date.now())/3600000;
-    if(_h<24){toast('לא ניתן לשנות את הבחירה פחות מ-24 שעות לפני האירוע','error',4000);return;}
-  }
+  const _lockH=prefsLockHours(_ev);
+  if(_lockH){toast('לא ניתן לשנות את הבחירה פחות מ-'+_lockH+' שעות לפני האירוע','error',4000);return;}
   const freeSelected=[...celebrantChoicesSelected].filter(sid=>{const x=CELEBRANT_GAMES.find(y=>y.id===sid);return x&&!x.premium&&x.enabled!==false;});
   if(celebrantChoicesSelected.has(id)){
     celebrantChoicesSelected.delete(id);
@@ -3063,7 +3085,7 @@ function closeDjMessages(){
 
 // ── DJ TABS ──
 function djTab(t){
-  const tabs=[{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3},{k:'Manage',n:4}];
+  const tabs=[{k:'Events',n:1},{k:'Create',n:2},{k:'About',n:3},{k:'Manage',n:4},{k:'Settings',n:5}];
   tabs.forEach(x=>{
     document.getElementById('djT'+x.n).classList.toggle('on',t===x.k.toLowerCase());
     document.getElementById('djB'+x.k).classList.toggle('on',t===x.k.toLowerCase());
@@ -3071,6 +3093,7 @@ function djTab(t){
   if(t==='about')loadAboutFields();
   if(t==='events')renderDJEvents();
   if(t==='manage')renderDJManage();
+  if(t==='settings')renderDjSettingsTab();
   if(t==='create'){
     const isOwner=currentUserType==='owner';
     // ── הסתרת אופציית "חתונה" מ-non-owner ──
@@ -3148,7 +3171,8 @@ async function loadConfig(){
     get(fbRef(db,'config/eventPrefixes')),
     get(fbRef(db,'config/waMsgTemplate')),
     get(fbRef(db,'config/games')),
-    get(fbRef(db,'about/gameDescriptions'))
+    get(fbRef(db,'about/gameDescriptions')),
+    get(fbRef(db,'config/djSettings'))
   ]);
   const val=i=>{try{return res[i].status==='fulfilled'?res[i].value.val():null;}catch(e){return null;}};
   res.forEach((r,i)=>{if(r.status==='rejected')console.warn('loadConfig read failed #'+i,r.reason);});
@@ -3157,6 +3181,7 @@ async function loadConfig(){
   const eventPrefixes=val(2);
   const waMsgTemplate=val(3);
   applyGamesConfig(val(4),val(5));
+  _djSettings=val(6)||{};
   if(djNames){
     _djNames={owner:DJ_NAMES.owner};
     Object.keys(djNames).forEach(k=>{if(k!=='owner')_djNames[k]=djNames[k];});
@@ -3589,7 +3614,69 @@ function clearEvSearch(){
 }
 
 // ── שאלות פתוחות מחוגגים (הודעות ללא תשובת DJ) ──
+// ── הגדרות אישיות לכל DJ (config/djSettings/{djId}) ──
+let _djSettings={};
+const DJ_SETTINGS_DEFAULT={msgs:true,lockOn:true,lockHours:24};
+function getDjSettings(djId){return {...DJ_SETTINGS_DEFAULT,...((_djSettings||{})[djId||'owner']||{})};}
+function djSettingsForEvent(ev){return getDjSettings((ev&&ev.djId)||'owner');}
+function djMsgsEnabled(ev){return djSettingsForEvent(ev).msgs!==false;}
+// מחזיר מספר שעות הנעילה אם הבחירות נעולות כרגע, אחרת 0
+function prefsLockHours(ev){
+  const st=djSettingsForEvent(ev);
+  if(!st.lockOn||!ev||!ev.date)return 0;
+  const h=Number(st.lockHours)||24;
+  const left=(new Date(ev.date+'T'+(ev.time||'00:00'))-Date.now())/3600000;
+  return left<h?h:0;
+}
+function prefsLockNote(ev){
+  const st=djSettingsForEvent(ev);
+  if(!st.lockOn)return 'ניתן לשנות את הבחירה עד תחילת האירוע';
+  return 'ניתן לשנות את הבחירה עד '+(Number(st.lockHours)||24)+' שעות לפני האירוע';
+}
+function applyCelebMsgVisibility(ev){
+  const on=djMsgsEnabled(ev);
+  ['hCelebAskDjBtn','celebAskDjBtn2'].forEach(id=>{const b=document.getElementById(id);if(b)b.style.display=on?'':'none';});
+  const n=document.getElementById('celebLockNote');if(n)n.textContent=prefsLockNote(ev);
+}
+function renderDjSettingsTab(){
+  const isOwner=currentUserType==='owner';
+  const wrap=document.getElementById('djSetForWrap');
+  const sel=document.getElementById('djSetFor');
+  if(wrap)wrap.style.display=isOwner?'':'none';
+  if(sel&&isOwner){
+    const cur=sel.value;
+    sel.innerHTML=`<option value="owner">👑 בעלים</option>`+Object.keys(_djNames).filter(k=>k!=='owner').map(k=>`<option value="${esc(k)}">🎧 ${esc(_djNames[k])}</option>`).join('');
+    if(cur)sel.value=cur;
+  }
+  // טעינה טרייה כדי לא לדרוס שינוי ממכשיר אחר
+  get(fbRef(db,'config/djSettings')).then(snap=>{_djSettings=snap.val()||{};loadDjSettingsForm();}).catch(()=>loadDjSettingsForm());
+}
+function _djSettingsKey(){
+  if(currentUserType==='owner'){const sel=document.getElementById('djSetFor');return (sel&&sel.value)||'owner';}
+  return currentUserType;
+}
+function loadDjSettingsForm(){
+  const st=getDjSettings(_djSettingsKey());
+  document.getElementById('djSetMsgs').checked=st.msgs!==false;
+  document.getElementById('djSetLock').checked=!!st.lockOn;
+  document.getElementById('djSetHours').value=Number(st.lockHours)||24;
+  document.getElementById('djSetHoursWrap').style.opacity=st.lockOn?1:.4;
+}
+async function saveDjSettings(){
+  const key=_djSettingsKey();
+  if(!key){toast('יש להתחבר מחדש','error');return;}
+  let hours=parseInt(document.getElementById('djSetHours').value,10);
+  if(!hours||hours<1)hours=24;if(hours>336)hours=336;
+  const val={msgs:document.getElementById('djSetMsgs').checked,lockOn:document.getElementById('djSetLock').checked,lockHours:hours};
+  try{
+    await set(fbRef(db,'config/djSettings/'+key),val);
+    _djSettings[key]=val;
+    toast('✅ ההגדרות נשמרו','success');
+    renderDJEvents();
+  }catch(e){toast('שגיאה בשמירה: '+e.message,'error',5000);}
+}
 function getOpenQuestions(ev){
+  if(!djMsgsEnabled(ev))return [];
   const msgs=(ev&&ev.djMessages)||{};
   return Object.entries(msgs).filter(([k,m])=>m&&m.text&&m.from!=='dj'&&!m.reply&&!m.readAt);
 }
@@ -3785,7 +3872,7 @@ function renderDJEvents(){
         <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
         ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
         <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
-        <button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות${openQ?` <span style="background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900">${openQ}</span>`:''}</button>
+        ${djMsgsEnabled(ev)?`<button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות${openQ?` <span style="background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900">${openQ}</span>`:''}</button>`:''}
         <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
         <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
         <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
