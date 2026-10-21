@@ -4815,8 +4815,14 @@ function sendWhatsAppLink(url,celebrantPass){
   // גיבוי: ההודעה המלאה מועתקת ללוח — אם וואטסאפ משמיט טקסט, אפשר פשוט להדביק
   try{if(navigator.clipboard)navigator.clipboard.writeText(msg).catch(()=>{});}catch(e){}
   const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  if(isIOS){
-    // באייפון wa.me דרך window.open משמיט לפעמים את הטקסט — פותחים ישירות את האפליקציה
+  if(isIOS&&navigator.share){
+    // באייפון: תפריט השיתוף של המערכת עם טקסט בלבד (בלי שדה url) — שומר על כל ההודעה,
+    // ועובד גם עם וואטסאפ ביזנס וגם עם וואטסאפ רגיל
+    navigator.share({text:msg}).catch(err=>{
+      if(err&&err.name==='AbortError')return;
+      location.href='whatsapp://send?text='+encoded;
+    });
+  } else if(isIOS){
     toast('📋 ההודעה המלאה הועתקה — אם חסר טקסט, הדביקו אותה',"info",4000);
     location.href='whatsapp://send?text='+encoded;
   } else {
