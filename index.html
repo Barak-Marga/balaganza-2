@@ -304,7 +304,8 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 #sParty .sp-search-panel.open{display:block}
 
 body.party-mode #sGuest{background:#0a0a18;color:#fff;position:relative;overflow-x:hidden}
-body.party-mode #laserCanvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55}
+#laserCanvas{display:none}
+body.party-mode #laserCanvas{display:block;position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55}
 body.party-mode #sGuest>div{position:relative;z-index:1}
 body.party-mode .hdr{background:rgba(10,10,24,.92)!important;border-bottom:2px solid rgba(180,0,255,.35)!important;backdrop-filter:blur(18px)}
 body.party-mode #gHdrTitle{font-family:'Fredoka One',cursive;font-size:22px;background:linear-gradient(135deg,#ff00cc,#9b00ff,#00eaff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
