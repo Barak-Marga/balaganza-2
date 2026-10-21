@@ -675,6 +675,29 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           <div class="fld"><label>סיסמה חדשה לבעלים</label><input type="password" id="ownerNewPass" placeholder="הקלד סיסמה חדשה..."></div>
           <button class="btn-full btn-red" onclick="changeOwnerPass()">💾 שמור סיסמה</button>
         </div>
+        <!-- Share link preview -->
+        <div class="admin-card">
+          <h3>📎 שם האתר בשליחת לינק</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.6">הכותרת והתיאור שמופיעים בוואטסאפ כששולחים לינק לאירוע (וגם בלשונית הדפדפן).<br>אפשר להשתמש ב: <b>{שם האירוע}</b> · <b>{שם}</b> (החוגג/ת) · <b>{בני הזוג}</b> (בחתונה)<br>⚠️ וואטסאפ שומר תצוגה מקדימה — לינק שכבר נשלח עשוי להמשיך להציג את הישן.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:10px">
+            <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px">
+              <div style="font-weight:900;font-size:13px;margin-bottom:6px">💍 חתונה</div>
+              <div class="fld"><label>כותרת</label><input type="text" id="shareT_wedding"></div>
+              <div class="fld" style="margin-bottom:0"><label>תיאור</label><input type="text" id="shareD_wedding"></div>
+            </div>
+            <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px">
+              <div style="font-weight:900;font-size:13px;margin-bottom:6px">🪩 מסיבה פרטית</div>
+              <div class="fld"><label>כותרת</label><input type="text" id="shareT_party"></div>
+              <div class="fld" style="margin-bottom:0"><label>תיאור</label><input type="text" id="shareD_party"></div>
+            </div>
+            <div style="background:var(--surface2);border:2px solid rgba(255,255,255,.1);border-radius:12px;padding:10px 12px">
+              <div style="font-weight:900;font-size:13px;margin-bottom:6px">🎉 שאר האירועים</div>
+              <div class="fld"><label>כותרת</label><input type="text" id="shareT_default"></div>
+              <div class="fld" style="margin-bottom:0"><label>תיאור</label><input type="text" id="shareD_default"></div>
+            </div>
+          </div>
+          <button class="btn-full btn-red" onclick="saveShareMeta()">💾 שמור</button>
+        </div>
         <!-- WhatsApp message template -->
         <div class="admin-card">
           <h3>💬 תבנית הודעת ווטסאפ לאורחים</h3>
@@ -3279,7 +3302,32 @@ async function savePrefixes(){
   toast('✅ הקידומות נשמרו!','success');
 }
 
+const SHARE_META_DEFAULTS={
+  wedding:{title:'החתונה של {בני הזוג} · Music by MARGA',desc:'בחרו את השירים שילוו אותנו ברחבה 🎶'},
+  party:{title:'{שם האירוע} · Party Playlist · MARGA',desc:'הוסיפו שירים לפלייליסט של המסיבה 🎧'},
+  default:{title:'{שם האירוע} · בלאגנזה 🎵',desc:'בקשו שירים והצביעו לפלייליסט של האירוע 🎶'}
+};
+async function loadShareMetaForm(){
+  let m={};
+  try{m=(await get(fbRef(db,'config/shareMeta'))).val()||{};}catch(e){}
+  Object.keys(SHARE_META_DEFAULTS).forEach(k=>{
+    const v={...SHARE_META_DEFAULTS[k],...(m[k]||{})};
+    const t=document.getElementById('shareT_'+k),d=document.getElementById('shareD_'+k);
+    if(t)t.value=v.title;if(d)d.value=v.desc;
+  });
+}
+async function saveShareMeta(){
+  if(currentUserType!=='owner'){toast('הרשאה נדרשת','error');return;}
+  const val={};
+  Object.keys(SHARE_META_DEFAULTS).forEach(k=>{
+    val[k]={title:(document.getElementById('shareT_'+k).value.trim()||SHARE_META_DEFAULTS[k].title),
+            desc:document.getElementById('shareD_'+k).value.trim()};
+  });
+  try{await set(fbRef(db,'config/shareMeta'),val);toast('✅ נשמר! לינקים חדשים יוצגו עם הנוסח החדש','success',3500);}
+  catch(e){toast('שגיאה בשמירה: '+e.message,'error',5000);}
+}
 function renderDJManage(){
+  loadShareMetaForm();
   // פאנל ניהול המשחקים — טעינה טרייה מ-Firebase
   renderGamesAdmin();
   loadGamesConfig().then(renderGamesAdmin).catch(()=>{});
