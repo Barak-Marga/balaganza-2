@@ -649,9 +649,9 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
           </label>
           <label style="display:flex;align-items:center;gap:10px;background:var(--surface2);border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 14px;margin-bottom:10px;cursor:pointer">
             <input type="checkbox" id="djSetLock" style="width:20px;height:20px;accent-color:#4a9fff" onchange="document.getElementById('djSetHoursWrap').style.opacity=this.checked?1:.4">
-            <div><div style="font-weight:900;font-size:14px">🔒 נעילת בחירות לפני האירוע</div><div style="font-size:12px;color:var(--muted)">כבוי: החוגג/ת יוכלו לשנות פעילויות עד תחילת האירוע</div></div>
+            <div><div style="font-weight:900;font-size:14px">🔒 נעילת בחירת שירים לפני האירוע</div><div style="font-size:12px;color:var(--muted)">דלוק: אורחים וחוגג/ת לא יוכלו להוסיף/להצביע/למחוק שירים בשעות שלפני האירוע. כבוי (ברירת מחדל): ללא הגבלה</div></div>
           </label>
-          <div class="fld" id="djSetHoursWrap"><label>כמה שעות לפני האירוע לנעול</label><input type="number" id="djSetHours" min="1" max="336" value="24"></div>
+          <div class="fld" id="djSetHoursWrap"><label>כמה שעות לפני האירוע לנעול את השירים</label><input type="number" id="djSetHours" min="1" max="336" value="24"></div>
           <button class="btn-full btn-red" onclick="saveDjSettings()">💾 שמור הגדרות</button>
         </div>
       </div>
@@ -1199,6 +1199,10 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <div class="fld"><label>שם הDJ</label><input type="text" id="editEvDJName" placeholder="Balaganza DJ"></div>
     </div>
     <div class="fld"><label>מקס׳ שירים</label><input type="number" id="editEvMaxSongs" min="5" max="200" placeholder="20"></div>
+    <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer">
+      <input type="checkbox" id="editEvGamesUnlocked" style="width:20px;height:20px;accent-color:#4a9fff">
+      <div><div style="font-weight:900;font-size:13px">🔓 לאפשר לחוגג/ת לשנות משחקים גם בתוך 24 השעות</div><div style="font-size:11px;color:var(--muted)">ברירת מחדל: הבחירה ננעלת 24 שעות לפני האירוע</div></div>
+    </label>
     <button class="btn-full btn-red" onclick="saveEvDetails()" style="margin-top:8px">💾 שמור שינויים</button>
   </div>
 </div>
@@ -2907,10 +2911,9 @@ async function openPremiumModal(id,game){
     const evDt=new Date(ev.date+'T'+(ev.time||'00:00'));
     const hoursLeft=(evDt-Date.now())/3600000;
     if(hoursLeft>=0&&hoursLeft<24){
+      // פחות מ-24 שעות: אין הזמנה דרך האתר — רק פנייה אלינו בווטסאפ
       _premiumModalBlocked=true;
-      body.textContent='לא ניתן להזמין שדרוג פרימיום פחות מ-24 שעות לפני האירוע 🙏';
-      btn.style.display='none';
-      return;
+      body.textContent='הזמנת שדרוג פרימיום דרך האתר נסגרת 24 שעות לפני האירוע. רוצים בכל זאת? דברו איתנו בווטסאפ 👇';
     }
   }
   let num=String(wa||'972509896598').replace(/[^0-9]/g,'');
@@ -2932,7 +2935,7 @@ async function openPremiumModal(id,game){
 function closePremiumModal(){document.getElementById('premiumModal').style.display='none';}
 // לחיצה על כפתור הוואטסאפ: הלינק נפתח (href), ובמקביל נרשם עניין בפרימיום לממשק הדי-ג'יי
 function onPremiumWaClick(){
-  if(_premiumModalBlocked)return;
+  if(_premiumModalBlocked){setTimeout(closePremiumModal,300);return;}
   if(_premiumModalGameId)notifyPremiumInterest(_premiumModalGameId);
   setTimeout(()=>{closePremiumModal();toast('💌 תודה! נחזור אליכם בהקדם','success',4000);},300);
 }
@@ -3476,6 +3479,7 @@ function countMyRequests(room){
 
 async function addToQ(song){
   if(!db)return;
+  if(songsLockedToast(allEvents[currentRoom]||{})){closeSearch();return;}
   const queue=allQueues[currentRoom]||{};
   const ev=allEvents[currentRoom]||{};
   const maxQ=ev.maxSongs||30;
@@ -3538,6 +3542,7 @@ function countMyVotes(room){
 const MAX_MUST_SONGS=5;
 async function toggleMustSong(key){
   if(!isCelebrant)return;
+  if(songsLockedToast(allEvents[currentRoom]||{}))return;
   const q=allQueues[currentRoom]||{};
   const song=q[key];if(!song)return;
   if(!song.must){
@@ -3551,11 +3556,13 @@ async function toggleMustSong(key){
 }
 async function delGuestSong(key){
   if(!isCelebrant)return;
+  if(songsLockedToast(allEvents[currentRoom]||{}))return;
   if(!confirm('למחוק את השיר מהתור?'))return;
   await set(fbRef(db,'rooms/'+currentRoom+'/queue/'+key),null);
   toast('🗑️ השיר נמחק','info');
 }
 async function vote(key){
+  if(songsLockedToast(allEvents[currentRoom]||{}))return;
   const song=(allQueues[currentRoom]||{})[key];if(!song)return;
   if(song.voters&&song.voters[guestId]){toast('כבר הצבעת על שיר זה 😊','info');return;}
   if(!isCelebrant&&countMyVotes(currentRoom)>=10){showLimitModal('votes');return;}
@@ -3617,22 +3624,36 @@ function clearEvSearch(){
 // ── שאלות פתוחות מחוגגים (הודעות ללא תשובת DJ) ──
 // ── הגדרות אישיות לכל DJ (config/djSettings/{djId}) ──
 let _djSettings={};
-const DJ_SETTINGS_DEFAULT={msgs:true,lockOn:false,lockHours:24};
+const DJ_SETTINGS_DEFAULT={msgs:true,songsLockOn:false,songsLockHours:24};
+const GAMES_LOCK_HOURS=24; // נעילת בחירת משחקים — קבוע לכולם; DJ יכול לפתוח ידנית בפרטי האירוע
 function getDjSettings(djId){return {...DJ_SETTINGS_DEFAULT,...((_djSettings||{})[djId||'owner']||{})};}
 function djSettingsForEvent(ev){return getDjSettings((ev&&ev.djId)||'owner');}
 function djMsgsEnabled(ev){return djSettingsForEvent(ev).msgs!==false;}
-// מחזיר מספר שעות הנעילה אם הבחירות נעולות כרגע, אחרת 0
+function _hoursToEvent(ev){
+  if(!ev||!ev.date)return Infinity;
+  return (new Date(ev.date+'T'+(ev.time||'00:00'))-Date.now())/3600000;
+}
+// משחקים: נעול 24 שעות לפני, אלא אם ה-DJ פתח ידנית באירוע (ev.gamesUnlocked)
 function prefsLockHours(ev){
-  const st=djSettingsForEvent(ev);
-  if(!st.lockOn||!ev||!ev.date)return 0;
-  const h=Number(st.lockHours)||24;
-  const left=(new Date(ev.date+'T'+(ev.time||'00:00'))-Date.now())/3600000;
-  return left<h?h:0;
+  if(!ev||ev.gamesUnlocked)return 0;
+  return _hoursToEvent(ev)<GAMES_LOCK_HOURS?GAMES_LOCK_HOURS:0;
 }
 function prefsLockNote(ev){
+  if(ev&&ev.gamesUnlocked)return 'ה-DJ פתח את הבחירה לשינויים';
+  return 'ניתן לשנות את הבחירה עד '+GAMES_LOCK_HOURS+' שעות לפני האירוע';
+}
+// שירים: לפי הגדרת ה-DJ (ברירת מחדל — ללא הגבלה). מחזיר שעות נעילה אם נעול כרגע, אחרת 0
+function songsLockHours(ev){
   const st=djSettingsForEvent(ev);
-  if(!st.lockOn)return 'ניתן לשנות את הבחירה עד תחילת האירוע';
-  return 'ניתן לשנות את הבחירה עד '+(Number(st.lockHours)||24)+' שעות לפני האירוע';
+  if(!st.songsLockOn)return 0;
+  const h=Number(st.songsLockHours)||24;
+  return _hoursToEvent(ev)<h?h:0;
+}
+function songsLockedToast(ev){
+  const h=songsLockHours(ev);
+  if(!h)return false;
+  toast('🔒 רשימת השירים נסגרה '+h+' שעות לפני האירוע','error',4000);
+  return true;
 }
 function applyCelebMsgVisibility(ev){
   const on=djMsgsEnabled(ev);
@@ -3659,16 +3680,16 @@ function _djSettingsKey(){
 function loadDjSettingsForm(){
   const st=getDjSettings(_djSettingsKey());
   document.getElementById('djSetMsgs').checked=st.msgs!==false;
-  document.getElementById('djSetLock').checked=!!st.lockOn;
-  document.getElementById('djSetHours').value=Number(st.lockHours)||24;
-  document.getElementById('djSetHoursWrap').style.opacity=st.lockOn?1:.4;
+  document.getElementById('djSetLock').checked=!!st.songsLockOn;
+  document.getElementById('djSetHours').value=Number(st.songsLockHours)||24;
+  document.getElementById('djSetHoursWrap').style.opacity=st.songsLockOn?1:.4;
 }
 async function saveDjSettings(){
   const key=_djSettingsKey();
   if(!key){toast('יש להתחבר מחדש','error');return;}
   let hours=parseInt(document.getElementById('djSetHours').value,10);
   if(!hours||hours<1)hours=24;if(hours>336)hours=336;
-  const val={msgs:document.getElementById('djSetMsgs').checked,lockOn:document.getElementById('djSetLock').checked,lockHours:hours};
+  const val={msgs:document.getElementById('djSetMsgs').checked,songsLockOn:document.getElementById('djSetLock').checked,songsLockHours:hours};
   try{
     await set(fbRef(db,'config/djSettings/'+key),val);
     _djSettings[key]=val;
@@ -4336,6 +4357,7 @@ async function editEvDetails(rid){
   document.getElementById('editEvLoc').value=ev.location||'';
   document.getElementById('editEvDJName').value=ev.djName||'';
   document.getElementById('editEvMaxSongs').value=ev.maxSongs||20;
+  document.getElementById('editEvGamesUnlocked').checked=!!ev.gamesUnlocked;
   document.getElementById('editEvModal').classList.add('show');
 }
 async function saveEvDetails(){
@@ -4351,7 +4373,8 @@ async function saveEvDetails(){
     time:document.getElementById('editEvTime').value,
     location:document.getElementById('editEvLoc').value.trim(),
     djName:newDjName,
-    maxSongs:parseInt(document.getElementById('editEvMaxSongs').value)||20};
+    maxSongs:parseInt(document.getElementById('editEvMaxSongs').value)||20,
+    gamesUnlocked:document.getElementById('editEvGamesUnlocked').checked||null};
   // ── פריט 9: סנכרון djId לפי שם הדיג'יי החדש (רק לבעלים) ──
   if(currentUserType==='owner'&&newDjName){
     const matched=Object.keys(_djNames).find(k=>k!=='owner'&&_djNames[k]===newDjName);
@@ -5018,6 +5041,7 @@ function spSetCelebrant(on){
 }
 async function spDelSong(key){
   if(!isCelebrant||!db||!urlRoom)return;
+  if(songsLockedToast(allEvents[urlRoom]||{}))return;
   const s=(allQueues[urlRoom]||{})[key];
   if(!confirm('למחוק את "'+((s&&s.name)||'השיר')+'" מהתור?'))return;
   try{
@@ -5083,6 +5107,7 @@ function _spRenderQueue(raw){
 
 function spVote(key){
   if(!db||!urlRoom)return;
+  if(songsLockedToast(allEvents[urlRoom]||{}))return;
   const q=allQueues[urlRoom]||{};
   const s=q[key];if(!s)return;
   const myVote=s.voters&&s.voters[guestId];
@@ -5118,6 +5143,7 @@ function _spRenderResults(results){
 
 async function spAddSong(i){
   const r=_spResults[i];if(!r)return;
+  if(songsLockedToast(allEvents[urlRoom]||{}))return;
   if(!guestName){
     const nb=document.getElementById('spNameBar');
     if(nb){nb.classList.remove('hidden');document.getElementById('spNameInp').focus();toast('קודם הכניסו שם 😊','info');}
