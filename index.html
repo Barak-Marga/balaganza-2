@@ -310,6 +310,11 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 #spAddedPop .sp-pop-song{font-size:13px;color:#cc80ff;word-break:break-word}
 #sParty .sp-del-btn{background:rgba(232,23,26,.12);border:1px solid rgba(232,23,26,.35);border-radius:8px;color:#ff6b6b;cursor:pointer;width:30px;height:28px;font-size:13px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
 #sParty .sp-del-btn:hover{background:rgba(232,23,26,.25)}
+#sParty.sp-ltr{direction:ltr}
+#sParty.sp-ltr .sp-name-btn{left:auto;right:8px}
+#sParty.sp-ltr .sp-search-input{padding:11px 16px 11px 40px}
+#sParty.sp-ltr #spLangBtn{left:auto;right:14px}
+#sParty.sp-ltr #spAddedPop .sp-pop-card,#spAddedPop.sp-ltr .sp-pop-card{direction:ltr}
 #sParty .sp-search-panel{display:none}
 #sParty .sp-search-panel.open{display:block}
 
@@ -484,18 +489,19 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
 <div id="sParty" class="scr" style="display:none">
   <canvas class="sp-laser" id="spLaserC"></canvas>
   <div class="sp-inner">
+    <button id="spLangBtn" onclick="spToggleLang()" style="position:absolute;top:14px;left:14px;z-index:5;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.25);border-radius:6px;color:rgba(255,255,255,.75);font-family:'Space Grotesk',Arial,sans-serif;font-size:11px;letter-spacing:2px;padding:4px 10px;cursor:pointer">EN</button>
     <div class="sp-header">
       <div class="sp-logo-wrap">
         <p class="sp-music-by">Music by</p>
         <img class="sp-logo-img" id="spLogo" src="" alt="MARGA">
       </div>
       <h1 class="sp-title">PARTY<br>PLAYLIST</h1>
-      <p class="sp-subtitle">הוסיפו שיר לתור &bull; בקשות הקהל</p>
+      <p class="sp-subtitle" id="spSubtitle">הוסיפו שיר לתור &bull; בקשות הקהל</p>
     </div>
     <!-- name bar -->
     <div class="sp-name-bar" id="spNameBar">
       <input class="sp-name-input" id="spNameInp" type="text" placeholder="מה השם שלך?" autocomplete="off" maxlength="20">
-      <button class="sp-name-btn" onclick="spConfirmName()">כניסה →</button>
+      <button class="sp-name-btn" id="spNameBtn" onclick="spConfirmName()">כניסה →</button>
     </div>
     <!-- status + celebrant code -->
     <div class="sp-status">
@@ -504,7 +510,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     </div>
     <div class="sp-celeb-box" id="spCelebBox">
       <input id="spCelebInp" type="text" inputmode="numeric" placeholder="הזינו קוד חוגג/ת" autocomplete="off" maxlength="12">
-      <button onclick="spCheckCelebCode()">אישור</button>
+      <button id="spCelebOk" onclick="spCheckCelebCode()">אישור</button>
     </div>
     <!-- crowd bar -->
     <div class="sp-crowd" id="spCrowdBar"></div>
@@ -521,12 +527,12 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     <div class="sp-search-results" id="spSearchRes"></div>
     <!-- divider -->
     <div class="sp-divider"></div>
-    <p class="sp-queue-label">תור השירים</p>
+    <p class="sp-queue-label" id="spQueueLbl">תור השירים</p>
     <div class="sp-q-list" id="spQList"></div>
     <!-- add button -->
     <div class="sp-add-wrap">
       <button class="sp-add-btn" onclick="spOpenSearch()">
-        <i class="ti ti-plus" aria-hidden="true"></i> הוסיפו שיר
+        <i class="ti ti-plus" aria-hidden="true"></i> <span id="spAddBtnTxt">הוסיפו שיר</span>
       </button>
     </div>
   </div>
@@ -642,7 +648,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
             </div>
           </div>
           <div class="fld-row">
-            <div class="fld"><label>שפת פלייליסט</label>
+            <div class="fld"><label>שפה (פלייליסט · דף מסיבה)</label>
               <select id="evLang"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select>
             </div>
             <div class="fld"><label>מקס׳ שירים לפלייליסט</label><input type="number" id="evMaxSongs" min="5" max="200" value="20" placeholder="20"></div>
@@ -1236,7 +1242,10 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <div class="fld"><label>מיקום</label><input type="text" id="editEvLoc" placeholder="אולם X, תל אביב"></div>
       <div class="fld"><label>שם הDJ</label><input type="text" id="editEvDJName" placeholder="Balaganza DJ"></div>
     </div>
-    <div class="fld"><label>מקס׳ שירים</label><input type="number" id="editEvMaxSongs" min="5" max="200" placeholder="20"></div>
+    <div class="fld-row">
+      <div class="fld"><label>מקס׳ שירים</label><input type="number" id="editEvMaxSongs" min="5" max="200" placeholder="20"></div>
+      <div class="fld"><label>שפה (פלייליסט · דף מסיבה)</label><select id="editEvLang"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option></select></div>
+    </div>
     <label style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;margin-bottom:8px;cursor:pointer">
       <input type="checkbox" id="editEvGamesUnlocked" style="width:20px;height:20px;accent-color:#4a9fff">
       <div><div style="font-weight:900;font-size:13px">🔓 לאפשר לחוגג/ת לשנות משחקים גם בתוך 24 השעות</div><div style="font-size:11px;color:var(--muted)">ברירת מחדל: הבחירה ננעלת 24 שעות לפני האירוע</div></div>
@@ -4446,6 +4455,7 @@ async function editEvDetails(rid){
   document.getElementById('editEvLoc').value=ev.location||'';
   document.getElementById('editEvDJName').value=ev.djName||'';
   document.getElementById('editEvMaxSongs').value=ev.maxSongs||20;
+  document.getElementById('editEvLang').value=ev.lang==='en'?'en':'he';
   document.getElementById('editEvGamesUnlocked').checked=!!ev.gamesUnlocked;
   document.getElementById('editEvModal').classList.add('show');
 }
@@ -4463,7 +4473,8 @@ async function saveEvDetails(){
     location:document.getElementById('editEvLoc').value.trim(),
     djName:newDjName,
     maxSongs:parseInt(document.getElementById('editEvMaxSongs').value)||20,
-    gamesUnlocked:document.getElementById('editEvGamesUnlocked').checked||null};
+    gamesUnlocked:document.getElementById('editEvGamesUnlocked').checked||null,
+    lang:document.getElementById('editEvLang').value};
   // ── פריט 9: סנכרון djId לפי שם הדיג'יי החדש (רק לבעלים) ──
   if(currentUserType==='owner'&&newDjName){
     const matched=Object.keys(_djNames).find(k=>k!=='owner'&&_djNames[k]===newDjName);
@@ -5031,8 +5042,60 @@ let _spSearchT=null;
 let _spResults=[];
 let _spUnsub=null;
 
+// ── שפת דף המסיבה (he/en) — לפי שפת האירוע, וכל אורח יכול להחליף ──
+let _spLang='he';
+const SP_STR={
+ he:{subtitle:'הוסיפו שיר לתור • בקשות הקהל',namePh:'מה השם שלך?',nameBtn:'כניסה →',celebBtn:'🎂 קוד חוגג/ת',celebPh:'הזינו קוד חוגג/ת',ok:'אישור',searchPh:'חפשו שיר...',queue:'תור השירים',addBtn:'הוסיפו שיר',
+  added:'השיר נוסף לתור!',alreadyVotedAdded:'השיר כבר בתור — הצבעת לו 🔥',empty:'התור ריק — הוסיפו שיר 🎵',by:'בקשה של',searchErr:'שגיאה בחיפוש',noRes:'לא נמצאו תוצאות',add:'+ הוסף',delTitle:'מחק שיר',
+  alreadyVoted:'כבר הצבעת לשיר הזה 😊',nameFirst:'קודם הכניסו שם 😊',nameFirstCeleb:'קודם הכניסו שם, ואז קוד חוגג/ת 😊',full:'הפלייליסט מלא! מקסימום {n} שירים 🎵',inQueueVoted:'השיר כבר בתור והצבעת עליו 😊',
+  badCode:'קוד שגוי ❌',celebOn:'🎂 גישת חוגג/ת פעילה — בחירה ללא הגבלה!',delConfirm:'למחוק את "{s}" מהתור?',deleted:'🗑️ השיר נמחק',delErr:'שגיאה במחיקה: ',
+  statusCeleb:'🎂 <b style="color:#FFD700">חוגג/ת</b> · ללא הגבלת שירים (עד {n} בפלייליסט)',statusGuest:'🎵 {a}/{b} שירים · 🔥 {c}/{d} הצבעות',
+  limitSongs:'הגעת למקסימום — {n} שירים לכל אורח 🎤 עדיין אפשר להצביע לשירים בתור!',limitVotes:'הגעת למקסימום — {n} הצבעות לכל אורח 🗳️',locked:'🔒 רשימת השירים נסגרה {n} שעות לפני האירוע',dateLoc:'he-IL'},
+ en:{subtitle:'Add a song to the queue • Crowd requests',namePh:"What's your name?",nameBtn:'Enter →',celebBtn:'🎂 Host code',celebPh:'Enter host code',ok:'OK',searchPh:'Search a song...',queue:'Song queue',addBtn:'Add a song',
+  added:'Song added to the queue!',alreadyVotedAdded:'Already in the queue — you voted for it 🔥',empty:'The queue is empty — add a song 🎵',by:'Requested by',searchErr:'Search error',noRes:'No results found',add:'+ Add',delTitle:'Delete song',
+  alreadyVoted:'You already voted for this song 😊',nameFirst:'Please enter your name first 😊',nameFirstCeleb:'Enter your name first, then the host code 😊',full:'The playlist is full! Max {n} songs 🎵',inQueueVoted:'Already in the queue and you voted for it 😊',
+  badCode:'Wrong code ❌',celebOn:'🎂 Host access on — unlimited picks!',delConfirm:'Remove "{s}" from the queue?',deleted:'🗑️ Song removed',delErr:'Delete failed: ',
+  statusCeleb:'🎂 <b style="color:#FFD700">Host</b> · unlimited songs (up to {n} in the playlist)',statusGuest:'🎵 {a}/{b} songs · 🔥 {c}/{d} votes',
+  limitSongs:"You've reached the max — {n} songs per guest 🎤 You can still vote for songs in the queue!",limitVotes:"You've reached the max — {n} votes per guest 🗳️",locked:'🔒 Song requests closed {n} hours before the event',dateLoc:'en-GB'}
+};
+function spT(k,v){let t=(SP_STR[_spLang]||SP_STR.he)[k];if(t===undefined)t=SP_STR.he[k]||k;if(v)Object.keys(v).forEach(x=>{t=t.split('{'+x+'}').join(v[x]);});return t;}
+function _spApplyLang(){
+  const scr=document.getElementById('sParty');if(scr)scr.classList.toggle('sp-ltr',_spLang==='en');
+  const pop=document.getElementById('spAddedPop');if(pop)pop.classList.toggle('sp-ltr',_spLang==='en');
+  const setT=(id,k)=>{const e=document.getElementById(id);if(e)e.textContent=spT(k);};
+  const setP=(id,k)=>{const e=document.getElementById(id);if(e)e.placeholder=spT(k);};
+  setT('spSubtitle','subtitle');setT('spNameBtn','nameBtn');setT('spCelebBtn','celebBtn');setT('spCelebOk','ok');setT('spQueueLbl','queue');setT('spAddBtnTxt','addBtn');
+  setP('spNameInp','namePh');setP('spCelebInp','celebPh');setP('spSearchInp','searchPh');
+  const lb=document.getElementById('spLangBtn');if(lb)lb.textContent=_spLang==='en'?'עב':'EN';
+  const ev=allEvents[urlRoom]||{};
+  const pills=document.getElementById('spPills');
+  if(pills){
+    pills.innerHTML='';
+    if(ev.date){const d=new Date(ev.date+'T00:00:00');const ds=d.toLocaleDateString(spT('dateLoc'),{day:'numeric',month:'numeric',year:'numeric'});pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">📅</span>${ds}</div>`;}
+    if(ev.time)pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">🕐</span>${esc(ev.time)}</div>`;
+    if(ev.location)pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">📍</span>${esc(ev.location)}</div>`;
+  }
+  _spUpdateStatus();
+  if(allQueues[urlRoom])_spRenderQueue(allQueues[urlRoom]);
+  if(_spResults&&_spResults.length)_spRenderResults(_spResults);
+}
+function spToggleLang(){
+  _spLang=_spLang==='en'?'he':'en';
+  try{localStorage.setItem('sp_lang_'+urlRoom,_spLang);}catch(e){}
+  _spApplyLang();
+}
+function _spLockedToast(){
+  const h=songsLockHours(allEvents[urlRoom]||{});
+  if(!h)return false;
+  toast(spT('locked',{n:h}),'error',4000);return true;
+}
+function _spLimit(type){
+  toast(type==='songs'?spT('limitSongs',{n:SP_GUEST_MAX_SONGS}):spT('limitVotes',{n:SP_GUEST_MAX_VOTES}),'error',4500);
+}
 function partyInit(ev){
   setEventDocTitle(ev);
+  let _sl=null;try{_sl=localStorage.getItem('sp_lang_'+urlRoom);}catch(e){}
+  _spLang=(_sl==='en'||_sl==='he')?_sl:(ev.lang==='en'?'en':'he');
   show('sParty');
   // לוגו
   const logo=document.getElementById('spLogo');
@@ -5040,13 +5103,6 @@ function partyInit(ev){
   // פרטי אירוע
   const nm=document.getElementById('spEventName');
   if(nm)nm.textContent=ev.name||'';
-  const pills=document.getElementById('spPills');
-  if(pills){
-    pills.innerHTML='';
-    if(ev.date){const d=new Date(ev.date+'T00:00:00');const ds=d.toLocaleDateString('he-IL',{day:'numeric',month:'numeric',year:'numeric'});pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">📅</span>${ds}</div>`;}
-    if(ev.time)pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">🕐</span>${ev.time}</div>`;
-    if(ev.location)pills.innerHTML+=`<div class="sp-pill"><span class="sp-pill-ico">📍</span>${esc(ev.location)}</div>`;
-  }
   const det=document.getElementById('spEventDetails');
   if(det)det.style.display='block';
   // שם מהזכרון?
@@ -5067,7 +5123,7 @@ function partyInit(ev){
   if(guestName&&savedCode&&ev.celebrantPass&&savedCode===String(ev.celebrantPass))spSetCelebrant(true);
   const ci=document.getElementById('spCelebInp');
   if(ci)ci.onkeydown=e=>{if(e.key==='Enter')spCheckCelebCode();};
-  _spUpdateStatus();
+  _spApplyLang();
   // אנימציות
   _spStartLasers();
   _spStartCrowd();
@@ -5101,7 +5157,7 @@ function _spRequireName(){
   if(ni&&ni.value.trim()){spConfirmName();if(guestName)return true;}
   const nb=document.getElementById('spNameBar');
   if(nb){nb.classList.remove('hidden');const i=document.getElementById('spNameInp');if(i){i.focus();i.style.borderColor='rgba(232,23,26,.6)';}}
-  toast('קודם הכניסו שם, ואז קוד חוגג/ת 😊','info',3000);
+  toast(spT('nameFirstCeleb'),'info',3000);
   return false;
 }
 function spToggleCelebBox(){
@@ -5116,10 +5172,10 @@ function spCheckCelebCode(){
   if(!code)return;
   if(!_spRequireName())return;
   const ev=allEvents[urlRoom]||{};
-  if(!ev.celebrantPass||String(ev.celebrantPass)!==code){toast('קוד שגוי ❌','error');if(inp)inp.style.borderColor='rgba(232,23,26,.7)';return;}
+  if(!ev.celebrantPass||String(ev.celebrantPass)!==code){toast(spT('badCode'),'error');if(inp)inp.style.borderColor='rgba(232,23,26,.7)';return;}
   localStorage.setItem('sp_celeb_'+urlRoom,code);
   spSetCelebrant(true);
-  toast('🎂 גישת חוגג/ת פעילה — בחירה ללא הגבלה!','success',3000);
+  toast(spT('celebOn'),'success',3000);
 }
 function spSetCelebrant(on){
   isCelebrant=!!on;
@@ -5131,26 +5187,26 @@ function spSetCelebrant(on){
 }
 async function spDelSong(key){
   if(!isCelebrant||!db||!urlRoom)return;
-  if(songsLockedToast(allEvents[urlRoom]||{}))return;
+  if(_spLockedToast())return;
   const s=(allQueues[urlRoom]||{})[key];
-  if(!confirm('למחוק את "'+((s&&s.name)||'השיר')+'" מהתור?'))return;
+  if(!confirm(spT('delConfirm',{s:(s&&s.name)||''})))return;
   try{
     await set(fbRef(db,'rooms/'+urlRoom+'/queue/'+key),null);
-    toast('🗑️ השיר נמחק','info');
-  }catch(e){toast('שגיאה במחיקה: '+e.message,'error');}
+    toast(spT('deleted'),'info');
+  }catch(e){toast(spT('delErr')+e.message,'error');}
 }
 function _spUpdateStatus(){
   const el=document.getElementById('spStatusTxt');if(!el)return;
   if(isCelebrant){
     const ev=allEvents[urlRoom]||{};
-    el.innerHTML='🎂 <b style="color:#FFD700">חוגג/ת</b> · ללא הגבלת שירים (עד '+(ev.maxSongs||30)+' בפלייליסט)';
+    el.innerHTML=spT('statusCeleb',{n:ev.maxSongs||30});
   } else {
-    el.textContent='🎵 '+countMyRequests(urlRoom)+'/'+SP_GUEST_MAX_SONGS+' שירים · 🔥 '+countMyVotes(urlRoom)+'/'+SP_GUEST_MAX_VOTES+' הצבעות';
+    el.textContent=spT('statusGuest',{a:countMyRequests(urlRoom),b:SP_GUEST_MAX_SONGS,c:countMyVotes(urlRoom),d:SP_GUEST_MAX_VOTES});
   }
 }
 function spShowAdded(name,title){
   const pop=document.getElementById('spAddedPop');if(!pop)return;
-  document.getElementById('spPopTitle').textContent=title||'השיר נוסף לתור!';
+  document.getElementById('spPopTitle').textContent=title||spT('added');
   document.getElementById('spPopSong').textContent=name||'';
   pop.classList.add('show');
   clearTimeout(pop._t);
@@ -5177,7 +5233,7 @@ function _spRenderQueue(raw){
   const list=document.getElementById('spQList');
   if(!list)return;
   const songs=Object.entries(raw).map(([k,v])=>({key:k,...v})).sort((a,b)=>(b.votes||0)-(a.votes||0));
-  if(!songs.length){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:20px 0">התור ריק — הוסיפו שיר 🎵</div>';return;}
+  if(!songs.length){list.innerHTML='<div style="text-align:center;color:rgba(255,255,255,.2);font-size:12px;padding:20px 0">'+spT('empty')+'</div>';return;}
   list.innerHTML=songs.map((s,i)=>{
     const myVote=s.voters&&s.voters[guestId];
     const thumb=s.art?`<img class="sp-song-thumb" src="${s.art}" alt="" onerror="this.style.display='none'">`
@@ -5185,24 +5241,24 @@ function _spRenderQueue(raw){
     const rank=i===0?`<span class="sp-song-dot"></span>`:`<span class="sp-song-rank">${i+1}</span>`;
     return `<div class="sp-song-row${i===0?' sp-top1':''}">
       ${rank}${thumb}
-      <div class="sp-song-info"><p class="sp-song-name">${esc(s.name)}</p><p class="sp-song-artist">${esc(s.artist||'')}</p>${s.requestedBy?`<p class="sp-song-by">בקשה של ${esc(s.requestedBy)}</p>`:''}</div>
+      <div class="sp-song-info"><p class="sp-song-name">${esc(s.name)}</p><p class="sp-song-artist">${esc(s.artist||'')}</p>${s.requestedBy?`<p class="sp-song-by">${spT('by')} ${esc(s.requestedBy)}</p>`:''}</div>
       ${s.preview?`<button class="sp-preview-btn" data-preview="${s.preview}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" data-art="${escA(s.art||'')}" onclick="event.stopPropagation();spTogglePreview(this)">▶</button>`:''}
       <button class="sp-vote-btn${myVote?' voted':''}" data-key="${s.key}" onclick="event.stopPropagation();spVote('${s.key}')">
         <i class="ti ti-flame" aria-hidden="true"></i> ${s.votes||0}
       </button>
-      ${isCelebrant?`<button class="sp-del-btn" title="מחק שיר" onclick="event.stopPropagation();spDelSong('${s.key}')">🗑️</button>`:''}
+      ${isCelebrant?`<button class="sp-del-btn" title="${spT('delTitle')}" onclick="event.stopPropagation();spDelSong('${s.key}')">🗑️</button>`:''}
     </div>`;
   }).join('');
 }
 
 function spVote(key){
   if(!db||!urlRoom)return;
-  if(songsLockedToast(allEvents[urlRoom]||{}))return;
+  if(_spLockedToast())return;
   const q=allQueues[urlRoom]||{};
   const s=q[key];if(!s)return;
   const myVote=s.voters&&s.voters[guestId];
-  if(myVote){toast('כבר הצבעת לשיר הזה 😊','info');return;}
-  if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){showLimitModal('votes');return;}
+  if(myVote){toast(spT('alreadyVoted'),'info');return;}
+  if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){_spLimit('votes');return;}
   runTransaction(fbRef(db,'rooms/'+urlRoom+'/queue/'+key),cur=>{
     if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
   });
@@ -5215,46 +5271,46 @@ async function _spDoSearch(q){
     catch{const r2=await fetch('https://itunes.apple.com/search?term='+encodeURIComponent(q)+'&media=music&limit=8&country=IL');d=await r2.json();}
     _spResults=(d.results||[]).map(t=>({name:t.trackName||'',artist:t.artistName||'',art:t.artworkUrl100||'',preview:t.previewUrl||''}));
     _spRenderResults(_spResults);
-  }catch(e){const el=document.getElementById('spSearchRes');if(el)el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:12px;padding:8px 0;text-align:center">שגיאה בחיפוש</div>';}
+  }catch(e){const el=document.getElementById('spSearchRes');if(el)el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:12px;padding:8px 0;text-align:center">'+spT('searchErr')+'</div>';}
 }
 
 function _spRenderResults(results){
   const el=document.getElementById('spSearchRes');
   if(!el)return;
-  if(!results.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:12px;padding:8px 0;text-align:center">לא נמצאו תוצאות</div>';return;}
+  if(!results.length){el.innerHTML='<div style="color:rgba(255,255,255,.3);font-size:12px;padding:8px 0;text-align:center">'+spT('noRes')+'</div>';return;}
   el.innerHTML=results.map((r,i)=>`
     <div class="sp-res-row" data-i="${i}">
       ${r.art?`<img class="sp-res-thumb" src="${r.art}" alt="">`:'<div class="sp-res-thumb" style="display:flex;align-items:center;justify-content:center"><i class="ti ti-music" style="color:#b450ff;font-size:15px" aria-hidden="true"></i></div>'}
       <div class="sp-res-info"><p class="sp-res-name">${esc(r.name)}</p><p class="sp-res-artist">${esc(r.artist)}</p></div>
       ${r.preview?`<button class="sp-preview-btn" data-preview="${r.preview}" data-name="${escA(r.name)}" data-artist="${escA(r.artist)}" data-art="${escA(r.art)}" onclick="event.stopPropagation();spTogglePreview(this)">▶</button>`:''}
-      <button class="sp-res-add" onclick="event.stopPropagation();spAddSong(${i})">+ הוסף</button>
+      <button class="sp-res-add" onclick="event.stopPropagation();spAddSong(${i})">${spT('add')}</button>
     </div>`).join('');
 }
 
 async function spAddSong(i){
   const r=_spResults[i];if(!r)return;
-  if(songsLockedToast(allEvents[urlRoom]||{}))return;
+  if(_spLockedToast())return;
   if(!guestName){
     const nb=document.getElementById('spNameBar');
-    if(nb){nb.classList.remove('hidden');document.getElementById('spNameInp').focus();toast('קודם הכניסו שם 😊','info');}
+    if(nb){nb.classList.remove('hidden');document.getElementById('spNameInp').focus();toast(spT('nameFirst'),'info');}
     return;
   }
   const queue=allQueues[urlRoom]||{};
   const ev=allEvents[urlRoom]||{};
   const maxQ=ev.maxSongs||30;
-  if(Object.keys(queue).length>=maxQ){toast('הפלייליסט מלא! מקסימום '+maxQ+' שירים 🎵','error');return;}
+  if(Object.keys(queue).length>=maxQ){toast(spT('full',{n:maxQ}),'error');return;}
   const existing=Object.entries(queue).find(([k,s])=>s.name===r.name&&s.artist===r.artist);
   if(existing){
     const [existKey,existSong]=existing;
-    if(existSong.voters&&existSong.voters[guestId]){toast('השיר כבר בתור והצבעת עליו 😊','info');return;}
-    if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){showLimitModal('votes');return;}
+    if(existSong.voters&&existSong.voters[guestId]){toast(spT('inQueueVoted'),'info');return;}
+    if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){_spLimit('votes');return;}
     await runTransaction(fbRef(db,'rooms/'+urlRoom+'/queue/'+existKey),cur=>{
       if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
     });
-    spShowAdded(r.name,'השיר כבר בתור — הצבעת לו 🔥');
+    spShowAdded(r.name,spT('alreadyVotedAdded'));
   } else {
     // אורח רגיל: עד 3 שירים. חוגג/ת עם קוד: ללא הגבלה (רק עד מקסימום הפלייליסט שנבדק למעלה)
-    if(!isCelebrant&&countMyRequests(urlRoom)>=SP_GUEST_MAX_SONGS){showLimitModal('songs');return;}
+    if(!isCelebrant&&countMyRequests(urlRoom)>=SP_GUEST_MAX_SONGS){_spLimit('songs');return;}
     const ref=push(fbRef(db,'rooms/'+urlRoom+'/queue'));
     await set(ref,{name:r.name,artist:r.artist,art:r.art,preview:r.preview||'',votes:1,requestedBy:(isCelebrant?'🎂 ':'')+guestName,requesterId:guestId,voters:{[guestId]:true},timestamp:Date.now()});
     spShowAdded(r.name);
