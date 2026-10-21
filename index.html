@@ -4863,7 +4863,7 @@ function partyInit(ev){
   const cb=document.getElementById('spCelebBtn');
   if(cb)cb.style.display=ev.celebrantPass?'inline-block':'none';
   const savedCode=localStorage.getItem('sp_celeb_'+urlRoom);
-  if(savedCode&&ev.celebrantPass&&savedCode===String(ev.celebrantPass))spSetCelebrant(true);
+  if(guestName&&savedCode&&ev.celebrantPass&&savedCode===String(ev.celebrantPass))spSetCelebrant(true);
   const ci=document.getElementById('spCelebInp');
   if(ci)ci.onkeydown=e=>{if(e.key==='Enter')spCheckCelebCode();};
   _spUpdateStatus();
@@ -4893,7 +4893,15 @@ function spConfirmName(){
 }
 
 const SP_GUEST_MAX_SONGS=3,SP_GUEST_MAX_VOTES=10;
+function _spRequireName(){
+  if(guestName)return true;
+  const nb=document.getElementById('spNameBar');
+  if(nb){nb.classList.remove('hidden');const i=document.getElementById('spNameInp');if(i){i.focus();i.style.borderColor='rgba(232,23,26,.6)';}}
+  toast('קודם הכניסו שם, ואז קוד חוגג/ת 😊','info',3000);
+  return false;
+}
 function spToggleCelebBox(){
+  if(!_spRequireName())return;
   const b=document.getElementById('spCelebBox');if(!b)return;
   b.classList.toggle('open');
   if(b.classList.contains('open')){const i=document.getElementById('spCelebInp');if(i)i.focus();}
@@ -4902,6 +4910,7 @@ function spCheckCelebCode(){
   const inp=document.getElementById('spCelebInp');
   const code=(inp?inp.value.trim():'');
   if(!code)return;
+  if(!_spRequireName())return;
   const ev=allEvents[urlRoom]||{};
   if(!ev.celebrantPass||String(ev.celebrantPass)!==code){toast('קוד שגוי ❌','error');if(inp)inp.style.borderColor='rgba(232,23,26,.7)';return;}
   localStorage.setItem('sp_celeb_'+urlRoom,code);
