@@ -3617,7 +3617,7 @@ function clearEvSearch(){
 // ── שאלות פתוחות מחוגגים (הודעות ללא תשובת DJ) ──
 // ── הגדרות אישיות לכל DJ (config/djSettings/{djId}) ──
 let _djSettings={};
-const DJ_SETTINGS_DEFAULT={msgs:true,lockOn:true,lockHours:24};
+const DJ_SETTINGS_DEFAULT={msgs:true,lockOn:false,lockHours:24};
 function getDjSettings(djId){return {...DJ_SETTINGS_DEFAULT,...((_djSettings||{})[djId||'owner']||{})};}
 function djSettingsForEvent(ev){return getDjSettings((ev&&ev.djId)||'owner');}
 function djMsgsEnabled(ev){return djSettingsForEvent(ev).msgs!==false;}
