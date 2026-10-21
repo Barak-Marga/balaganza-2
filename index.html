@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>בלאגנזה 🎵</title>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://balaganza-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script>
 // לפני טעינת האירוע: לא מציגים את טפט בלאגנזה בדפי חתונה/מסיבה (סוג האירוע נזכר מביקור קודם)
 (function(){try{var r=new URLSearchParams(location.search).get('room');if(!r)return;
@@ -366,6 +369,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
 </style>
 </head>
 <body>
+<div id="bootLoader" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:9998;pointer-events:none"><div style="width:34px;height:34px;border:3px solid rgba(128,128,128,.25);border-top-color:rgba(128,128,128,.8);border-radius:50%;animation:spin .8s linear infinite"></div></div>
 
 <!-- ══ GUEST: NAME ENTRY (with event details) ══ -->
 <div id="sName" class="scr-center">
@@ -1357,6 +1361,8 @@ document.addEventListener('fb-ready',()=>{
   db=fb.db;fbRef=fb.ref;push=fb.push;onValue=fb.onValue;
   runTransaction=fb.runTransaction;get=fb.get;set=fb.set;
   // Load config (passwords/DJ names) from Firebase first
+  // טעינת האירוע מתחילה מיד, במקביל להגדרות (במקום אחריהן)
+  if(urlRoom)window._evPrefetch=get(fbRef(db,'events/'+urlRoom));
   loadConfig().then(()=>{
     get(fbRef(db,'about')).then(snap=>{if(snap.val())applyAbout(snap.val());});
     loadWaMsgTemplate();
@@ -1406,7 +1412,7 @@ document.addEventListener('fb-ready',()=>{
 function initScreen(){
   if(urlRoom){
     // בדיקה מקדימה: אם האירוע מסוג חתונה — דילוג על מסך השם
-    get(fbRef(db,'events/'+urlRoom)).then(snap=>{
+    (window._evPrefetch||get(fbRef(db,'events/'+urlRoom))).then(snap=>{
       const _ev0=snap.val();
       const ev=_ev0&&!_ev0.archived?_ev0:null; // אירוע בארכיון = כמו אירוע שנמחק
       if(ev&&ev.type==='חתונה'&&ev.weddingConfig){
@@ -1455,6 +1461,7 @@ function show(id,from){
   if(el.classList.contains('scr-center'))el.classList.add('on');
   else{el.classList.add('on');el.style.display='block';}
   window.scrollTo(0,0);
+  const _bl=document.getElementById('bootLoader');if(_bl)_bl.remove();
   document.documentElement.classList.remove('bg-loading');
   document.documentElement.classList.toggle('bg-wedding',id==='sWedding');
   document.documentElement.classList.toggle('bg-party',id==='sParty');
