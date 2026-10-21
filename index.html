@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>בלאגנזה 🎵</title>
+<script>
+// לפני טעינת האירוע: לא מציגים את טפט בלאגנזה בדפי חתונה/מסיבה (סוג האירוע נזכר מביקור קודם)
+(function(){try{var r=new URLSearchParams(location.search).get('room');if(!r)return;
+var k=localStorage.getItem('b_evkind_'+r);var c=document.documentElement.classList;
+if(k==='wedding')c.add('bg-wedding');else if(k==='party')c.add('bg-party');else if(k!=='default')c.add('bg-loading');}catch(e){}})();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;700;900&family=Fredoka+One&family=Allura&family=Space+Grotesk:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
@@ -307,6 +313,7 @@ body.party-mode #sGuest{background:#0a0a18;color:#fff;position:relative;overflow
 #laserCanvas{display:none}
 /* דפי חתונה/מסיבה: בלי טפט בלאגנזה, רקע הדף בצבע העיצוב (גם בגלילה קופצנית באייפון) */
 html.bg-wedding,html.bg-wedding body{background:#ffffff}
+html.bg-loading body::before,html.bg-loading body::after{display:none}
 html.bg-party,html.bg-party body{background:#050508}
 html.bg-wedding body::before,html.bg-wedding body::after,html.bg-party body::before,html.bg-party body::after{display:none}
 body.party-mode #laserCanvas{display:block;position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:.55}
@@ -1396,6 +1403,7 @@ function initScreen(){
         partyInit(ev);
       } else {
         // אירוע רגיל — זרימת הג'וקבוקס הקיימת
+        try{if(ev)localStorage.setItem('b_evkind_'+urlRoom,'default');}catch(e){}
         show('sName');
         loadEntryEventDetails(urlRoom);
       }
@@ -1425,6 +1433,7 @@ function show(id,from){
   if(el.classList.contains('scr-center'))el.classList.add('on');
   else{el.classList.add('on');el.style.display='block';}
   window.scrollTo(0,0);
+  document.documentElement.classList.remove('bg-loading');
   document.documentElement.classList.toggle('bg-wedding',id==='sWedding');
   document.documentElement.classList.toggle('bg-party',id==='sParty');
   // כאשר עוזבים את מסך האורח — כבה party mode
@@ -1733,6 +1742,7 @@ function wfSwitchTab(listName){
 async function setEventDocTitle(ev){
   if(!ev||!ev.name)return;
   const kind=ev.type==='חתונה'?'wedding':ev.type==='מסיבה פרטית'?'party':'default';
+  try{if(urlRoom)localStorage.setItem('b_evkind_'+urlRoom,kind);}catch(e){}
   let m=null;try{m=(await get(fbRef(db,'config/shareMeta/'+kind))).val();}catch(e){}
   const tpl=((m&&m.title)||SHARE_META_DEFAULTS[kind].title);
   const cn=ev.weddingConfig&&ev.weddingConfig.coupleNames;
