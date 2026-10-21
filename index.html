@@ -4808,11 +4808,20 @@ async function saveWaMsgTemplate(){
 }
 
 function sendWhatsAppLink(url,celebrantPass){
-  let msg=_waMsgTemplate;
+  let msg=_waMsgTemplate||'';
   if(celebrantPass)msg+='\n\nקוד חוגג/ת: '+celebrantPass;
   msg+='\n\n'+url;
   const encoded=encodeURIComponent(msg);
-  window.open('https://wa.me/?text='+encoded,'_blank');
+  // גיבוי: ההודעה המלאה מועתקת ללוח — אם וואטסאפ משמיט טקסט, אפשר פשוט להדביק
+  try{if(navigator.clipboard)navigator.clipboard.writeText(msg).catch(()=>{});}catch(e){}
+  const isIOS=/iPhone|iPad|iPod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(isIOS){
+    // באייפון wa.me דרך window.open משמיט לפעמים את הטקסט — פותחים ישירות את האפליקציה
+    toast('📋 ההודעה המלאה הועתקה — אם חסר טקסט, הדביקו אותה',"info",4000);
+    location.href='whatsapp://send?text='+encoded;
+  } else {
+    window.open('https://api.whatsapp.com/send?text='+encoded,'_blank');
+  }
 }
 function toast(msg,type='info',duration=2500){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type+' show';setTimeout(()=>t.classList.remove('show'),duration);}
 // ── TOP SONGS ──
