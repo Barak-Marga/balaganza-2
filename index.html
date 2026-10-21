@@ -283,6 +283,21 @@ body::after{content:'';position:fixed;inset:0;background-image:url('data:image/p
 #sParty .sp-add-btn{width:100%;background:rgba(180,80,255,.12);border:1px solid rgba(180,80,255,.3);border-radius:12px;color:#cc80ff;font-family:'Space Grotesk',Arial,sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;padding:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s}
 #sParty .sp-add-btn:hover{background:rgba(180,80,255,.22);border-color:rgba(180,80,255,.55)}
 /* search open/close state */
+#sParty .sp-song-by{font-size:10px;color:rgba(204,128,255,.6);margin:1px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#sParty .sp-status{margin:0 28px 14px;position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#sParty .sp-status-txt{font-size:11px;color:rgba(255,255,255,.55)}
+#sParty .sp-celeb-link{background:none;border:1px solid rgba(212,175,55,.4);border-radius:16px;color:#D4AF37;font-family:'Space Grotesk',Arial,sans-serif;font-size:11px;font-weight:600;padding:5px 12px;cursor:pointer}
+#sParty .sp-celeb-box{margin:0 28px 14px;position:relative;z-index:2;display:none;gap:6px}
+#sParty .sp-celeb-box.open{display:flex}
+#sParty .sp-celeb-box input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(212,175,55,.45);border-radius:10px;color:#fff;font-size:14px;padding:10px 14px;outline:none;letter-spacing:3px;text-align:center;font-family:'Space Grotesk',Arial,sans-serif}
+#sParty .sp-celeb-box button{background:rgba(212,175,55,.2);border:1px solid rgba(212,175,55,.5);border-radius:10px;color:#FFD700;font-size:13px;font-weight:600;padding:0 16px;cursor:pointer}
+#spAddedPop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:600;pointer-events:none;opacity:0;transition:opacity .2s}
+#spAddedPop.show{opacity:1}
+#spAddedPop .sp-pop-card{background:rgba(20,10,40,.95);border:2px solid rgba(180,80,255,.7);border-radius:20px;padding:26px 30px;text-align:center;max-width:300px;box-shadow:0 0 40px rgba(180,80,255,.5);transform:scale(.85);transition:transform .25s cubic-bezier(.34,1.56,.64,1);font-family:'Space Grotesk',Arial,sans-serif;direction:rtl}
+#spAddedPop.show .sp-pop-card{transform:scale(1)}
+#spAddedPop .sp-pop-ico{font-size:44px;margin-bottom:8px}
+#spAddedPop .sp-pop-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px}
+#spAddedPop .sp-pop-song{font-size:13px;color:#cc80ff;word-break:break-word}
 #sParty .sp-search-panel{display:none}
 #sParty .sp-search-panel.open{display:block}
 
@@ -464,6 +479,15 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
       <input class="sp-name-input" id="spNameInp" type="text" placeholder="מה השם שלך?" autocomplete="off" maxlength="20">
       <button class="sp-name-btn" onclick="spConfirmName()">כניסה →</button>
     </div>
+    <!-- status + celebrant code -->
+    <div class="sp-status">
+      <span class="sp-status-txt" id="spStatusTxt"></span>
+      <button class="sp-celeb-link" id="spCelebBtn" style="display:none" onclick="spToggleCelebBox()">🎂 קוד חוגג/ת</button>
+    </div>
+    <div class="sp-celeb-box" id="spCelebBox">
+      <input id="spCelebInp" type="text" inputmode="numeric" placeholder="הזינו קוד חוגג/ת" autocomplete="off" maxlength="12">
+      <button onclick="spCheckCelebCode()">אישור</button>
+    </div>
     <!-- crowd bar -->
     <div class="sp-crowd" id="spCrowdBar"></div>
     <!-- event details -->
@@ -489,6 +513,7 @@ body.party-mode #lGuest{filter:drop-shadow(0 0 8px rgba(180,0,255,.5))}
     </div>
   </div>
 </div>
+<div id="spAddedPop"><div class="sp-pop-card"><div class="sp-pop-ico">✅</div><div class="sp-pop-title" id="spPopTitle">השיר נוסף לתור!</div><div class="sp-pop-song" id="spPopSong"></div></div></div>
 
 <!-- ══ DJ PANEL ══ -->
 <div id="sDJ" class="scr dj-mode">
@@ -4831,6 +4856,15 @@ function partyInit(ev){
     const inp=document.getElementById('spNameInp');
     if(inp){inp.focus();inp.onkeydown=e=>{if(e.key==='Enter')spConfirmName();};}
   }
+  // קוד חוגג/ת — כפתור רק אם הוגדר קוד; כניסה שמורה מאומתת מול הקוד הנוכחי
+  isCelebrant=false;
+  const cb=document.getElementById('spCelebBtn');
+  if(cb)cb.style.display=ev.celebrantPass?'inline-block':'none';
+  const savedCode=localStorage.getItem('sp_celeb_'+urlRoom);
+  if(savedCode&&ev.celebrantPass&&savedCode===String(ev.celebrantPass))spSetCelebrant(true);
+  const ci=document.getElementById('spCelebInp');
+  if(ci)ci.onkeydown=e=>{if(e.key==='Enter')spCheckCelebCode();};
+  _spUpdateStatus();
   // אנימציות
   _spStartLasers();
   _spStartCrowd();
@@ -4856,6 +4890,47 @@ function spConfirmName(){
   if(nb)nb.classList.add('hidden');
 }
 
+const SP_GUEST_MAX_SONGS=3,SP_GUEST_MAX_VOTES=10;
+function spToggleCelebBox(){
+  const b=document.getElementById('spCelebBox');if(!b)return;
+  b.classList.toggle('open');
+  if(b.classList.contains('open')){const i=document.getElementById('spCelebInp');if(i)i.focus();}
+}
+function spCheckCelebCode(){
+  const inp=document.getElementById('spCelebInp');
+  const code=(inp?inp.value.trim():'');
+  if(!code)return;
+  const ev=allEvents[urlRoom]||{};
+  if(!ev.celebrantPass||String(ev.celebrantPass)!==code){toast('קוד שגוי ❌','error');if(inp)inp.style.borderColor='rgba(232,23,26,.7)';return;}
+  localStorage.setItem('sp_celeb_'+urlRoom,code);
+  spSetCelebrant(true);
+  toast('🎂 גישת חוגג/ת פעילה — בחירה ללא הגבלה!','success',3000);
+}
+function spSetCelebrant(on){
+  isCelebrant=!!on;
+  celebrantRoom=on?urlRoom:'';
+  const b=document.getElementById('spCelebBox');if(b)b.classList.remove('open');
+  const cb=document.getElementById('spCelebBtn');if(cb)cb.style.display=on?'none':cb.style.display;
+  _spUpdateStatus();
+}
+function _spUpdateStatus(){
+  const el=document.getElementById('spStatusTxt');if(!el)return;
+  if(isCelebrant){
+    const ev=allEvents[urlRoom]||{};
+    el.innerHTML='🎂 <b style="color:#FFD700">חוגג/ת</b> · ללא הגבלת שירים (עד '+(ev.maxSongs||30)+' בפלייליסט)';
+  } else {
+    el.textContent='🎵 '+countMyRequests(urlRoom)+'/'+SP_GUEST_MAX_SONGS+' שירים · 🔥 '+countMyVotes(urlRoom)+'/'+SP_GUEST_MAX_VOTES+' הצבעות';
+  }
+}
+function spShowAdded(name,title){
+  const pop=document.getElementById('spAddedPop');if(!pop)return;
+  document.getElementById('spPopTitle').textContent=title||'השיר נוסף לתור!';
+  document.getElementById('spPopSong').textContent=name||'';
+  pop.classList.add('show');
+  clearTimeout(pop._t);
+  pop._t=setTimeout(()=>pop.classList.remove('show'),1800);
+}
+
 function spOpenSearch(){
   const si=document.getElementById('spSearchInp');
   if(si){si.focus();si.scrollIntoView({behavior:'smooth',block:'center'});}
@@ -4868,6 +4943,7 @@ function _spSubscribeQueue(){
     const raw=snap.val()||{};
     allQueues[urlRoom]=raw;
     _spRenderQueue(raw);
+    _spUpdateStatus();
   });
 }
 
@@ -4883,7 +4959,7 @@ function _spRenderQueue(raw){
     const rank=i===0?`<span class="sp-song-dot"></span>`:`<span class="sp-song-rank">${i+1}</span>`;
     return `<div class="sp-song-row${i===0?' sp-top1':''}">
       ${rank}${thumb}
-      <div class="sp-song-info"><p class="sp-song-name">${esc(s.name)}</p><p class="sp-song-artist">${esc(s.artist||'')}</p></div>
+      <div class="sp-song-info"><p class="sp-song-name">${esc(s.name)}</p><p class="sp-song-artist">${esc(s.artist||'')}</p>${s.requestedBy?`<p class="sp-song-by">בקשה של ${esc(s.requestedBy)}</p>`:''}</div>
       ${s.preview?`<button class="sp-preview-btn" data-preview="${s.preview}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" data-art="${escA(s.art||'')}" onclick="event.stopPropagation();spTogglePreview(this)">▶</button>`:''}
       <button class="sp-vote-btn${myVote?' voted':''}" data-key="${s.key}" onclick="event.stopPropagation();spVote('${s.key}')">
         <i class="ti ti-flame" aria-hidden="true"></i> ${s.votes||0}
@@ -4898,7 +4974,7 @@ function spVote(key){
   const s=q[key];if(!s)return;
   const myVote=s.voters&&s.voters[guestId];
   if(myVote){toast('כבר הצבעת לשיר הזה 😊','info');return;}
-  if(countMyVotes(urlRoom)>=10){showLimitModal('votes');return;}
+  if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){showLimitModal('votes');return;}
   runTransaction(fbRef(db,'rooms/'+urlRoom+'/queue/'+key),cur=>{
     if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
   });
@@ -4942,16 +5018,19 @@ async function spAddSong(i){
   if(existing){
     const [existKey,existSong]=existing;
     if(existSong.voters&&existSong.voters[guestId]){toast('השיר כבר בתור והצבעת עליו 😊','info');return;}
+    if(!isCelebrant&&countMyVotes(urlRoom)>=SP_GUEST_MAX_VOTES){showLimitModal('votes');return;}
     await runTransaction(fbRef(db,'rooms/'+urlRoom+'/queue/'+existKey),cur=>{
       if(cur){cur.votes=(cur.votes||0)+1;if(!cur.voters)cur.voters={};cur.voters[guestId]=true;}return cur;
     });
-    toast('הצבעת לשיר שכבר בתור ⬆️','info');
+    spShowAdded(r.name,'השיר כבר בתור — הצבעת לו 🔥');
   } else {
-    if(!isCelebrant&&countMyRequests(urlRoom)>=(ev.maxSongs?Math.floor(ev.maxSongs/3):3)){showLimitModal('songs');return;}
+    // אורח רגיל: עד 3 שירים. חוגג/ת עם קוד: ללא הגבלה (רק עד מקסימום הפלייליסט שנבדק למעלה)
+    if(!isCelebrant&&countMyRequests(urlRoom)>=SP_GUEST_MAX_SONGS){showLimitModal('songs');return;}
     const ref=push(fbRef(db,'rooms/'+urlRoom+'/queue'));
-    await set(ref,{name:r.name,artist:r.artist,art:r.art,preview:r.preview||'',votes:1,requestedBy:guestName,requesterId:guestId,voters:{[guestId]:true}});
-    toast('השיר נוסף לתור 🎵','success');
+    await set(ref,{name:r.name,artist:r.artist,art:r.art,preview:r.preview||'',votes:1,requestedBy:(isCelebrant?'🎂 ':'')+guestName,requesterId:guestId,voters:{[guestId]:true},timestamp:Date.now()});
+    spShowAdded(r.name);
   }
+  _spUpdateStatus();
   // נקה חיפוש
   const si=document.getElementById('spSearchInp');if(si)si.value='';
   document.getElementById('spSearchRes').innerHTML='';
