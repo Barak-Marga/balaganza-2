@@ -4895,6 +4895,9 @@ function spConfirmName(){
 const SP_GUEST_MAX_SONGS=3,SP_GUEST_MAX_VOTES=10;
 function _spRequireName(){
   if(guestName)return true;
+  // אם הוקלד שם ולא נלחץ "כניסה" — מאשרים אותו אוטומטית
+  const ni=document.getElementById('spNameInp');
+  if(ni&&ni.value.trim()){spConfirmName();if(guestName)return true;}
   const nb=document.getElementById('spNameBar');
   if(nb){nb.classList.remove('hidden');const i=document.getElementById('spNameInp');if(i){i.focus();i.style.borderColor='rgba(232,23,26,.6)';}}
   toast('קודם הכניסו שם, ואז קוד חוגג/ת 😊','info',3000);
