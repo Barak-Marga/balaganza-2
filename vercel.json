@@ -3,14 +3,6 @@
     "api/page.js": { "includeFiles": "index.html" }
   },
   "routes": [
-    {
-      "src": "/",
-      "has": [
-        { "type": "query", "key": "room" },
-        { "type": "header", "key": "user-agent", "value": ".*(WhatsApp|facebookexternalhit|Facebot|Twitterbot|TelegramBot|Slackbot|Discordbot|LinkedInBot|SkypeUriPreview|Applebot|Googlebot|bingbot|Pinterest|vkShare|redditbot|Viber).*" }
-      ],
-      "dest": "/api/page"
-    },
     { "handle": "filesystem" },
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/(.*)", "dest": "/index.html" }
