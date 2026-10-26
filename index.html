@@ -2611,10 +2611,10 @@ function editCelebrantPass(rid,currentPass){
   m.innerHTML=`<div style="background:#1e3060;border:2px solid rgba(212,175,55,.5);border-radius:18px;width:100%;max-width:360px;padding:22px 18px;direction:rtl;text-align:center">
     <div style="font-size:13px;color:#aaa;margin-bottom:4px">🎂 קוד חוגג/ת — ${esc(ev.name||'')}</div>
     <div id="celebCodeShow" style="font-family:monospace;font-size:32px;letter-spacing:4px;color:#D4AF37;font-weight:900;margin:6px 0 14px">${code?esc(code):'<span style="font-size:15px;color:#888;letter-spacing:0">אין קוד</span>'}</div>
-    <button onclick="copyCelebCode('${escA(code)}')" ${code?'':'disabled'} style="width:100%;margin-bottom:8px;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:Heebo,sans-serif;font-size:15px;font-weight:900;padding:10px;cursor:pointer;opacity:${code?1:.4}">📋 העתק קוד</button>
+    <button onclick="copyCelebCode('${escJ(code)}')" ${code?'':'disabled'} style="width:100%;margin-bottom:8px;background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.5);border-radius:12px;color:#D4AF37;font-family:Heebo,sans-serif;font-size:15px;font-weight:900;padding:10px;cursor:pointer;opacity:${code?1:.4}">📋 העתק קוד</button>
     <div style="display:flex;gap:6px;margin-bottom:8px">
       <input id="celebCodeInp" value="${escA(code)}" placeholder="קוד חדש" inputmode="numeric" style="flex:1;min-width:0;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:10px;color:white;padding:9px 10px;font-family:monospace;font-size:16px;text-align:center;outline:none">
-      <button onclick="saveCelebCode('${escA(rid)}')" style="flex-shrink:0;background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.45);border-radius:10px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:14px;font-weight:900;padding:9px 14px;cursor:pointer">✏️ שמור</button>
+      <button onclick="saveCelebCode('${escJ(rid)}')" style="flex-shrink:0;background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.45);border-radius:10px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:14px;font-weight:900;padding:9px 14px;cursor:pointer">✏️ שמור</button>
     </div>
     <div style="font-size:11px;color:#777;margin-bottom:10px">שמירה עם שדה ריק מבטלת את גישת החוגג/ת</div>
     <button onclick="document.getElementById('celebCodeModal').style.display='none'" style="width:100%;background:transparent;border:none;color:#888;font-family:Heebo,sans-serif;font-size:13px;cursor:pointer">סגור</button>
@@ -2725,7 +2725,7 @@ function renderGamesAdmin(){
   list.innerHTML=CELEBRANT_GAMES.map((g0,i)=>{
     const g=getGameFull(g0.id);
     const isFirst=i===0,isLast=i===CELEBRANT_GAMES.length-1;
-    const arrow=(dir,dis)=>`<button onclick="moveGameOrder('${escA(g.id)}',${dir})" ${dis?'disabled':''} style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);border-radius:6px;color:#c084fc;width:24px;height:20px;cursor:${dis?'not-allowed':'pointer'};font-size:11px;padding:0;opacity:${dis?'.35':'1'}">${dir<0?'▲':'▼'}</button>`;
+    const arrow=(dir,dis)=>`<button onclick="moveGameOrder('${escJ(g.id)}',${dir})" ${dis?'disabled':''} style="background:rgba(168,85,247,.15);border:1px solid rgba(168,85,247,.3);border-radius:6px;color:#c084fc;width:24px;height:20px;cursor:${dis?'not-allowed':'pointer'};font-size:11px;padding:0;opacity:${dis?'.35':'1'}">${dir<0?'▲':'▼'}</button>`;
     const tag=g.premium?'<span style="font-size:10px;background:rgba(212,175,55,.2);color:#D4AF37;border-radius:4px;padding:1px 6px;font-weight:700">👑 פרימיום</span>':'';
     const off=g.enabled===false?'<span style="font-size:10px;background:rgba(255,255,255,.08);color:#999;border-radius:4px;padding:1px 6px;font-weight:700">מושבת</span>':'';
     return `<div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.04);border:1.5px solid ${g.premium?'rgba(212,175,55,.3)':'rgba(255,255,255,.1)'};border-radius:12px;padding:8px 10px;opacity:${g.enabled===false?'.55':'1'}">
@@ -2735,7 +2735,7 @@ function renderGamesAdmin(){
         <div style="font-weight:700;font-size:14px;color:#fff;margin-bottom:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap">${esc(g.name)} ${tag} ${off} ${gameBadgeHtml(g,10)}</div>
         <div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(g.description||'אין הסבר')}</div>
       </div>
-      <button onclick="openGameEdit('${escA(g.id)}')" style="background:rgba(74,159,255,.15);border:1.5px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;padding:6px 10px;cursor:pointer;flex-shrink:0">✏️ ערוך</button>
+      <button onclick="openGameEdit('${escJ(g.id)}')" style="background:rgba(74,159,255,.15);border:1.5px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;padding:6px 10px;cursor:pointer;flex-shrink:0">✏️ ערוך</button>
     </div>`;
   }).join('')+(_gamesFromFirebase?'':'<div style="font-size:11px;color:var(--muted);text-align:center">מוצגת רשימת ברירת המחדל — היא תישמר ב-Firebase בעריכה הראשונה</div>');
 }
@@ -3146,8 +3146,8 @@ function openDjMessages(rid,evName){
         ${m.reply
           ?`<div style="font-size:12px;color:#4a9fff;background:rgba(74,159,255,.08);border-radius:8px;padding:6px 10px">🎧 DJ: ${esc(m.reply)}</div>`
           :`${m.readAt
-              ?`<div style="font-size:11px;color:#8bc34a;margin-bottom:4px">✓ נקראה (ללא תשובה) · <a href="#" onclick="event.preventDefault();markQuestionRead('${escA(rid)}','${k}',false)" style="color:#999">בטל סימון</a></div>`
-              :`<button onclick="markQuestionRead('${escA(rid)}','${k}',true)" style="margin-bottom:4px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:3px 10px;font-family:Heebo,sans-serif;font-size:11px;font-weight:700;cursor:pointer">✓ סמן כנקראה</button>`}
+              ?`<div style="font-size:11px;color:#8bc34a;margin-bottom:4px">✓ נקראה (ללא תשובה) · <a href="#" onclick="event.preventDefault();markQuestionRead('${escJ(rid)}','${k}',false)" style="color:#999">בטל סימון</a></div>`
+              :`<button onclick="markQuestionRead('${escJ(rid)}','${k}',true)" style="margin-bottom:4px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:3px 10px;font-family:Heebo,sans-serif;font-size:11px;font-weight:700;cursor:pointer">✓ סמן כנקראה</button>`}
             <div style="display:flex;gap:6px;margin-top:6px">
               <input id="djReplyInp_${k}" placeholder="כתוב תשובה..." style="flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
               <button onclick="sendDjReply('${k}','djReplyInp_${k}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
@@ -3565,7 +3565,7 @@ function renderSearch(results){
     <div class="ri" data-i="${i}">
       ${r.art?`<img src="${r.art}" alt="">`:'<div class="art">🎵</div>'}
       <div class="ri-info"><div class="ri-name">${esc(r.name)}</div><div class="ri-artist">${esc(r.artist)}</div></div>
-      ${r.preview?`<button class="preview-btn" data-preview="${r.preview}" onclick="event.stopPropagation();togglePreview(this,'${escA(r.name)}','${escA(r.artist)}','${escA(r.art)}')">▶</button>`:''}
+      ${r.preview?`<button class="preview-btn" data-preview="${r.preview}" onclick="event.stopPropagation();togglePreview(this,'${escJ(r.name)}','${escJ(r.artist)}','${escJ(r.art)}')">▶</button>`:''}
       <div class="ri-add">+</div>
     </div>`).join('');
   el.querySelectorAll('.ri').forEach(el=>{
@@ -3631,7 +3631,7 @@ function renderGuestQ(){
     return `<div class="qi ${mv?'voted':''} ${i===0?'top1':''}">
       ${s.art?`<img src="${s.art}" alt="" onerror="this.style.display='none'">`:'<div class="qi-art">🎵</div>'}
       <div class="qi-info"><div class="qi-name">${rank(i)} ${esc(s.name)}${s.must?' <span style="font-size:10px;background:rgba(212,175,55,.25);color:#D4AF37;border-radius:5px;padding:1px 5px;font-weight:700">⭐ חובה</span>':''}</div><div class="qi-artist">${esc(s.artist||'')}</div><div class="qi-by">בקשה של ${esc(s.requestedBy||'אנונימי')}</div></div>
-      <button class="preview-btn" data-preview="${s.preview||''}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" onclick="event.stopPropagation();playQueuePreview(this,'${escA(s.name)}','${escA(s.artist)}','${escA(s.art||'')}')">▶</button>
+      <button class="preview-btn" data-preview="${s.preview||''}" data-name="${escA(s.name)}" data-artist="${escA(s.artist||'')}" onclick="event.stopPropagation();playQueuePreview(this,'${escJ(s.name)}','${escJ(s.artist)}','${escJ(s.art||'')}')">▶</button>
       <button class="vote-btn ${mv?'voted':''}" data-key="${s.key}"><span class="vote-arr">▲</span><span class="vote-cnt" style="color:${mv?'#FFB800':voteColor(s.votes||0,maxVotes)}">${s.votes||0}</span></button>
       ${isCelebrant?`<button onclick="event.stopPropagation();toggleMustSong('${s.key}')" title="${s.must?'הסר סימון חובה':'סמן כשיר חובה'}" style="background:${s.must?'rgba(212,175,55,.25)':'rgba(255,255,255,.05)'};border:2px solid ${s.must?'rgba(212,175,55,.7)':'rgba(255,255,255,.15)'};border-radius:8px;color:${s.must?'#FFD700':'#888'};cursor:pointer;padding:5px 7px;font-size:14px;flex-shrink:0">${s.must?'★':'☆'}</button>`:''}
       ${isCelebrant?`<button onclick="event.stopPropagation();delGuestSong('${s.key}')" style="background:rgba(232,23,26,.15);border:2px solid rgba(232,23,26,.35);border-radius:8px;color:#ff6b6b;cursor:pointer;padding:5px 8px;font-size:13px;flex-shrink:0" title="מחק שיר">🗑️</button>`:''}
@@ -3859,10 +3859,10 @@ function renderAllOpenQuestions(){
           <div style="font-size:12px;color:#a78bfa;font-weight:700;margin-bottom:3px">🎂 ${esc(m.name||'חוגג/ת')}${when?` <span style="color:#666;font-weight:400">${when}</span>`:''}</div>
           <div style="font-size:13px;margin-bottom:6px;white-space:pre-line">${esc(m.text)}</div>
           <div style="display:flex;gap:6px">
-            <input id="${inpId}" data-qkey="${escA(qk)}" value="${escA(typed[qk]||'')}" placeholder="כתוב תשובה..." onkeydown="if(event.key==='Enter')sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
-            <button onclick="sendDjReplyTo('${escA(rid)}','${escA(k)}','${inpId}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
+            <input id="${inpId}" data-qkey="${escA(qk)}" value="${escA(typed[qk]||'')}" placeholder="כתוב תשובה..." onkeydown="if(event.key==='Enter')sendDjReplyTo('${escJ(rid)}','${escJ(k)}','${inpId}')" style="flex:1;min-width:0;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:white;padding:6px 10px;font-family:Heebo,sans-serif;font-size:12px;direction:rtl;outline:none">
+            <button onclick="sendDjReplyTo('${escJ(rid)}','${escJ(k)}','${inpId}')" style="background:rgba(74,159,255,.2);border:2px solid rgba(74,159,255,.4);border-radius:8px;color:#4a9fff;padding:6px 12px;font-weight:900;cursor:pointer">שלח</button>
           </div>
-          <button onclick="markQuestionRead('${escA(rid)}','${escA(k)}',true)" style="margin-top:6px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:4px 10px;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;cursor:pointer">✓ סמן כנקראה (בלי לענות)</button>
+          <button onclick="markQuestionRead('${escJ(rid)}','${escJ(k)}',true)" style="margin-top:6px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#bbb;padding:4px 10px;font-family:Heebo,sans-serif;font-size:12px;font-weight:700;cursor:pointer">✓ סמן כנקראה (בלי לענות)</button>
         </div>`;
       }).join('')}
     </div>`;
@@ -3977,7 +3977,7 @@ function renderDJEvents(){
   list.innerHTML=evArr.map(([rid,ev])=>{
     const cnt=allQueues[rid]?Object.keys(allQueues[rid]).length:0;
     const openQ=countOpenQuestions(ev);
-    const openQPill=openQ?`<div onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;background:rgba(255,59,48,.15);border:1.5px solid rgba(255,59,48,.55);color:#ff6b6b;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:900;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:#ff3b30;display:inline-block"></span>${openQ===1?'שאלה פתוחה':openQ+' שאלות פתוחות'} — לחץ למענה</div>`:'';
+    const openQPill=openQ?`<div onclick="openDjMessages('${escJ(rid)}','${escJ(ev.name)}')" style="cursor:pointer;display:inline-flex;align-items:center;gap:5px;background:rgba(255,59,48,.15);border:1.5px solid rgba(255,59,48,.55);color:#ff6b6b;border-radius:8px;padding:3px 10px;font-size:12px;font-weight:900;margin-bottom:6px"><span style="width:8px;height:8px;border-radius:50%;background:#ff3b30;display:inline-block"></span>${openQ===1?'שאלה פתוחה':openQ+' שאלות פתוחות'} — לחץ למענה</div>`:'';
     const gUrl=location.origin+location.pathname+'?room='+encodeURIComponent(rid);
     const djUrl=location.origin+location.pathname+'?dj=true';
     const dateStr=ev.date?new Date(ev.date+'T00:00:00').toLocaleDateString('he-IL'):'';
@@ -3985,7 +3985,7 @@ function renderDJEvents(){
     const evTypeColor=ev.type==='חתונה'?'rgba(255,215,0,0.25)':ev.type==='אירוע חברה'?'rgba(138,43,226,0.2)':'';
     const evTypeBorder=ev.type==='חתונה'?'3px solid gold':ev.type==='אירוע חברה'?'3px solid #8B2BE2':'';
     return `<div class="ev-item" style="${evTypeColor?'background:'+evTypeColor+';':''} ${evTypeBorder?'border-right:'+evTypeBorder+';':''}${openQ?'box-shadow:0 0 0 2px rgba(255,59,48,.55);':''}">
-      <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escA(rid)}','${escA(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
+      <div class="ev-name" style="display:flex;align-items:center;gap:8px">${typeEmoji} ${esc(ev.name)}<button onclick="editEvNameFromList('${escJ(rid)}','${escJ(ev.name)}')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#4a9fff;padding:0;flex-shrink:0;line-height:1" title="ערוך שם">✏️</button></div>
       ${isPastEvent(ev)?'<span style="display:inline-block;font-size:11px;font-weight:700;color:#c9a227;background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);border-radius:6px;padding:1px 7px;margin-bottom:6px">🕘 אירוע עבר</span>':''}
       ${openQPill}
       ${ev.type!=='חתונה'?renderEvCelebrantPrefs(ev):''}
@@ -3993,16 +3993,16 @@ function renderDJEvents(){
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':' '}${dateStr?'• '+dateStr+' ':''}${ev.time?'• '+ev.time+' ':''}${ev.location?'• '+esc(ev.location)+' ':''}${ev.djName?'• DJ: '+esc(ev.djName):''}</div>
       ${ev.djNotes?`<div style="font-size:12px;color:rgba(74,159,255,.8);background:rgba(74,159,255,.07);border:1px solid rgba(74,159,255,.2);border-radius:8px;padding:6px 10px;margin-bottom:8px;white-space:pre-line">📝 ${esc(ev.djNotes.slice(0,120))}${ev.djNotes.length>120?'…':''}</div>`:''}
       <div class="ev-btns">
-        <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escA(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
-        <button class="ev-btn ev-btn-copy" onclick="sendWhatsAppLink('${escA(gUrl)}','${escA(ev.celebrantPass||'')}')">💬 שלח לינק בווטסאפ</button>
-        <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}',true)">📋 תור (${cnt})</button>
-        <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escA(rid)}','${escA(ev.name)}','${escA(ev.type||'')}','${escA(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
-        ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escA(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
-        <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escA(rid)}')">✏️ עריכת פרטי אירוע</button>
-        ${djMsgsEnabled(ev)?`<button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escA(rid)}','${escA(ev.name)}')">📬 הודעות${openQ?` <span style="background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900">${openQ}</span>`:''}</button>`:''}
-        <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escA(rid)}','${escA(ev.djNotes||'')}')">📝 הערה</button>
-        <button class="ev-btn ev-btn-del" onclick="deleteEv('${escA(rid)}')">🗑️ מחק</button>
-        <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escA(rid)}','${escA(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
+        <button class="ev-btn" style="background:rgba(26,47,191,.2);color:#818cf8;border-color:rgba(26,47,191,.35)" onclick="window.open('${escJ(gUrl)}','_blank')">↗ פתח את הפלייליסט</button>
+        <button class="ev-btn ev-btn-copy" onclick="sendWhatsAppLink('${escJ(gUrl)}','${escJ(ev.celebrantPass||'')}')">💬 שלח לינק בווטסאפ</button>
+        <button class="ev-btn ev-btn-view" onclick="openEQ('${escJ(rid)}','${escJ(ev.name)}','${escJ(ev.type||'')}','${escJ(dateStr)}',true)">📋 תור (${cnt})</button>
+        <button class="ev-btn" style="background:rgba(29,185,84,.1);color:#1DB954;border-color:rgba(29,185,84,.3)" onclick="openEQ('${escJ(rid)}','${escJ(ev.name)}','${escJ(ev.type||'')}','${escJ(dateStr)}');setTimeout(()=>exportSpotify(),300)">🎵 ייצא לספוטיפיי</button>
+        ${ev.spotifyUrl?`<button class="ev-btn" style="background:rgba(29,185,84,.15);color:#1DB954;border-color:rgba(29,185,84,.4)" onclick="window.open('${escJ(ev.spotifyUrl)}','_blank')">🔗 לינק לפלייליסט בספוטיפיי</button>`:''}
+        <button class="ev-btn" style="background:rgba(255,165,0,.12);color:#FFA500;border-color:rgba(255,165,0,.4);font-weight:900" onclick="editEvDetails('${escJ(rid)}')">✏️ עריכת פרטי אירוע</button>
+        ${djMsgsEnabled(ev)?`<button class="ev-btn" style="background:rgba(168,85,247,.1);color:#a78bfa;border-color:rgba(168,85,247,.3)" onclick="openDjMessages('${escJ(rid)}','${escJ(ev.name)}')">📬 הודעות${openQ?` <span style="background:#ff3b30;color:white;border-radius:10px;padding:0 6px;font-size:11px;font-weight:900">${openQ}</span>`:''}</button>`:''}
+        <button class="ev-btn" style="background:rgba(74,159,255,.1);color:#4a9fff;border-color:rgba(74,159,255,.3)" onclick="editDJNote('${escJ(rid)}','${escJ(ev.djNotes||'')}')">📝 הערה</button>
+        <button class="ev-btn ev-btn-del" onclick="deleteEv('${escJ(rid)}')">🗑️ מחק</button>
+        <button class="ev-btn" style="background:rgba(212,175,55,.12);color:#D4AF37;border-color:rgba(212,175,55,.5);font-weight:900" onclick="editCelebrantPass('${escJ(rid)}','${escJ(ev.celebrantPass||'')}')">🎂 קוד חוגג${ev.celebrantPass?` <span style="font-family:monospace;letter-spacing:1px">${esc(ev.celebrantPass)}</span>`:''}</button>
       </div>
     </div>`;
   }).join('');
@@ -4165,9 +4165,9 @@ function renderArchiveView(list,arch,q){
       <div class="ev-meta">${ev.type?esc(ev.type)+' ':''}${dateStr?'• '+dateStr+' ':''}• DJ: ${esc(ev.djName||_djLabel(ev.djId))} • ${cnt} שירים</div>
       <div style="font-size:12px;color:#ff8a80;background:rgba(255,59,48,.08);border:1px solid rgba(255,59,48,.3);border-radius:8px;padding:5px 10px;margin-bottom:8px">🗑️ נמחק ע״י <b>${esc(a.byName||_djLabel(a.by))}</b>${when?' · '+when:''}</div>
       <div class="ev-btns">
-        <button class="ev-btn" style="background:rgba(0,200,83,.12);color:#00C853;border-color:rgba(0,200,83,.4);font-weight:900" onclick="restoreEv('${escA(rid)}')">♻️ שחזר</button>
-        <button class="ev-btn ev-btn-view" onclick="openEQ('${escA(rid)}','${escA(ev.name||'')}','${escA(ev.type||'')}','${escA(dateStr)}',true)">📋 תור (${cnt})</button>
-        <button class="ev-btn ev-btn-del" onclick="purgeEv('${escA(rid)}')">⛔ מחק לצמיתות</button>
+        <button class="ev-btn" style="background:rgba(0,200,83,.12);color:#00C853;border-color:rgba(0,200,83,.4);font-weight:900" onclick="restoreEv('${escJ(rid)}')">♻️ שחזר</button>
+        <button class="ev-btn ev-btn-view" onclick="openEQ('${escJ(rid)}','${escJ(ev.name||'')}','${escJ(ev.type||'')}','${escJ(dateStr)}',true)">📋 תור (${cnt})</button>
+        <button class="ev-btn ev-btn-del" onclick="purgeEv('${escJ(rid)}')">⛔ מחק לצמיתות</button>
       </div>
     </div>`;
   }).join('');
@@ -4858,7 +4858,7 @@ function renderTopSongs(){
   const list=document.getElementById('topSongsList');
   if(!list)return;
   list.innerHTML=TOP_SONGS.map((s,i)=>`
-    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface2);border:2px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer" onclick="addToQ({name:'${escA(s.name)}',artist:'${escA(s.artist)}',art:''})">
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface2);border:2px solid rgba(255,255,255,.08);border-radius:10px;cursor:pointer" onclick="addToQ({name:'${escJ(s.name)}',artist:'${escJ(s.artist)}',art:''})">
       <span style="font-size:14px;font-weight:900;color:#4a9fff;width:20px;text-align:center;flex-shrink:0">${['🥇','🥈','🥉','4','5'][i]}</span>
       <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(s.artist)}</div></div>
       <div style="width:26px;height:26px;background:var(--blue);border:2px solid white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0">+</div>
@@ -5413,6 +5413,8 @@ function stopPreview(){
 
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function escA(s){return String(s||'').replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+// לארגומנטים של JS בתוך onclick: גרש (') נשבר אם הופך ל-&#39; — לכן בורחים ברמת JS ואז ברמת HTML
+function escJ(s){return String(s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\r?\n/g,'\\n').replace(/</g,'\\x3c').replace(/&/g,'&amp;').replace(/"/g,'&quot;');}
 </script>
 
 <!-- ══ CROP MODAL ══ -->
